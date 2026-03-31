@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use View;
 
 class AdminController extends Controller
 {
@@ -22,6 +23,12 @@ class AdminController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/admin/login');
+    }
+
+    // Admin Login
+    public function AdminLogin()
+    {
+        return View("admin.admin_login");
     }
 }

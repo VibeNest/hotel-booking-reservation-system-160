@@ -59,8 +59,11 @@
 
                                             <div class=" col-12">
                                                 <label for="login" class="form-label">Email/Name/Phone</label>
-                                                <input type="text" class="form-control" id="login" name="login"
-                                                    placeholder="thanhtung@example.com">
+                                                <input type="text" class="form-control @error('login') is-invalid
+                                                @enderror" id="login" name="login" placeholder="thanhtung@example.com">
+                                                @error('login')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
                                             </div>
                                             <div class="col-12">
                                                 <label for="password" class="form-label">Password</label>

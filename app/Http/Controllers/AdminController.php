@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use View;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -41,5 +41,36 @@ class AdminController extends Controller
         // Lấy thông tin của người đăng nhập (Admin) thông qua id
         $profileData = User::find($id);
         return view("admin.profile.admin_profile", compact("profileData"));
+    }
+
+    // Admin Profile Store Data 
+    public function AdminProfileStore(Request $request)
+    {
+        $id = Auth::user()->id;
+        $data = User::find($id);
+        $oldPhoto = $data->photo;
+        // Cập nhật data field của user
+        $data->name = $request->name;
+        $data->username = $request->username;
+        $data->email = $request->email;
+        $data->phone = $request->phone;
+        $data->address = $request->address;
+
+        // Kiểm tra có photo không -> nếu có thì update photo
+        if ($request->file('photo')) {
+            // Xóa ảnh cũ nếu tồn tại
+            if ($oldPhoto && file_exists(public_path('upload/admin_images/' . $oldPhoto))) {
+                unlink(public_path('upload/admin_images/' . $oldPhoto));
+            }
+
+            $file = $request->file('photo');
+            $filename = date('YmdHi') . '-' . $file->getClientOriginalName();
+            $file->move(public_path('upload/admin_images'), $filename);
+            $data->photo = $filename;
+        }
+
+        $data->save();
+
+        return redirect()->back();
     }
 }

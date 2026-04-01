@@ -1,11 +1,13 @@
 <div class="sidebar-wrapper" data-simplebar="true">
     <div class="sidebar-header">
-        <div>
-            <img src="{{ asset('backend/assets/images/logo-icon.png') }}" class="logo-icon" alt="logo icon">
-        </div>
-        <div>
-            <h4 class="logo-text">Thanh Tùng</h4>
-        </div>
+        <a href="{{ route("admin.dashboard") }}" class="d-flex align-items-center text-decoration-none">
+            <div>
+                <img src="{{ asset('backend/assets/images/logo-icon.png') }}" class="logo-icon" alt="logo icon">
+            </div>
+            <div>
+                <h4 class="logo-text">Thanh Tùng</h4>
+            </div>
+        </a>
         <div class="toggle-icon ms-auto"><i class='bx bx-arrow-back'></i>
         </div>
     </div>

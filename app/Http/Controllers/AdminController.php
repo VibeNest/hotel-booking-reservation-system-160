@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use View;
@@ -29,6 +30,16 @@ class AdminController extends Controller
     // Admin Login
     public function AdminLogin()
     {
-        return View("admin.admin_login");
+        return view("admin.admin_login");
+    }
+
+    // Admin Profile 
+    public function AdminProfile()
+    {
+        // Lấy id người đang đăng nhập (Admin)
+        $id = Auth::user()->id;
+        // Lấy thông tin của người đăng nhập (Admin) thông qua id
+        $profileData = User::find($id);
+        return view("admin.profile.admin_profile", compact("profileData"));
     }
 }

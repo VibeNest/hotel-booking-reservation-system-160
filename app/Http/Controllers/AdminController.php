@@ -71,6 +71,12 @@ class AdminController extends Controller
 
         $data->save();
 
-        return redirect()->back();
+        // Hiển thị thông báo toaster
+        $notification = array(
+            'message' => 'Updated Admin Profile Successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
     }
 }

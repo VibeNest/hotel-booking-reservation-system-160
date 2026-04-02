@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -73,7 +73,52 @@ class AdminController extends Controller
 
         // Hiển thị thông báo toaster
         $notification = array(
-            'message' => 'Updated Admin Profile Successfully!',
+            'message' => 'Updated admin profile successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+    }
+
+    // Admin Change Password
+    public function AdminChangePassword()
+    {
+        // Lấy id người đang đăng nhập (Admin)
+        $id = Auth::user()->id;
+        // Lấy thông tin của người đăng nhập (Admin) thông qua id
+        $profileData = User::find($id);
+        return view("admin.profile.admin_change_password", compact("profileData"));
+    }
+
+    // Admin Password Update 
+    public function AdminPasswordUpdate(Request $request)
+    {
+        // Validation
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|confirmed'
+        ]);
+
+        // Nếu password không khớp nhau
+        if (!Hash::check($request->current_password, Auth::user()->password)) {
+            // Hiển thị thông báo toaster
+            $notification = array(
+                'message' => 'Current password does not match!',
+                'alert-type' => 'error'
+            );
+
+            return back()->with($notification);
+        }
+
+        // Update new password
+        $id = Auth::user()->id;
+        User::whereId($id)->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        // Hiển thị thông báo toaster
+        $notification = array(
+            'message' => 'Updated password successfully!',
             'alert-type' => 'success'
         );
 

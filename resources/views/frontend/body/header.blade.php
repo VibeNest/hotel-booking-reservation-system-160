@@ -25,6 +25,14 @@
                             <i class='bx bx-envelope'></i>
                             <a href="mailto:hello@atoli.com">tungvuvanthanh@gmail.com</a>
                         </li>
+                        <li>
+                            <i class='bx bx-log-in'></i>
+                            <a href="{{ route('login') }}">Login</a>
+                        </li>
+                        <li>
+                            <i class='bx bx-user-plus'></i>
+                            <a href="{{ route('register') }}">Register</a>
+                        </li>
                     </ul>
                 </div>
             </div>

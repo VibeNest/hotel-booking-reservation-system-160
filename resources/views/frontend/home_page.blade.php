@@ -63,10 +63,6 @@
     @include('frontend.body.navbar')
     <!-- End Navbar Area -->
 
-    <!-- Banner Area -->
-    @include('frontend.body.banner')
-    <!-- Banner Area End -->
-
     @yield('home')
 
     <!-- Footer Area -->

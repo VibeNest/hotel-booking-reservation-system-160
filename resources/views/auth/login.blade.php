@@ -37,7 +37,7 @@
                                     <div class="col-lg-12 ">
                                         <div class="form-group">
                                             <input type="text" name="login" id="login"
-                                                class="form-control @error('login') login-input-error @enderror" required
+                                                class="form-control @error('login') login-input-error @enderror"
                                                 data-error="Please enter your Username or Email"
                                                 placeholder="Email/Name/Phone">
 
@@ -49,8 +49,12 @@
 
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <input class="form-control" type="password" name="password" id="password"
-                                                placeholder="Password">
+                                            <input class="form-control @error('password') login-input-error @enderror"
+                                                type="password" name="password" id="password" placeholder="Password">
+
+                                            @error('password')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
 

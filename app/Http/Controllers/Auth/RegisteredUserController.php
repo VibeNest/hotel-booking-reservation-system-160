@@ -32,20 +32,29 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'phone' => ['required', 'string', 'max:255'],
+            'address' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password_confirmation' => ['required']
         ]);
 
         $user = User::create([
             'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Hiển thị thông báo đăng ký thành công
+        $notification = array(
+            'message' => 'Registration successfully!',
+            'alert-type' => 'success'
+        );
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('login', absolute: false))->with($notification);
     }
 }

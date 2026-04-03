@@ -38,7 +38,13 @@ class AuthenticatedSessionController extends Controller
             $url = "dashboard";
         }
 
-        return redirect()->intended($url);
+        // Hiển thị thông báo đăng nhập thành công
+        $notification = array(
+            'message' => 'Login successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->intended($url)->with($notification);
     }
 
     /**

@@ -13,10 +13,15 @@ use Illuminate\Support\Facades\Route;
 // HomePage
 Route::get('/', [UserController::class, 'Index']);
 
-// User
+// User Dashboard
 Route::get('/dashboard', function () {
     return view('frontend.dashboard.user_dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// User Profile
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [UserController::class, 'UserProfile'])->name('user.profile');
+});
 
 // Admin Group Middleware
 Route::middleware(['auth', 'roles:admin'])->group(function () {
@@ -34,12 +39,6 @@ Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.
 // Instructor Group Middleware
 Route::middleware(['auth', 'roles:instructor'])->group(function () {
     Route::get('/instructor/dashboard', [InstructorController::class, 'InstructorDashboard'])->name('instructor.dashboard');
-});
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__ . '/auth.php';

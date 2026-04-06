@@ -49,7 +49,7 @@ class AdminController extends Controller
         $id = Auth::user()->id;
         $data = User::find($id);
         $oldPhoto = $data->photo;
-        // Cập nhật data field của user
+        // Cập nhật data field của admin
         $data->name = $request->name;
         $data->username = $request->username;
         $data->email = $request->email;

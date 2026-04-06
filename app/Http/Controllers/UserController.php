@@ -24,4 +24,41 @@ class UserController extends Controller
         $profileData = User::find($id);
         return view("frontend.dashboard.edit_profile", compact("profileData"));
     }
+
+    // User Profile Store Data 
+    public function UserProfileStore(Request $request)
+    {
+        $id = Auth::user()->id;
+        $data = User::find($id);
+        $oldPhoto = $data->photo;
+        // Cập nhật data field của user
+        $data->name = $request->name;
+        $data->username = $request->username;
+        $data->email = $request->email;
+        $data->phone = $request->phone;
+        $data->address = $request->address;
+
+        // Kiểm tra có photo không -> nếu có thì update photo
+        if ($request->file('photo')) {
+            // Xóa ảnh cũ nếu tồn tại
+            if ($oldPhoto && file_exists(public_path('upload/user_images/' . $oldPhoto))) {
+                unlink(public_path('upload/user_images/' . $oldPhoto));
+            }
+
+            $file = $request->file('photo');
+            $filename = date('YmdHi') . '-' . $file->getClientOriginalName();
+            $file->move(public_path('upload/user_images'), $filename);
+            $data->photo = $filename;
+        }
+
+        $data->save();
+
+        // Hiển thị thông báo toaster
+        $notification = array(
+            'message' => 'Updated user profile successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+    }
 }

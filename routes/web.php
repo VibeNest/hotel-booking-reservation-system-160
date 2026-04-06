@@ -13,14 +13,15 @@ use Illuminate\Support\Facades\Route;
 // HomePage
 Route::get('/', [UserController::class, 'Index']);
 
-// User Dashboard
+// User Dashboard Routes
 Route::get('/dashboard', function () {
     return view('frontend.dashboard.user_dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// User Profile
+// User Profile Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [UserController::class, 'UserProfile'])->name('user.profile');
+    Route::post('/profile/store', [UserController::class, 'UserProfileStore'])->name('user.profile.store');
 });
 
 // Admin Group Middleware
@@ -33,7 +34,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     Route::post('/admin/password/update', [AdminController::class, 'AdminPasswordUpdate'])->name('admin.password.update');
 });
 
-// Admin Login Route
+// Admin Login Routes
 Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login');
 
 // Instructor Group Middleware

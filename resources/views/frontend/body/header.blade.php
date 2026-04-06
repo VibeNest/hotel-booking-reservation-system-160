@@ -25,14 +25,26 @@
                             <i class='bx bx-envelope'></i>
                             <a href="mailto:hello@atoli.com">tungvuvanthanh@gmail.com</a>
                         </li>
-                        <li>
-                            <i class='bx bx-log-in'></i>
-                            <a href="{{ route('login') }}">Login</a>
-                        </li>
-                        <li>
-                            <i class='bx bx-user-plus'></i>
-                            <a href="{{ route('register') }}">Register</a>
-                        </li>
+
+                        @auth
+                            <li>
+                                <i class='bx bx-home-alt'></i>
+                                <a href="{{ route('dashboard') }}">Dashboard</a>
+                            </li>
+                            <li>
+                                <i class='bx bx-log-out'></i>
+                                <a href="{{ route('user.logout') }}">Logout</a>
+                            </li>
+                        @else
+                            <li>
+                                <i class='bx bx-log-in'></i>
+                                <a href="{{ route('login') }}">Login</a>
+                            </li>
+                            <li>
+                                <i class='bx bx-user-plus'></i>
+                                <a href="{{ route('register') }}">Register</a>
+                            </li>
+                        @endauth
                     </ul>
                 </div>
             </div>

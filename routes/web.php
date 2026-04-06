@@ -18,10 +18,11 @@ Route::get('/dashboard', function () {
     return view('frontend.dashboard.user_dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// User Profile Routes
+// User Group Middleware
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [UserController::class, 'UserProfile'])->name('user.profile');
     Route::post('/profile/store', [UserController::class, 'UserProfileStore'])->name('user.profile.store');
+    Route::get('/logout', [UserController::class, 'UserLogout'])->name('user.logout');
 });
 
 // Admin Group Middleware

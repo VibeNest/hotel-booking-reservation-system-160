@@ -12,9 +12,9 @@
                         <a href="index.html">Home</a>
                     </li>
                     <li><i class='bx bx-chevron-right'></i></li>
-                    <li>User Dashboard </li>
+                    <li>User Profile </li>
                 </ul>
-                <h3>User Dashboard</h3>
+                <h3>User Profile</h3>
             </div>
         </div>
     </div>

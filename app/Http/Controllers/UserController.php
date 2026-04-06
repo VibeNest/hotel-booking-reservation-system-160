@@ -79,4 +79,45 @@ class UserController extends Controller
 
         return redirect('/login')->with($notification);
     }
+
+    // User Change Password
+    public function UserChangePassword()
+    {
+        return view("frontend.dashboard.user_change_password");
+    }
+
+    // User Password Update
+    public function UserPasswordUpdate(Request $request)
+    {
+        // Validation
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|confirmed'
+        ]);
+
+        // Nếu password không khớp nhau
+        if (!Hash::check($request->current_password, Auth::user()->password)) {
+            // Hiển thị thông báo toaster
+            $notification = array(
+                'message' => 'Current password does not match!',
+                'alert-type' => 'error'
+            );
+
+            return back()->with($notification);
+        }
+
+        // Update new password
+        $id = Auth::user()->id;
+        User::whereId($id)->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        // Hiển thị thông báo toaster
+        $notification = array(
+            'message' => 'Updated password successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+    }
 }

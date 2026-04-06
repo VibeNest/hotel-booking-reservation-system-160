@@ -20,9 +20,11 @@ Route::get('/dashboard', function () {
 
 // User Group Middleware
 Route::middleware('auth')->group(function () {
+    Route::get('/logout', [UserController::class, 'UserLogout'])->name('user.logout');
     Route::get('/profile', [UserController::class, 'UserProfile'])->name('user.profile');
     Route::post('/profile/store', [UserController::class, 'UserProfileStore'])->name('user.profile.store');
-    Route::get('/logout', [UserController::class, 'UserLogout'])->name('user.logout');
+    Route::get('/change/password', [UserController::class, 'UserChangePassword'])->name('user.change.password');
+    Route::post('/password/update', [UserController::class, 'UserPasswordUpdate'])->name('user.password.update');
 });
 
 // Admin Group Middleware

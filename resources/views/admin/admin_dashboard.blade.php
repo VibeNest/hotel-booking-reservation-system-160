@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/css/header-colors.css') }}" />
     <!-- Toaster -->
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+
     <title>Admin Dashboard</title>
 </head>
 

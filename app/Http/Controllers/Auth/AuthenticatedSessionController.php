@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,10 +39,17 @@ class AuthenticatedSessionController extends Controller
             $url = "dashboard";
         }
 
+        // Lấy id người đang đăng nhập 
+        $id = Auth::user()->id;
+        // Lấy thông tin của người đăng nhập thông qua id
+        $profileData = User::find($id);
+
+        $username = $profileData->name;
+
         // Hiển thị thông báo đăng nhập thành công
         $notification = array(
-            'message' => 'Login successfully!',
-            'alert-type' => 'success'
+            'message' => '' . $username . ' login successfully!',
+            'alert-type' => 'info'
         );
 
         return redirect()->intended($url)->with($notification);

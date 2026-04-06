@@ -24,7 +24,13 @@ class AdminController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/admin/login');
+        // Hiển thị thông báo toaster
+        $notification = array(
+            'message' => 'Logout successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect('/admin/login')->with($notification);
     }
 
     // Admin Login

@@ -15,7 +15,7 @@ Route::get('/', [UserController::class, 'Index']);
 
 // User
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('frontend.dashboard.user_dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Admin Group Middleware

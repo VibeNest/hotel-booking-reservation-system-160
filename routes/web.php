@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Backend\TeamController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -39,6 +40,14 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 
 // Admin Login Routes
 Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login');
+
+// Admin Group Middleware
+Route::middleware(['auth', 'roles:admin'])->group(function () {
+    // Teams Management Routes
+    Route::controller(TeamController::class)->group(function () {
+        Route::get('/all/team', 'AllTeam')->name('all.team');
+    });
+});
 
 // Instructor Group Middleware
 Route::middleware(['auth', 'roles:instructor'])->group(function () {

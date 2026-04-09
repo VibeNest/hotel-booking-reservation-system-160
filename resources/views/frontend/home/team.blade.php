@@ -17,13 +17,10 @@
                             <a href="#" target="_blank"><i class='bx bxl-facebook'></i></a>
                         </li>
                         <li>
-                            <a href="#" target="_blank"><i class='bx bxl-twitter'></i></a>
+                            <a href="#" target="_blank"><i class='bx bxl-tiktok'></i></a>
                         </li>
                         <li>
                             <a href="#" target="_blank"><i class='bx bxl-instagram'></i></a>
-                        </li>
-                        <li>
-                            <a href="#" target="_blank"><i class='bx bxl-pinterest-alt'></i></a>
                         </li>
                     </ul>
                 </div>
@@ -41,13 +38,10 @@
                             <a href="#" target="_blank"><i class='bx bxl-facebook'></i></a>
                         </li>
                         <li>
-                            <a href="#" target="_blank"><i class='bx bxl-twitter'></i></a>
+                            <a href="#" target="_blank"><i class='bx bxl-tiktok'></i></a>
                         </li>
                         <li>
                             <a href="#" target="_blank"><i class='bx bxl-instagram'></i></a>
-                        </li>
-                        <li>
-                            <a href="#" target="_blank"><i class='bx bxl-pinterest-alt'></i></a>
                         </li>
                     </ul>
                 </div>
@@ -65,13 +59,10 @@
                             <a href="#" target="_blank"><i class='bx bxl-facebook'></i></a>
                         </li>
                         <li>
-                            <a href="#" target="_blank"><i class='bx bxl-twitter'></i></a>
+                            <a href="#" target="_blank"><i class='bx bxl-tiktok'></i></a>
                         </li>
                         <li>
                             <a href="#" target="_blank"><i class='bx bxl-instagram'></i></a>
-                        </li>
-                        <li>
-                            <a href="#" target="_blank"><i class='bx bxl-pinterest-alt'></i></a>
                         </li>
                     </ul>
                 </div>
@@ -89,13 +80,10 @@
                             <a href="#" target="_blank"><i class='bx bxl-facebook'></i></a>
                         </li>
                         <li>
-                            <a href="#" target="_blank"><i class='bx bxl-twitter'></i></a>
+                            <a href="#" target="_blank"><i class='bx bxl-tiktok'></i></a>
                         </li>
                         <li>
                             <a href="#" target="_blank"><i class='bx bxl-instagram'></i></a>
-                        </li>
-                        <li>
-                            <a href="#" target="_blank"><i class='bx bxl-pinterest-alt'></i></a>
                         </li>
                     </ul>
                 </div>

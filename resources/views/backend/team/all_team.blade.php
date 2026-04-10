@@ -16,9 +16,7 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-primary px-3">
-                        <i class="bx bx-plus me-1"></i> Add Team
-                    </button>
+                    <a href="" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add Team</a>
                 </div>
             </div>
         </div>

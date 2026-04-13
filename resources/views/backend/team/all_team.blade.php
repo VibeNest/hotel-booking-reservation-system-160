@@ -16,7 +16,7 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add Team</a>
+                    <a href="{{ route('add.team') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add Team</a>
                 </div>
             </div>
         </div>
@@ -43,8 +43,14 @@
                             @foreach ($team as $key => $item)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td><img src="{{ asset($item->image) }}" alt="{{ $item->name }}"
-                                            style="width: 70px; height: 40px;"></td>
+                                    <td>
+                                        @if ($item->image)
+                                            <img src="{{ asset($item->image) }}" alt="{{ $item->name }}"
+                                                style="width: 70px; height: 40px;">
+                                        @else
+                                            <span class="text-muted">No image</span>
+                                        @endif
+                                    </td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->position }}</td>
                                     <td>{{ $item->facebook }}</td>

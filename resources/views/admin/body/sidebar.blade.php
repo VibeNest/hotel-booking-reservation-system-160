@@ -44,7 +44,7 @@
             <ul>
                 <li> <a href="{{ route("all.book.area") }}"><i class='bx bx-radio-circle'></i>All book area</a>
                 </li>
-                <li> <a href="app-chat-box.html"><i class='bx bx-radio-circle'></i>Add book area</a>
+                <li> <a href="{{ route("add.book.area") }}"><i class='bx bx-radio-circle'></i>Add book area</a>
                 </li>
             </ul>
         </li>

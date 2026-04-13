@@ -54,6 +54,8 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/all/book_area', 'AllBookArea')->name('all.book.area');
         Route::get('/add/book_area', 'AddBookArea')->name('add.book.area');
         Route::post('/book_area/store', 'StoreBookArea')->name('book_area.store');
+        Route::get('/edit/book_area/{id}', 'EditBookArea')->name('edit.book_area');
+        Route::post('/book_area/update', 'UpdateBookArea')->name('book_area.update');
     });
 });
 

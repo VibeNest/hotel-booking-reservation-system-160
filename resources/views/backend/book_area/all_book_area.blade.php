@@ -50,7 +50,8 @@
                                     <td><img src="{{ asset($item->image) }}" alt="{{ $item->sub_title }}"
                                             style="width: 70px; height: 40px;"></td>
                                     <td>
-                                        <a href="" class="btn btn-warning px-3 radius-30">Edit</a>
+                                        <a href="{{ route('edit.book_area', $item->id) }}"
+                                            class="btn btn-warning px-3 radius-30">Edit</a>
                                         <a href="" class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
                                     </td>
                                 </tr>

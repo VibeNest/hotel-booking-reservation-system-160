@@ -23,7 +23,8 @@
                 <div class="row">
                     <div class="col-lg-8">
                         <div class="card">
-                            <form action="{{ route("book_area.store") }}" method="POST" enctype="multipart/form-data">
+                            <form id="myForm" action="{{ route("book_area.store") }}" method="POST"
+                                enctype="multipart/form-data">
                                 @csrf
 
                                 <div class="card-body">
@@ -31,7 +32,7 @@
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Sub title</h6>
                                         </div>
-                                        <div class="col-sm-9 text-secondary">
+                                        <div class="col-sm-9 text-secondary form-group">
                                             <input type="text" name="sub_title" class="form-control"
                                                 placeholder="Enter Sub Title" />
                                         </div>
@@ -40,7 +41,7 @@
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Title</h6>
                                         </div>
-                                        <div class="col-sm-9 text-secondary">
+                                        <div class="col-sm-9 text-secondary form-group">
                                             <input type="text" name="title" class="form-control"
                                                 placeholder="Enter Title" />
                                         </div>
@@ -49,7 +50,7 @@
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Description</h6>
                                         </div>
-                                        <div class="col-sm-9 text-secondary">
+                                        <div class="col-sm-9 text-secondary form-group">
                                             <textarea name="description" class="form-control"
                                                 placeholder="Enter Description" rows="4"></textarea>
                                         </div>
@@ -58,7 +59,7 @@
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Link</h6>
                                         </div>
-                                        <div class="col-sm-9 text-secondary">
+                                        <div class="col-sm-9 text-secondary form-group">
                                             <input type="text" name="link_url" class="form-control"
                                                 placeholder="Enter Link URL" />
                                         </div>
@@ -68,7 +69,7 @@
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Image</h6>
                                         </div>
-                                        <div class="col-sm-9 text-secondary">
+                                        <div class="col-sm-9 text-secondary form-group">
                                             <input class="form-control" type="file" id="image" name="image">
                                         </div>
                                     </div>
@@ -76,14 +77,14 @@
                                         <div class="col-sm-3">
                                             <h6 class="mb-0"></h6>
                                         </div>
-                                        <div class="col-sm-9 text-secondary">
+                                        <div class="col-sm-9 text-secondary form-group">
                                             <img id="showImage" src="{{  url("upload/no_image.jpeg")}}" alt="Admin"
                                                 class="rounded-circle p-1 bg-primary" width="80">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-3"></div>
-                                        <div class="col-sm-9 text-secondary">
+                                        <div class="col-sm-9 text-secondary form-group">
                                             <input type="submit" class="btn btn-primary px-4" value="Save Changes" />
                                         </div>
                                     </div>
@@ -113,5 +114,59 @@
                 reader.readAsDataURL(e.target.files['0']); // e.target.files['0']: file đầu tiên user chọn
             })
         })
+    </script>
+
+    {{-- Form Validation --}}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#myForm').validate({
+                rules: {
+                    sub_title: {
+                        required: true,
+                    },
+                    title: {
+                        required: true,
+                    },
+                    description: {
+                        required: true,
+                    },
+                    link_url: {
+                        required: true,
+                    },
+                    image: {
+                        required: true,
+                    },
+                },
+                messages: {
+                    sub_title: {
+                        required: 'Please Enter Sub Title',
+                    },
+                    title: {
+                        required: 'Please Enter Title',
+                    },
+                    description: {
+                        required: 'Please Enter Description',
+                    },
+                    link_url: {
+                        required: 'Please Enter Link URL',
+                    },
+                    image: {
+                        required: 'Please Select Image',
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+            });
+        });
+
     </script>
 @endsection

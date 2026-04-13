@@ -117,4 +117,23 @@ class BookAreaController extends Controller
             return redirect()->route('all.book.area')->with($notification);
         }
     }
+
+    //Delete Book Area Method
+    public function DeleteBookArea($id)
+    {
+        $item = BookArea::findOrFail($id);
+        $img = $item->image;
+        unlink($img);
+
+        BookArea::findOrFail($id)->delete();
+
+        // Hiển thị thông báo toaster
+        $notification = array(
+            'message' => 'Deleted book area successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+
+    }
 }

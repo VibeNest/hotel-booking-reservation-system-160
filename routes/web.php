@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Backend\BookAreaController;
 use App\Http\Controllers\Backend\TeamController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\ProfileController;
@@ -46,6 +47,16 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     // Teams Management Routes
     Route::controller(TeamController::class)->group(function () {
         Route::get('/all/team', 'AllTeam')->name('all.team');
+    });
+
+    // Book Area Management Routes
+    Route::controller(BookAreaController::class)->group(function () {
+        Route::get('/all/book_area', 'AllBookArea')->name('all.book.area');
+        Route::get('/add/book_area', 'AddBookArea')->name('add.book.area');
+        Route::post('/book_area/store', 'StoreBookArea')->name('book_area.store');
+        Route::get('/edit/book_area/{id}', 'EditBookArea')->name('edit.book_area');
+        Route::post('/book_area/update', 'UpdateBookArea')->name('book_area.update');
+        Route::get('/delete/book_area/{id}', 'DeleteBookArea')->name('delete.book_area');
     });
 });
 

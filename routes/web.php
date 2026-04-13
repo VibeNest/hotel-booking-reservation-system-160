@@ -51,8 +51,9 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 
     // Book Area Management Routes
     Route::controller(BookAreaController::class)->group(function () {
-        Route::get('/all/book/area', 'AllBookArea')->name('all.book.area');
-        Route::get('/add/book/area', 'AddBookArea')->name('add.book.area');
+        Route::get('/all/book_area', 'AllBookArea')->name('all.book.area');
+        Route::get('/add/book_area', 'AddBookArea')->name('add.book.area');
+        Route::post('/book_area/store', 'StoreBookArea')->name('book_area.store');
     });
 });
 

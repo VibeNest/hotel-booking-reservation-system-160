@@ -44,8 +44,8 @@
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $item->sub_title }}</td>
-                                    <td>{{ $item->title }}</td>
-                                    <td>{{ $item->description }}</td>
+                                    <td>{{ Str::limit($item->title, 30, '...') }}</td>
+                                    <td>{{ Str::limit($item->description, 30, '...') }}</td>
                                     <td>{{ $item->link_url }}</td>
                                     <td><img src="{{ asset($item->image) }}" alt="{{ $item->sub_title }}"
                                             style="width: 70px; height: 40px;"></td>

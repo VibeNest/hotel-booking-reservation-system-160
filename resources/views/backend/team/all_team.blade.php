@@ -52,7 +52,16 @@
                                     <td>{{ $item->instagram }}</td>
                                     <td>
                                         <a href="" class="btn btn-warning px-3 radius-30">Edit</a>
-                                        <a href="" class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                        <!-- Delete -->
+                                        <form action="{{ route('delete.team', $item->id) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit" class="btn btn-danger px-3 radius-30"
+                                                onclick="return confirm('Bạn có chắc muốn xóa?')">
+                                                Delete
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

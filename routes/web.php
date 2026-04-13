@@ -54,4 +54,7 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
     Route::get('/instructor/dashboard', [InstructorController::class, 'InstructorDashboard'])->name('instructor.dashboard');
 });
 
+Route::delete('/delete/team/{id}', [TeamController::class, 'DeleteTeam'])
+    ->name('delete.team');
+
 require __DIR__ . '/auth.php';

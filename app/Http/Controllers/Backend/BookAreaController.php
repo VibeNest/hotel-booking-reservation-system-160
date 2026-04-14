@@ -32,7 +32,7 @@ class BookAreaController extends Controller
         $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
         $manager = new ImageManager(new Driver());
         $img = $manager->read($image);
-        $img->resize(576, 576)->save(public_path('upload/book_area/' . $name_gen));
+        $img->resize(1000, 1000)->save(public_path('upload/book_area/' . $name_gen));
         $save_url = 'upload/book_area/' . $name_gen;
 
         // Lưu thông tin book area vào database
@@ -78,7 +78,7 @@ class BookAreaController extends Controller
             $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
             $manager = new ImageManager(new Driver());
             $img = $manager->read($image);
-            $img->resize(576, 576)->save(public_path('upload/book_area/' . $name_gen));
+            $img->resize(1000, 1000)->save(public_path('upload/book_area/' . $name_gen));
             $save_url = 'upload/book_area/' . $name_gen;
 
             // Cập nhật thông tin book area vào database khi thay đổi ảnh

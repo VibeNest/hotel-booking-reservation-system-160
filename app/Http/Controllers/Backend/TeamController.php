@@ -19,12 +19,7 @@ class TeamController extends Controller
     // Delete Team
     public function DeleteTeam($id)
     {
-        $team = Team::find($id);
-        
-        // Check tồn tại (tránh crash)
-        if (!$team) {
-            return redirect()->back()->with('error', 'Không tìm thấy team');
-        }
+        $team = Team::findOrFail($id);
 
         // Xóa ảnh nếu tồn tại
         if (!empty($team->image) && File::exists(public_path($team->image))) {
@@ -34,6 +29,11 @@ class TeamController extends Controller
         // Xóa db
         $team->delete();
 
-        return redirect()->route('all.team')->with('success', 'Xóa thành công');
+        $notification = array(
+            'message' => 'Deleted team successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
     }
 }

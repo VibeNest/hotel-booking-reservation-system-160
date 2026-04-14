@@ -48,6 +48,8 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     Route::controller(TeamController::class)->group(function () {
         Route::get('/all/team', 'AllTeam')->name('all.team');
         Route::get('/delete/team/{id}', 'DeleteTeam')->name('delete.team');
+        Route::get('/edit/team/{id}', [TeamController::class, 'EditTeam'])->name('edit.team');
+        Route::post('/team/update', [TeamController::class, 'UpdateTeam'])->name('team.update');
     });
 
     // Book Area Management Routes

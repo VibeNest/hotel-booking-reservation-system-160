@@ -53,15 +53,8 @@
                                     <td>
                                         <a href="" class="btn btn-warning px-3 radius-30">Edit</a>
                                         {{-- form Xóa --}}
-                                        <form action="{{ route('delete.team', $item->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button type="submit" class="btn btn-danger px-3 radius-30"
-                                                onclick="return confirm('Bạn có chắc muốn xóa?')">
-                                                Delete
-                                            </button>
-                                        </form>
+                                        <a href="{{ route('delete.team', $item->id) }}" class="btn btn-danger px-3 radius-30"
+                                            id="delete">Delete</a>
                                     </td>
                                 </tr>
                             @endforeach

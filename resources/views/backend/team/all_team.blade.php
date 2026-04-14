@@ -52,7 +52,7 @@
                                     <td>{{ $item->instagram }}</td>
                                     <td>
                                         <a href="" class="btn btn-warning px-3 radius-30">Edit</a>
-                                        <!-- Delete -->
+                                        {{-- form Xóa --}}
                                         <form action="{{ route('delete.team', $item->id) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')

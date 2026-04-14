@@ -34,6 +34,6 @@ class TeamController extends Controller
         // Xóa db
         $team->delete();
 
-        return redirect()->back()->with('success', 'Xóa thành công');
+        return redirect()->route('all.team')->with('success', 'Xóa thành công');
     }
 }

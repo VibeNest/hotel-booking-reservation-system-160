@@ -47,6 +47,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     // Teams Management Routes
     Route::controller(TeamController::class)->group(function () {
         Route::get('/all/team', 'AllTeam')->name('all.team');
+        Route::delete('/delete/team/{id}', 'DeleteTeam')->name('delete.team');
     });
 
     // Book Area Management Routes

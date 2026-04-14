@@ -12,6 +12,9 @@ class TeamTest extends TestCase
 
     public function test_delete_team()
     {
+
+        $this->withoutMiddleware();
+
         // 1. Tạo dữ liệu giả
         $team = Team::factory()->create();
 

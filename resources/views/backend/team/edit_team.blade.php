@@ -68,7 +68,7 @@
                         <label class="col-sm-2 col-form-label"></label>
                         <div class="col-sm-10">
                             <img id="showImage" 
-                                 src="{{ (!empty($team->image)) ? asset($team->image) : url('upload/no_image.jpg') }}" 
+                                 src="{{ (!empty($team->image)) ? asset($team->image).'?v='.time() : url('upload/no_image.jpg') }}"
                                  alt="Team Image" 
                                  class="rounded-circle" 
                                  width="110">
@@ -90,5 +90,13 @@
 
     </div>
 </div>
+<script>
+    document.getElementById('image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('showImage').src = URL.createObjectURL(file);
+        }
+    });
+</script>
 
 @endsection

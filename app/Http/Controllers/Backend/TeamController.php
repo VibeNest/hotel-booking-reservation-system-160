@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class TeamController extends Controller
 {
@@ -29,16 +31,19 @@ class TeamController extends Controller
         if ($request->file('image')) {
 
             // Xóa ảnh cũ
-            if (file_exists($team->image)) {
-                unlink($team->image);
+            if (!empty($team->image) && file_exists(public_path($team->image))) {
+                unlink(public_path($team->image));
             }
 
-            // Upload ảnh mới
+            // Upload + resize ảnh mới
             $image = $request->file('image');
             $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-            $save_url = 'upload/team/' . $name_gen;
 
-            $image->move(public_path('upload/team'), $name_gen);
+            $manager = new ImageManager(new Driver());
+            $img = $manager->read($image);
+            $img->cover(550, 670)->save(public_path('upload/team/' . $name_gen));
+
+            $save_url = 'upload/team/' . $name_gen;
 
             $team->update([
                 'name' => $request->name,
@@ -64,7 +69,6 @@ class TeamController extends Controller
             'alert-type' => 'success'
         ]);
     }
-
     // Delete Team
     public function DeleteTeam($id)
     {

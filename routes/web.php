@@ -47,7 +47,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     // Teams Management Routes
     Route::controller(TeamController::class)->group(function () {
         Route::get('/all/team', 'AllTeam')->name('all.team');
-        Route::delete('/delete/team/{id}', 'DeleteTeam')->name('delete.team');
+        Route::get('/delete/team/{id}', 'DeleteTeam')->name('delete.team');
     });
 
     // Book Area Management Routes
@@ -65,8 +65,5 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 Route::middleware(['auth', 'roles:instructor'])->group(function () {
     Route::get('/instructor/dashboard', [InstructorController::class, 'InstructorDashboard'])->name('instructor.dashboard');
 });
-
-Route::delete('/delete/team/{id}', [TeamController::class, 'DeleteTeam'])
-    ->name('delete.team');
 
 require __DIR__ . '/auth.php';

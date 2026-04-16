@@ -58,6 +58,8 @@
             <ul>
                 <li> <a href="{{ route("room.type.list") }}"><i class='bx bx-radio-circle'></i>List Room Types</a>
                 </li>
+                <li> <a href="{{ route("add.room.type") }}"><i class='bx bx-radio-circle'></i>Add Room Type</a>
+                </li>
             </ul>
         </li>
 

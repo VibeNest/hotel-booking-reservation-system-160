@@ -49,6 +49,18 @@
             </ul>
         </li>
 
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bx bx-bed"></i>
+                </div>
+                <div class="menu-title">Room Type Management</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route("room.type.list") }}"><i class='bx bx-radio-circle'></i>List Room Types</a>
+                </li>
+            </ul>
+        </li>
+
         <li class="menu-label">UI Elements</li>
         <li>
             <a href="javascript:;" class="has-arrow">

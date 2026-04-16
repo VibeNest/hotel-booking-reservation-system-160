@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Backend\BookAreaController;
+use App\Http\Controllers\Backend\RoomTypeController;
 use App\Http\Controllers\Backend\TeamController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\ProfileController;
@@ -50,8 +51,8 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/add/team', 'AddTeam')->name('add.team');
         Route::post('/store/team', 'StoreTeam')->name('store.team');
         Route::get('/delete/team/{id}', 'DeleteTeam')->name('delete.team');
-    Route::get('/edit/team/{id}', 'EditTeam')->name('edit.team');
-    Route::post('/team/update', 'UpdateTeam')->name('team.update');
+        Route::get('/edit/team/{id}', 'EditTeam')->name('edit.team');
+        Route::post('/team/update', 'UpdateTeam')->name('team.update');
     });
 
     // Book Area Management Routes
@@ -62,6 +63,11 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/edit/book_area/{id}', 'EditBookArea')->name('edit.book_area');
         Route::post('/book_area/update', 'UpdateBookArea')->name('book_area.update');
         Route::get('/delete/book_area/{id}', 'DeleteBookArea')->name('delete.book_area');
+    });
+
+    // Room Type Management Routes
+    Route::controller(RoomTypeController::class)->group(function () {
+        Route::get('/room/type/list', 'RoomTypeList')->name('room.type.list');
     });
 });
 

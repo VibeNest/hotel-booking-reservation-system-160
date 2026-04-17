@@ -38,9 +38,16 @@
                         </thead>
                         <tbody>
                             @foreach ($allData as $key => $item)
+
+                                @php
+                                    // Lấy tất cả các phòng thuộc đúng loại phòng hiện tại 
+                                    $rooms = App\Models\Room::where('roomtype_id', $item->id)->get();
+                                @endphp
+
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td></td>
+                                    <td><img src="{{ (!empty($item->room->image)) ? url('upload/room_images/' . $item->room->image) : url('upload/no_image.jpg') }}"
+                                            alt="{{ $item->name }}" width="50"></td>
                                     <td>{{ $item->name }}</td>
                                     <td>
                                         <a href="{{ route('edit.book_area', $item->id) }}"

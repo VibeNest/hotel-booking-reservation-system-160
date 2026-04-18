@@ -129,6 +129,20 @@
     <script src="{{ asset('backend/assets/js/validate.min.js') }}"></script>
     {{-- Validate --}}
 
+    {{-- TinyMCE --}}
+    <script src="https://cdn.tiny.cloud/1/73ucpcrimmer2q4tpqw5gkn58t6ju8fcbm1uvpglaghkcbeq/tinymce/8/tinymce.min.js"
+        referrerpolicy="origin"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            tinymce.init({
+                selector: '#myeditorinstance',
+                plugins: 'code table lists',
+                toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | indent outdent | bullist numlist | code | table'
+            });
+        });
+    </script>
+    {{-- TinyMCE --}}
+
 </body>
 
 </html>

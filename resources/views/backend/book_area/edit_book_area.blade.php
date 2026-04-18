@@ -80,7 +80,7 @@
                                             <h6 class="mb-0"></h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">
-                                            <img id="showImage" src="{{  asset($bookArea->image)}}" alt="Admin"
+                                            <img id="showImage" src="{{  asset($bookArea->image)}}" alt="{{ $bookArea->title }}"
                                                 class="rounded-circle p-1 bg-primary" width="80">
                                         </div>
                                     </div>

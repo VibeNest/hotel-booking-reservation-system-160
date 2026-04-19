@@ -63,7 +63,7 @@
                                                     <img id="showImage"
                                                         src="{{ (!empty($editData->image)) ? url('upload/room_images/' . $editData->image) : url('upload/no_image.jpg') }}"
                                                         alt="{{ $editData->type->name }} "
-                                                        class="rounded-circle p-1 bg-primary" width="60"
+                                                        class="rounded-circle p-1 bg-primary" width="80"
                                                         style="margin-top: 10px">
 
                                                 </div>
@@ -76,19 +76,25 @@
                                                     <div class="row" id="preview_img"></div>
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label for="room_capacity" class="form-label">Room Capacity</label>
                                                     <input type="text" name="room_capacity" class="form-control"
                                                         id="room_capacity" value="{{ $editData->room_capacity }}">
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label for="price" class="form-label">Price</label>
                                                     <input type="text" name="price" class="form-control" id="price"
                                                         value="{{ $editData->price }}">
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
+                                                    <label for="size" class="form-label">Size</label>
+                                                    <input type="text" name="size" class="form-control" id="size"
+                                                        value="{{ $editData->size }}">
+                                                </div>
+
+                                                <div class="col-md-3">
                                                     <label for="discount" class="form-label">Discount (%)</label>
                                                     <input type="text" name="discount" class="form-control" id="discount"
                                                         value="{{ $editData->discount }}">

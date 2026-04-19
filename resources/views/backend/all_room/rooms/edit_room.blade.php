@@ -36,24 +36,26 @@
                                         <div class="card-body p-4">
                                             <h5 class="mb-4">Update Room</h5>
 
-                                            <form class="row g-3">
+                                            <form class="row g-3" method="POST" action="{{ route('update.room', $editData->id) }}" enctype="multipart/form-data">
+                                                @csrf
+                                            <div class="col-md-4">
+                                                  <label class="form-label">Room Type Name</label>
 
-                                                <div class="col-md-4">
-                                                    <label for="roomtype_id" class="form-label">Room Type Name</label>
-                                                    <input type="text" name="roomtype_id" class="form-control"
-                                                        id="roomtype_id" value="{{ $editData->type->name }}">
-                                                </div>
+                                                  <input type="text" class="form-control" value="{{ $editData->type->name }}" disabled>
+
+                                                  <input type="hidden" name="roomtype_id" value="{{ $editData->roomtype_id }}">
+                                              </div>
 
                                                 <div class="col-md-4">
                                                     <label for="total_adult" class="form-label">Total Adult</label>
-                                                    <input type="text" name="total_adult" class="form-control"
-                                                        id="total_adult" value="{{ $editData->total_adult }}">
+                                                    <input type="number" name="total_adult" class="form-control"
+                                                        id="total_adult" value="{{ $editData->total_adult }}" min="1">
                                                 </div>
 
                                                 <div class="col-md-4">
                                                     <label for="total_child" class="form-label">Total Child</label>
-                                                    <input type="text" name="total_child" class="form-control"
-                                                        id="total_child" value="{{ $editData->total_child }}">
+                                                    <input type="number" name="total_child" class="form-control"
+                                                        id="total_child" value="{{ $editData->total_child }}" min="0">
                                                 </div>
 
                                                 <div class="col-md-6">
@@ -61,7 +63,7 @@
                                                     <input type="file" name="image" class="form-control" id="image">
 
                                                     <img id="showImage"
-                                                        src="{{ (!empty($editData->image)) ? url('upload/room_images/' . $editData->image) : url('upload/no_image.jpg') }}"
+                                                        src="{{ (!empty($editData->image)) ? url($editData->image) : url('upload/no_image.jpg') }}"
                                                         alt="{{ $editData->type->name }} "
                                                         class="rounded-circle p-1 bg-primary" width="80"
                                                         style="margin-top: 10px">
@@ -78,13 +80,13 @@
 
                                                 <div class="col-md-3">
                                                     <label for="room_capacity" class="form-label">Room Capacity</label>
-                                                    <input type="text" name="room_capacity" class="form-control"
-                                                        id="room_capacity" value="{{ $editData->room_capacity }}">
+                                                    <input type="number" name="room_capacity" class="form-control"
+                                                        id="room_capacity" value="{{ $editData->room_capacity }}" min="1">
                                                 </div>
 
                                                 <div class="col-md-3">
                                                     <label for="price" class="form-label">Price</label>
-                                                    <input type="text" name="price" class="form-control" id="price"
+                                                    <input type="number" name="price" class="form-control" id="price"
                                                         value="{{ $editData->price }}">
                                                 </div>
 
@@ -96,20 +98,20 @@
 
                                                 <div class="col-md-3">
                                                     <label for="discount" class="form-label">Discount (%)</label>
-                                                    <input type="text" name="discount" class="form-control" id="discount"
-                                                        value="{{ $editData->discount }}">
+                                                    <input type="number" name="discount" class="form-control" id="discount"
+                                                        value="{{ $editData->discount }}" min="0" max="100">
                                                 </div>
 
                                                 <div class="col-md-6">
                                                     <label for="view" class="form-label">Room View</label>
                                                     <select name="view" id="view" class="form-select">
                                                         <option selected="">Choose Room View...</option>
-                                                        <option value="Sea View">Sea View</option>
-                                                        <option value="Hill View">Hill View</option>
-                                                        <option value="Mountain View">Mountain View</option>
-                                                        <option value="City View">City View</option>
-                                                        <option value="Garden View">Garden View</option>
-                                                        <option value="Pool View">Pool View</option>
+                                                        <option value="Sea View" {{ $editData->view == 'Sea View' ? 'selected' : '' }}>Sea View</option>
+                                                        <option value="Hill View" {{ $editData->view == 'Hill View' ? 'selected' : '' }}>Hill View</option>
+                                                        <option value="Mountain View" {{ $editData->view == 'Mountain View' ? 'selected' : '' }}>Mountain View</option>
+                                                        <option value="City View" {{ $editData->view == 'City View' ? 'selected' : '' }}>City View</option>
+                                                        <option value="Garden View" {{ $editData->view == 'Garden View' ? 'selected' : '' }}>Garden View</option>
+                                                        <option value="Pool View" {{ $editData->view == 'Pool View' ? 'selected' : '' }}>Pool View</option>
                                                     </select>
                                                 </div>
 
@@ -117,12 +119,12 @@
                                                     <label for="bed_style" class="form-label">Bed Style</label>
                                                     <select name="bed_style" id="bed_style" class="form-select">
                                                         <option selected="">Choose Bed Style...</option>
-                                                        <option value="Single Bed">Single Bed</option>
-                                                        <option value="Double Bed">Double Bed</option>
-                                                        <option value="Twin Bed">Twin Bed</option>
-                                                        <option value="Queen Bed">Queen Bed</option>
-                                                        <option value="King Bed">King Bed</option>
-                                                        <option value="Sofa Bed">Sofa Bed</option>
+                                                        <option value="Single Bed" {{ $editData->bed_style == 'Single Bed' ? 'selected' : '' }}>Single Bed</option>
+                                                        <option value="Double Bed" {{ $editData->bed_style == 'Double Bed' ? 'selected' : '' }}>Double Bed</option>
+                                                        <option value="Twin Bed" {{ $editData->bed_style == 'Twin Bed' ? 'selected' : '' }}>Twin Bed</option>
+                                                        <option value="Queen Bed" {{ $editData->bed_style == 'Queen Bed' ? 'selected' : '' }}>Queen Bed</option>
+                                                        <option value="King Bed" {{ $editData->bed_style == 'King Bed' ? 'selected' : '' }}>King Bed</option>
+                                                        <option value="Sofa Bed" {{ $editData->bed_style == 'Sofa Bed' ? 'selected' : '' }}>Sofa Bed</option>
                                                     </select>
                                                 </div>
 

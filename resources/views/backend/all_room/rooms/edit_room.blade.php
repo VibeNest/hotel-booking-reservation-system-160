@@ -63,9 +63,9 @@
                                                     <input type="file" name="image" class="form-control" id="image">
 
                                                     <img id="showImage"
-                                                        src="{{ (!empty($editData->image)) ? url($editData->image) : url('upload/no_image.jpg') }}"
+                                                        src="{{ (!empty($editData->image)) ? url('upload/room_images/' .$editData->image) : url('upload/no_image.jpg') }}"
                                                         alt="{{ $editData->type->name }} "
-                                                        class="rounded-circle p-1 bg-primary" width="80"
+                                                        class="rounded-circle p-1 bg-primary" width="80" height="60"
                                                         style="margin-top: 10px">
 
                                                 </div>
@@ -75,7 +75,7 @@
                                                     <input type="file" name="multi_img[]" class="form-control" id="multiImg"
                                                         accept="image/jpeg, image/jpg, image/gif, image/png" multiple>
 
-                                                    <div class="row" id="preview_img"></div>
+                                                    <div class="row" id="preview_img" style="margin-top: 10px;"></div>
                                                 </div>
 
                                                 <div class="col-md-3">
@@ -321,8 +321,8 @@
                             var fRead = new FileReader(); //new filereader
                             fRead.onload = (function (file) { //trigger function on successful read
                                 return function (e) {
-                                    var img = $('<img/>').addClass('thumb').attr('src', e.target.result).width(100)
-                                        .height(80); //create image element 
+                                    var img = $('<img/>').addClass('thumb').attr('src', e.target.result).width(80)
+                                        .height(60); //create image element 
                                     $('#preview_img').append(img); //append image to output element
                                 };
                             })(file);

@@ -14,6 +14,15 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class RoomController extends Controller
 {
+    // Edit Room Method
+    public function EditRoom($id)
+    {
+        $basic_facility = Facility::where('rooms_id', $id)->get();
+        $editData = Room::find($id);
+        return view('backend.all_room.rooms.edit_room', compact('editData', 'basic_facility'));
+    }
+
+    // Update Room Method
     public function UpdateRoom(Request $request, $id)
     {
         $room = Room::findOrFail($id);

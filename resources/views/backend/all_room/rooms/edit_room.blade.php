@@ -156,7 +156,7 @@
                                                                                 {{$item->facility_name == 'Complimentary Breakfast' ? 'selected' : ''}}>Complimentary
                                                                                 Breakfast</option>
                                                                             <option value="32/42 inch LED TV"
-                                                                                {{$item->facility_name == 'Complimentary Breakfast' ? 'selected' : ''}}> 32/42 inch LED
+                                                                                {{$item->facility_name == '32/42 inch LED TV' ? 'selected' : ''}}> 32/42 inch LED
                                                                                 TV
                                                                             </option>
 
@@ -164,7 +164,7 @@
                                                                                 {{$item->facility_name == 'Smoke alarms' ? 'selected' : ''}}>Smoke alarms</option>
 
                                                                             <option value="Minibar"
-                                                                                {{$item->facility_name == 'Complimentary Breakfast' ? 'selected' : ''}}> Minibar</option>
+                                                                                {{$item->facility_name == 'Minibar' ? 'selected' : ''}}> Minibar</option>
 
                                                                             <option value="Work Desk"
                                                                                 {{$item->facility_name == 'Work Desk' ? 'selected' : ''}}>Work Desk</option>
@@ -201,10 +201,10 @@
                                                                     <div class="col-md-4">
                                                                         <div class="form-group" style="padding-top: 30px;">
                                                                             <a class="btn btn-success addeventmore"><i
-                                                                                    class="fa fa-plus-circle"></i></a>
+                                                                                    class="lni lni-circle-plus"></i></a>
                                                                             <span
                                                                                 class="btn btn-danger btn-sm removeeventmore"><i
-                                                                                    class="fa fa-minus-circle"></i></span>
+                                                                                    class="lni lni-circle-minus"></i></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>

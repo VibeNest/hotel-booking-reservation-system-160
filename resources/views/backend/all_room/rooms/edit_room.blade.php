@@ -65,7 +65,7 @@
                                                     <img id="showImage"
                                                         src="{{ (!empty($editData->image)) ? url('upload/room_images/' .$editData->image) : url('upload/no_image.jpg') }}"
                                                         alt="{{ $editData->type->name }} "
-                                                        class="rounded-circle p-1 bg-primary" width="80" height="60"
+                                                        class="p-1" width="70" height="50"
                                                         style="margin-top: 10px">
 
                                                 </div>
@@ -74,6 +74,16 @@
                                                     <label for="multiImage" class="form-label">Gallery Image</label>
                                                     <input type="file" name="multi_img[]" class="form-control" id="multiImg"
                                                         accept="image/jpeg, image/jpg, image/gif, image/png" multiple>
+
+                                                    @foreach ($multi_images as $item)
+                                                        <img 
+                                                            src="{{ (!empty($item->multi_img)) ? url($item->multi_img) : url('upload/no_image.jpg') }}"
+                                                            alt="Gallery Image"
+                                                            class="p-1" width="70" height="50"
+                                                            style="margin-top: 10px">
+
+                                                            <a href="{{ route('multi.image.delete', $item->id) }}"><i class="lni lni-close"></i></a>
+                                                    @endforeach
 
                                                     <div class="row" id="preview_img" style="margin-top: 10px;"></div>
                                                 </div>
@@ -202,9 +212,8 @@
                                                                         <div class="form-group" style="padding-top: 30px;">
                                                                             <a class="btn btn-success addeventmore"><i
                                                                                     class="lni lni-circle-plus"></i></a>
-                                                                            <span
-                                                                                class="btn btn-danger btn-sm removeeventmore"><i
-                                                                                    class="lni lni-circle-minus"></i></span>
+                                                                            <a class="btn btn-danger removeeventmore"><i
+                                                                                    class="lni lni-circle-minus"></i></a>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -246,8 +255,8 @@
                                                                             <a class="btn btn-success addeventmore"><i
                                                                                     class="lni lni-circle-plus"></i></a>
 
-                                                                            <span class="btn btn-danger removeeventmore"><i
-                                                                                    class="lni lni-circle-minus"></i></span>
+                                                                            <a class="btn btn-danger removeeventmore"><i
+                                                                                    class="lni lni-circle-minus"></i></a>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -321,8 +330,8 @@
                             var fRead = new FileReader(); //new filereader
                             fRead.onload = (function (file) { //trigger function on successful read
                                 return function (e) {
-                                    var img = $('<img/>').addClass('thumb').attr('src', e.target.result).width(80)
-                                        .height(60); //create image element 
+                                    var img = $('<img/>').addClass('thumb').attr('src', e.target.result).width(70)
+                                        .height(50); //create image element 
                                     $('#preview_img').append(img); //append image to output element
                                 };
                             })(file);

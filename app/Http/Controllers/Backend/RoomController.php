@@ -18,8 +18,9 @@ class RoomController extends Controller
     public function EditRoom($id)
     {
         $basic_facility = Facility::where('rooms_id', $id)->get();
+        $multi_images = MultiImage::where('rooms_id', $id)->get();
         $editData = Room::find($id);
-        return view('backend.all_room.rooms.edit_room', compact('editData', 'basic_facility'));
+        return view('backend.all_room.rooms.edit_room', compact('editData', 'basic_facility', 'multi_images'));
     }
 
     // Update Room Method
@@ -148,5 +149,33 @@ class RoomController extends Controller
             'message' => 'Update Room Successfully',
             'alert-type' => 'success'
         ]);
+    }
+
+    // Multi Image Delete Method
+    public function MultiImageDelete($id)
+    {
+        $deleteData = MultiImage::where('id', $id)->first();
+
+        if ($deleteData) {
+            $imagePath = $deleteData->multi_img;
+
+            // Xóa file ảnh nếu tồn tại
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+                echo "Image Unlinked Successfully";
+            } else {
+                echo "Image does not exist";
+            }
+
+            // Xóa bản ghi trong database
+            $deleteData->delete();
+        }
+
+        $notification = array(
+            'message' => 'Deleted Multi Image Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
     }
 }

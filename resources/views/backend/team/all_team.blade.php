@@ -16,7 +16,8 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="{{ route('add.team') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add Team</a>
+                    <a href="{{ route('add.team') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
+                        Team</a>
                 </div>
             </div>
         </div>
@@ -53,9 +54,9 @@
                                     </td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->position }}</td>
-                                    <td>{{ $item->facebook }}</td>
-                                    <td>{{ $item->tiktok }}</td>
-                                    <td>{{ $item->instagram }}</td>
+                                    <td>{{ Str::limit($item->facebook, 20, '...') }}</td>
+                                    <td>{{ Str::limit($item->tiktok, 20, '...') }}</td>
+                                    <td>{{ Str::limit($item->instagram, 20, '...') }}</td>
                                     <td>
                                         <a href="{{ route('edit.team', $item->id) }}"
                                             class="btn btn-warning px-3 radius-30">Edit</a>

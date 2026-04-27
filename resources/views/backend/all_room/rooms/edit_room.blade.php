@@ -285,8 +285,8 @@
                                 <div class="tab-pane fade" id="roomNumber" role="tabpanel">
                                     <div class="card">
                                         <div class="card-body p-4">
-                                            <a class="card-title btn btn-primary float-right px-3"><i
-                                                    class="bx bx-plus me-1"></i>Add
+                                            <a class="card-title btn btn-primary float-right px-3" onclick="addRoomNumber()"
+                                                id="addRoomNumber"><i class="bx bx-plus me-1"></i>Add
                                                 new</a>
 
                                             <div class="roomnumberHide" id="roomnumberHide">
@@ -316,6 +316,29 @@
                                                 </form>
 
                                             </div>
+
+                                            <table class="table mb-0 table-striped" id="roomview">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Room Number</th>
+                                                        <th scope="col">Status</th>
+                                                        <th scope="col">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Mark</td>
+                                                        <td>Otto</td>
+                                                        <td>
+                                                            <a href="" class="btn btn-warning px-3 radius-30">Edit</a>
+                                                            {{-- form Xóa --}}
+                                                            <a href="" class="btn btn-danger px-3 radius-30"
+                                                                id="delete">Delete</a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
                                         </div>
                                     </div>
                                 </div>
@@ -433,5 +456,18 @@
         });
     </script>
     <!--========== End of Basic Plan Facilities ==============-->
+
+    <!--========== Start Add Room Number ==============-->
+    <script>
+        $('#roomnumberHide').hide();
+        $('#roomview').show();
+
+        function addRoomNumber() {
+            $('#roomnumberHide').show();
+            $('#roomview').hide();
+            $('#addRoomNumber').hide();
+        }
+    </script>
+    <!--========== End Add Room Number ==============-->
 
 @endsection

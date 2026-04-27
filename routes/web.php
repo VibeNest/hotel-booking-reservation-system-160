@@ -6,7 +6,6 @@ use App\Http\Controllers\Backend\RoomController;
 use App\Http\Controllers\Backend\RoomTypeController;
 use App\Http\Controllers\Backend\TeamController;
 use App\Http\Controllers\InstructorController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,7 +41,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 });
 
 // Admin Login Routes
-Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login');
+Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->middleware('admin.guest')->name('admin.login');
 
 // Admin Group Middleware
 Route::middleware(['auth', 'roles:admin'])->group(function () {

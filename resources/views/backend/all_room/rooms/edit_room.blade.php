@@ -20,7 +20,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#primaryprofile" role="tab"
+                                    <a class="nav-link" data-bs-toggle="tab" href="#roomNumber" role="tab"
                                         aria-selected="false" tabindex="-1">
                                         <div class="d-flex align-items-center">
                                             <div class="tab-icon"><i class="bx bx-id-card font-18 me-1"></i>
@@ -36,15 +36,19 @@
                                         <div class="card-body p-4">
                                             <h5 class="mb-4">Update Room</h5>
 
-                                            <form class="row g-3" method="POST" action="{{ route('update.room', $editData->id) }}" enctype="multipart/form-data">
+                                            <form class="row g-3" method="POST"
+                                                action="{{ route('update.room', $editData->id) }}"
+                                                enctype="multipart/form-data">
                                                 @csrf
-                                            <div class="col-md-4">
-                                                  <label class="form-label">Room Type Name</label>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Room Type Name</label>
 
-                                                  <input type="text" class="form-control" value="{{ $editData->type->name }}" disabled>
+                                                    <input type="text" class="form-control"
+                                                        value="{{ $editData->type->name }}" disabled>
 
-                                                  <input type="hidden" name="roomtype_id" value="{{ $editData->roomtype_id }}">
-                                              </div>
+                                                    <input type="hidden" name="roomtype_id"
+                                                        value="{{ $editData->roomtype_id }}">
+                                                </div>
 
                                                 <div class="col-md-4">
                                                     <label for="total_adult" class="form-label">Total Adult</label>
@@ -63,10 +67,9 @@
                                                     <input type="file" name="image" class="form-control" id="image">
 
                                                     <img id="showImage"
-                                                        src="{{ (!empty($editData->image)) ? url('upload/room_images/' .$editData->image) : url('upload/no_image.jpg') }}"
-                                                        alt="{{ $editData->type->name }} "
-                                                        class="p-1" width="70" height="50"
-                                                        style="margin-top: 10px">
+                                                        src="{{ (!empty($editData->image)) ? url('upload/room_images/' . $editData->image) : url('upload/no_image.jpg') }}"
+                                                        alt="{{ $editData->type->name }} " class="p-1" width="70"
+                                                        height="50" style="margin-top: 10px">
 
                                                 </div>
 
@@ -76,13 +79,12 @@
                                                         accept="image/jpeg, image/jpg, image/gif, image/png" multiple>
 
                                                     @foreach ($multi_images as $item)
-                                                        <img 
-                                                            src="{{ (!empty($item->multi_img)) ? url($item->multi_img) : url('upload/no_image.jpg') }}"
-                                                            alt="Gallery Image"
-                                                            class="p-1" width="70" height="50"
+                                                        <img src="{{ (!empty($item->multi_img)) ? url($item->multi_img) : url('upload/no_image.jpg') }}"
+                                                            alt="Gallery Image" class="p-1" width="70" height="50"
                                                             style="margin-top: 10px">
 
-                                                            <a href="{{ route('multi.image.delete', $item->id) }}"><i class="lni lni-close"></i></a>
+                                                        <a href="{{ route('multi.image.delete', $item->id) }}"><i
+                                                                class="lni lni-close"></i></a>
                                                     @endforeach
 
                                                     <div class="row" id="preview_img" style="margin-top: 10px;"></div>
@@ -189,8 +191,7 @@
                                                                                 {{$item->facility_name == 'Rain Shower' ? 'selected' : ''}}>Rain Shower</option>
 
                                                                             <option value="Slippers"
-                                                                                {{$item->facility_name == 'Slippers' ? 'selected' : ''}}>
-                                                                                Slippers</option>
+                                                                                {{$item->facility_name == 'Slippers' ? 'selected' : ''}}>Slippers</option>
 
                                                                             <option value="Hair dryer"
                                                                                 {{$item->facility_name == 'Hair dryer' ? 'selected' : ''}}>Hair dryer</option>
@@ -279,17 +280,46 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="primaryprofile" role="tabpanel">
-                                    <p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee
-                                        squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes
-                                        anderson artisan four loko farm-to-table craft beer twee. Qui photo booth
-                                        letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl
-                                        cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit.
-                                        Keytar helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan
-                                        fanny pack odio cillum wes anderson 8-bit, sustainable jean shorts beard ut DIY
-                                        ethical culpa terry richardson biodiesel. Art party scenester stumptown, tumblr
-                                        butcher vero sint qui sapiente accusamus tattooed echo park.</p>
+                                {{-- End Manage Room --}}
+
+                                <div class="tab-pane fade" id="roomNumber" role="tabpanel">
+                                    <div class="card">
+                                        <div class="card-body p-4">
+                                            <a class="card-title btn btn-primary float-right px-3"><i
+                                                    class="bx bx-plus me-1"></i>Add
+                                                new</a>
+
+                                            <div class="roomnumberHide" id="roomnumberHide">
+
+                                                <form action="">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label for="room_number" class="form-label">Room Number</label>
+                                                            <input type="text" name="room_number" class="form-control"
+                                                                id="room_number">
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <label for="status" class="form-label">Status</label>
+                                                            <select name="status" id="status" class="form-select">
+                                                                <option selected="">Select status...</option>
+                                                                <option value="Active">Active</option>
+                                                                <option value="Inactive">Inactive</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <button type="submit" class="btn btn-success"
+                                                                style="margin-top: 29px">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+                                {{-- End Room Number --}}
                             </div>
                         </div>
                     </div>

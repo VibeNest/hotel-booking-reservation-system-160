@@ -202,6 +202,9 @@ class RoomController extends Controller
         ]);
 
         return redirect()->route('room.type.list')
-            ->with('success', 'Update Room Number Successfully');
+            ->with([
+                'message' => 'Update Room Number Successfully',
+                'alert-type' => 'success'
+            ]);
     }
 }

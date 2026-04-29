@@ -332,7 +332,7 @@
                                                         <td>
                                                             <a href="" class="btn btn-warning px-3 radius-30">Edit</a>
                                                             {{-- form Xóa --}}
-                                                            <a href="" class="btn btn-danger px-3 radius-30"
+                                                            <a href="{{ route('delete.room.number', $room->id) }}" class="btn btn-danger px-3 radius-30"
                                                                 id="delete">Delete</a>
                                                         </td>
                                                     </tr>

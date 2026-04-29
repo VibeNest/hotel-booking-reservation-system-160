@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use App\Models\Room;
 use App\Models\MultiImage;
+use App\Models\RoomNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -177,5 +178,19 @@ class RoomController extends Controller
         );
 
         return redirect()->back()->with($notification);
+    }
+
+    public function DeleteRoomNumber($id)
+    {
+        $roomNumber = RoomNumber::findOrFail($id);
+
+        $roomNumber->delete();
+
+        $notification = array(
+            'message' => 'Deleted Room Successfully', 
+            'alert-type' => 'success' 
+        );
+
+        return redirect()->route('room.type.list')->with($notification);
     }
 }

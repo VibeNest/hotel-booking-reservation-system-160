@@ -291,7 +291,7 @@
 
                                             <div class="roomnumberHide" id="roomnumberHide">
 
-                                                <form action="">
+                                                <form action="{{ route('update.roomnumber', $editData->id) }}" method="POST">
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <label for="room_number" class="form-label">Room Number</label>
@@ -326,16 +326,23 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    @forelse($roomNumbers as $item)
                                                     <tr>
-                                                        <td>Mark</td>
-                                                        <td>Otto</td>
+                                                        <td>{{ $item->room_number }}</td>
+                                                        <td>{{ $item->status }}</td>
                                                         <td>
-                                                            <a href="" class="btn btn-warning px-3 radius-30">Edit</a>
+                                                            <a href="{{ route('edit.roomnumber', $item->id) }}" 
+                                                               class="btn btn-warning px-3 radius-30">Edit</a>
                                                             {{-- form Xóa --}}
                                                             <a href="" class="btn btn-danger px-3 radius-30"
                                                                 id="delete">Delete</a>
                                                         </td>
                                                     </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="3" class="text-center">No Room Number Found</td>
+                                                        </tr>
+                                                    @endforelse
                                                 </tbody>
                                             </table>
 

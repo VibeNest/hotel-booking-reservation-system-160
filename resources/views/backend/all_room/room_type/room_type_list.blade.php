@@ -26,6 +26,25 @@
         <hr />
         <div class="card">
             <div class="card-body">
+                @if(session('success'))
+                    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+                        <div id="liveToast" class="toast show align-items-center text-white bg-success border-0">
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    {{ session('success') }}
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+
+                            </div>
+                        </div>
+                    </div>
+                <script>
+                    setTimeout(() => {
+                        document.getElementById('liveToast').remove();
+                    }, 3000);
+                </script>
+                      
+                @endif
                 <div class="table-responsive">
                     <table id="example" class="table table-striped table-bordered" style="width:100%">
                         <thead>

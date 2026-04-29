@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use App\Models\RoomNumber;
 
 class RoomController extends Controller
 {
@@ -20,7 +21,8 @@ class RoomController extends Controller
         $basic_facility = Facility::where('rooms_id', $id)->get();
         $multi_images = MultiImage::where('rooms_id', $id)->get();
         $editData = Room::find($id);
-        return view('backend.all_room.rooms.edit_room', compact('editData', 'basic_facility', 'multi_images'));
+        $roomNumbers = RoomNumber::where('rooms_id', $id)->get();
+        return view('backend.all_room.rooms.edit_room', compact('editData', 'basic_facility', 'multi_images', 'roomNumbers'));
     }
 
     // Update Room Method
@@ -177,5 +179,29 @@ class RoomController extends Controller
         );
 
         return redirect()->back()->with($notification);
+    }
+    // Edit Room Number Method
+    public function EditRoomNumber($id)
+    {
+        $editData = RoomNumber::findOrFail($id);
+
+
+        return view('backend.all_room.rooms.edit_room_number', compact('editData'));
+    }
+    // Update Room Number Method
+    public function UpdateRoomNumber(Request $request, $id)
+    {
+        $request->validate([
+            'room_number' => 'required',
+            'status' => 'required'
+        ]);
+
+        RoomNumber::findOrFail($id)->update([
+            'room_number' => $request->room_number,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('room.type.list')
+            ->with('success', 'Update Room Number Successfully');
     }
 }

@@ -291,8 +291,9 @@
 
                                             <div class="roomnumberHide" id="roomnumberHide">
 
-                                                <form action="{{ route('update.roomnumber', $editData->id) }}"
+                                                <form action="{{ route('store.room.number', $editData->id) }}"
                                                     method="POST">
+                                                    @csrf
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <label for="room_number" class="form-label">Room Number</label>

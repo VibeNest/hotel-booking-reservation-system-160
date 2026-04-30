@@ -181,6 +181,37 @@ class RoomController extends Controller
 
         return redirect()->back()->with($notification);
     }
+
+    // Store Room Number Method
+    public function StoreRoomNumber(Request $request, $id)
+    {
+        $request->validate([
+            'room_number' => 'required',
+            'status' => 'required'
+        ]);
+
+        $room = Room::find($id);
+
+        if (!$room) {
+            return redirect()->back()->with([
+                'message' => 'Room Not Found',
+                'alert-type' => 'error'
+            ]);
+        }
+
+        RoomNumber::create([
+            'rooms_id' => $room->id,
+            'room_type_id' => $room->roomtype_id,
+            'room_number' => $request->room_number,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->back()->with([
+            'message' => 'Added Room Number Successfully',
+            'alert-type' => 'success'
+        ]);
+    }
+
     // Edit Room Number Method
     public function EditRoomNumber($id)
     {

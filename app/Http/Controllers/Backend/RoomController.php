@@ -228,12 +228,14 @@ class RoomController extends Controller
             'status' => 'required'
         ]);
 
-        RoomNumber::findOrFail($id)->update([
+        $roomNumber = RoomNumber::findOrFail($id);
+
+        $roomNumber->update([
             'room_number' => $request->room_number,
             'status' => $request->status,
         ]);
 
-        return redirect()->route('room.type.list')
+        return redirect()->route('edit.room', $roomNumber->rooms_id)
             ->with([
                 'message' => 'Update Room Number Successfully',
                 'alert-type' => 'success'

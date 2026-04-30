@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use App\Models\Room;
 use App\Models\MultiImage;
+use App\Models\RoomNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
-use App\Models\RoomNumber;
+
 
 class RoomController extends Controller
 {
@@ -206,5 +207,25 @@ class RoomController extends Controller
                 'message' => 'Update Room Number Successfully',
                 'alert-type' => 'success'
             ]);
+    }
+
+    // Delete Room Number Method
+    public function DeleteRoomNumber($id)
+    {
+        $roomNumber = RoomNumber::find($id);
+
+        if (!$roomNumber) {
+            return redirect()->back()->with([
+                'message' => 'Room Number Not Found',
+                'alert-type' => 'error'
+            ]);
+        }
+
+        $roomNumber->delete();
+
+        return redirect()->route('room.type.list')->with([
+            'message' => 'Deleted Room Number Successfully',
+            'alert-type' => 'success'
+        ]);
     }
 }

@@ -86,6 +86,9 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         // Update
         Route::post('/update/roomnumber/{id}', [RoomController::class, 'UpdateRoomNumber'])
             ->name('update.roomnumber');
+        
+        //Delete
+        Route::get('/delete/room/{id}', [RoomController::class, 'DeleteRoomNumber'])->name('delete.room.number');
     });
 });
 

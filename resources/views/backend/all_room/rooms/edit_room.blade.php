@@ -69,7 +69,7 @@
                                                     <img id="showImage"
                                                         src="{{ (!empty($editData->image)) ? url('upload/room_images/' . $editData->image) : url('upload/no_image.jpg') }}"
                                                         alt="{{ $editData->type->name }} " class="p-1" width="70"
-                                                        height="50" style="margin-top: 10px">
+                                                        height="70" style="margin-top: 10px">
 
                                                 </div>
 
@@ -80,7 +80,7 @@
 
                                                     @foreach ($multi_images as $item)
                                                         <img src="{{ (!empty($item->multi_img)) ? url($item->multi_img) : url('upload/no_image.jpg') }}"
-                                                            alt="Gallery Image" class="p-1" width="70" height="50"
+                                                            alt="Gallery Image" class="p-1" width="70" height="70"
                                                             style="margin-top: 10px">
 
                                                         <a href="{{ route('multi.image.delete', $item->id) }}"><i

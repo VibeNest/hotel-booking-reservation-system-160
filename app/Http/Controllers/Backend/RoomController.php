@@ -7,6 +7,7 @@ use App\Models\Facility;
 use App\Models\Room;
 use App\Models\MultiImage;
 use App\Models\RoomNumber;
+use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -154,6 +155,51 @@ class RoomController extends Controller
         ]);
     }
 
+    // Delete Room Method
+    public function DeleteRoom(Request $request, $id)
+    {
+        $room = Room::find($id);
+
+        // Xóa ảnh chính của phòng nếu tồn tại
+        if (!empty($room->image) && File::exists(public_path('upload/room_images/' . $room->image))) {
+            @unlink('upload/room_images/' . $room->image);
+        }
+
+        // Xóa ảnh phụ của phòng nếu tồn tại
+        $multiImages = MultiImage::where('rooms_id', $room->id)->get()->toArray();
+
+        if (!empty($multiImages)) {
+            foreach ($multiImages as $img) {
+                if (!empty($img)) {
+                    @unlink($img['multi_img']);
+                }
+            }
+        }
+
+        // Xóa loại phòng trong db
+        RoomType::where('id', $room->roomtype_id)->delete();
+
+        // Xóa gallery ảnh phụ trong db
+        MultiImage::where('rooms_id', $room->id)->delete();
+
+        // Xóa facility trong db
+        Facility::where('rooms_id', $room->id)->delete();
+
+        // Xóa số phòng trong db
+        RoomNumber::where('rooms_id', $room->id)->delete();
+
+        // Xóa phòng trong db
+        $room->delete();
+
+        // Hiển thị thông báo xóa thành công
+        $notification = array(
+            'message' => 'Deleted Room Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+    }
+
     // Multi Image Delete Method
     public function MultiImageDelete($id)
     {
@@ -220,6 +266,7 @@ class RoomController extends Controller
 
         return view('backend.all_room.rooms.edit_room_number', compact('editData'));
     }
+
     // Update Room Number Method
     public function UpdateRoomNumber(Request $request, $id)
     {

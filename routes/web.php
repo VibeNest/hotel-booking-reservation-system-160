@@ -74,25 +74,27 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 
     // Room Management Routes
     Route::controller(RoomController::class)->group(function () {
-        Route::get('edit/room/{id}', 'EditRoom')->name('edit.room');
-        Route::post('/update/room/{id}', [RoomController::class, 'UpdateRoom'])
+        Route::get('/edit/room/{id}', 'EditRoom')->name('edit.room');
+        Route::post('/update/room/{id}', 'UpdateRoom')
             ->name('update.room');
-        Route::get('/multi/image/delete/{id}', [RoomController::class, 'MultiImageDelete'])
+        Route::get('/multi/image/delete/{id}', 'MultiImageDelete')
             ->name('multi.image.delete');
+        Route::get('/delete/room/{id}', 'DeleteRoom')->name('delete.room');
+
         // Edit
-        Route::get('/edit/roomnumber/{id}', [RoomController::class, 'EditRoomNumber'])
+        Route::get('/edit/roomnumber/{id}', 'EditRoomNumber')
             ->name('edit.roomnumber');
 
         // Store
-        Route::post('/store/room/number/{id}', [RoomController::class, 'StoreRoomNumber'])
+        Route::post('/store/room/number/{id}', 'StoreRoomNumber')
             ->name('store.room.number');
 
         // Update
-        Route::post('/update/roomnumber/{id}', [RoomController::class, 'UpdateRoomNumber'])
+        Route::post('/update/roomnumber/{id}', 'UpdateRoomNumber')
             ->name('update.roomnumber');
-        
+
         //Delete
-        Route::get('/delete/room/{id}', [RoomController::class, 'DeleteRoomNumber'])->name('delete.room.number');
+        Route::get('/delete/room/number/{id}', 'DeleteRoomNumber')->name('delete.room.number');
     });
 });
 

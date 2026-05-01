@@ -83,6 +83,10 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/edit/roomnumber/{id}', [RoomController::class, 'EditRoomNumber'])
             ->name('edit.roomnumber');
 
+        // Store
+        Route::post('/store/room/number/{id}', [RoomController::class, 'StoreRoomNumber'])
+            ->name('store.room.number');
+
         // Update
         Route::post('/update/roomnumber/{id}', [RoomController::class, 'UpdateRoomNumber'])
             ->name('update.roomnumber');

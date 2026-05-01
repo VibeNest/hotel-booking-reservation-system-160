@@ -256,7 +256,7 @@ class RoomController extends Controller
 
         $roomNumber->delete();
 
-        return redirect()->route('room.type.list')->with([
+        return redirect()->back()->with([
             'message' => 'Deleted Room Number Successfully',
             'alert-type' => 'success'
         ]);

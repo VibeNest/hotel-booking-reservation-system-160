@@ -48,7 +48,7 @@
                                     <td>{{ Str::limit($item->description, 30, '...') }}</td>
                                     <td>{{ $item->link_url }}</td>
                                     <td><img src="{{ asset($item->image) }}" alt="{{ $item->sub_title }}"
-                                            style="width: 70px; height: 40px;"></td>
+                                            style="width: 50px; height: 50px;"></td>
                                     <td>
                                         <a href="{{ route('edit.book_area', $item->id) }}"
                                             class="btn btn-warning px-3 radius-30">Edit</a>

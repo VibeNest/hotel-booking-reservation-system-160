@@ -79,7 +79,7 @@
                                         </div>
                                         <div class="col-sm-9 text-secondary form-group">
                                             <img id="showImage" src="{{  url("upload/no_image.jpeg")}}" alt="Admin"
-                                                class="rounded-circle p-1 bg-primary" width="80">
+                                                class="rounded-circle p-1 bg-primary" width="70" height="70">
                                         </div>
                                     </div>
                                     <div class="row">

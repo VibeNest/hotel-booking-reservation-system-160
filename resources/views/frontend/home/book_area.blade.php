@@ -9,7 +9,7 @@
                 <div class="book-content-two">
                     <div class="section-title">
                         <span class="sp-color">{{ $book_area->sub_title }}</span>
-                        <h2>{{ $book_area->sub_title }}</h2>
+                        <h2>{{ $book_area->title }}</h2>
                         <p>
                             {{ $book_area->description }}
                         </p>
@@ -20,7 +20,7 @@
 
             <div class="col-lg-6">
                 <div class="book-img-2">
-                    <img src="{{ $book_area->image }}" alt="Images">
+                    <img src="{{ $book_area->image }}" alt={{ $book_area->sub_title }}>
                 </div>
             </div>
         </div>

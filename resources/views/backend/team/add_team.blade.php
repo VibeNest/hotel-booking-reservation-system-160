@@ -1,6 +1,8 @@
 @extends("admin.admin_dashboard")
 
 @section("admin")
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <div class="page-content">
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
             <div class="breadcrumb-title pe-3">Add Team</div>
@@ -68,11 +70,21 @@
 
                     <div class="col-md-6">
                         <label for="image" class="form-label">Image</label>
-                        <input type="file" id="image" name="image"
-                            class="form-control @error('image') is-invalid @enderror" accept="image/*">
+                        <input type="file" id="image" name="image" class="form-control @error('image') is-invalid @enderror"
+                            accept="image/*">
                         @error('image')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0"></h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary form-group">
+                            <img id="showImage" src="{{  url("upload/no_image.jpeg")}}" alt="Admin"
+                                class="rounded-circle p-1 bg-primary" width="70" height="70">
+                        </div>
                     </div>
 
                     <div class="col-12">
@@ -83,4 +95,23 @@
             </div>
         </div>
     </div>
+
+    {{-- Xem trước ảnh ngay khi chọn file --}}
+    <script type="text/javascript">
+        // Đảm bảo code HTML chạy xong
+        $(document).ready(function () {
+            // Khi user chọn file thì code bên trong chạy (Lắng nghe sự kiện change)
+            $('#image').change(function (e) {
+                // Đọc file khi đã chọn file xong
+                var reader = new FileReader();
+                // Khi đọc file xong thì sẽ chạy hàm này (onload)
+                reader.onload = function (e) {
+                    // Gán ảnh vửa mới đọc từ reader và hiển thị ngay lập tức
+                    $('#showImage').attr('src', e.target.result); // e.target.result là dữ liệu ảnh dạng base64
+                }
+                // Đọc file từ input (readAsDataURL: chuyển file thành data url)
+                reader.readAsDataURL(e.target.files['0']); // e.target.files['0']: file đầu tiên user chọn
+            })
+        })
+    </script>
 @endsection

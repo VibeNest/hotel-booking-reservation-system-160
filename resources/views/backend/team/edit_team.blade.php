@@ -69,7 +69,7 @@
                             <div class="col-sm-10">
                                 <img id="showImage"
                                     src="{{ (!empty($team->image)) ? asset($team->image) . '?v=' . time() : url('upload/no_image.jpg') }}"
-                                    alt="Team Image" class="rounded-circle p-1 bg-primary" width="80">
+                                    alt="Team Image" class="rounded-circle p-1 bg-primary" width="70" height="70">
                             </div>
                         </div>
 

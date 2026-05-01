@@ -47,7 +47,7 @@
                                     <td>
                                         @if ($item->image)
                                             <img src="{{ asset($item->image) }}" alt="{{ $item->name }}"
-                                                style="width: 70px; height: 40px;">
+                                                style="width: 50px; height: 50px;">
                                         @else
                                             <span class="text-muted">No image</span>
                                         @endif

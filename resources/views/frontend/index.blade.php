@@ -56,7 +56,7 @@
 
                         <div class="col-lg-4 col-md-4">
                             <button type="submit" class="default-btn btn-bg-one border-radius-5">
-                                Check Arability
+                                Search Now
                             </button>
                         </div>
                     </div>

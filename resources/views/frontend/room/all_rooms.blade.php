@@ -28,11 +28,11 @@
             <div class="row pt-45">
                 <div class="col-lg-4 col-md-6">
                     <div class="room-card">
-                        <a href="room-details.html">
+                        <a href="{{ url('room/details') }}">
                             <img src="{{ asset('frontend/assets/img/room/room-img1.jpg') }}" alt="Images">
                         </a>
                         <div class="content">
-                            <h3><a href="room-details.html">Luxury Room</a></h3>
+                            <h3><a href="{{ url('room/details') }}">Luxury Room</a></h3>
                             <ul>
                                 <li class="text-color">320</li>
                                 <li class="text-color">Per Night</li>

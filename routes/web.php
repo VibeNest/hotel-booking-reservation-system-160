@@ -5,6 +5,7 @@ use App\Http\Controllers\Backend\BookAreaController;
 use App\Http\Controllers\Backend\RoomController;
 use App\Http\Controllers\Backend\RoomTypeController;
 use App\Http\Controllers\Backend\TeamController;
+use App\Http\Controllers\frontend\FrontendRoomController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -101,6 +102,11 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 // Instructor Group Middleware
 Route::middleware(['auth', 'roles:instructor'])->group(function () {
     Route::get('/instructor/dashboard', [InstructorController::class, 'InstructorDashboard'])->name('instructor.dashboard');
+});
+
+// Room All Routes
+Route::controller(FrontendRoomController::class)->group(function () {
+    Route::get('/rooms', 'AllFrontendRoomList')->name('room.all');
 });
 
 require __DIR__ . '/auth.php';

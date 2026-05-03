@@ -10,7 +10,7 @@
                     <div class="row align-items-center">
                         <div class="col-lg-5 col-md-4 p-0">
                             <div class="room-card-img">
-                                <a href="room-details.html">
+                                <a href="{{ url('room/details') }}">
                                     <img src="{{ asset('frontend/assets/img/room/room-style-img1.jpg') }}" alt="Images">
                                 </a>
                             </div>

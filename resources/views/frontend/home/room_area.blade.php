@@ -4,24 +4,39 @@
             <span class="sp-color">ROOMS</span>
             <h2>Our Rooms & Rates</h2>
         </div>
+
+        @php
+           
+            $rooms = App\Models\Room::with('type')->latest()->get();
+        @endphp
+
         <div class="row pt-45">
-            <div class="col-lg-6">
+            @foreach($rooms as $index => $room)
+            <div class="col-lg-6 {{ $index >= 4 ? 'd-none extra-room' : '' }}">
                 <div class="room-card-two">
                     <div class="row align-items-center">
+
+                        {{-- IMAGE --}}
                         <div class="col-lg-5 col-md-4 p-0">
                             <div class="room-card-img">
-                                <a href="{{ url('room/details') }}">
-                                    <img src="{{ asset('frontend/assets/img/room/room-style-img1.jpg') }}" alt="Images">
+                                <a href="#">
+                                    <img src="{{ asset('upload/room_images/'.$room->image) }}" alt="Images">
                                 </a>
                             </div>
                         </div>
 
+                        {{-- CONTENT --}}
                         <div class="col-lg-7 col-md-8 p-0">
                             <div class="room-card-content">
+
                                 <h3>
-                                    <a href="room-details.html">Luxury Room</a>
+                                    <a href="{{ route('room.details', $room->id) }}">
+                                       {{ $room->type->name ?? '' }}
+                                    </a>
                                 </h3>
-                                <span>320 / Per Night </span>
+
+                                <span>{{ $room->price ?? 0 }} / Per Night </span>
+
                                 <div class="rating">
                                     <i class='bx bxs-star'></i>
                                     <i class='bx bxs-star'></i>
@@ -29,161 +44,72 @@
                                     <i class='bx bxs-star'></i>
                                     <i class='bx bxs-star'></i>
                                 </div>
-                                <p>Lorem ipsum dolor sit amet, adipiscing elit. Suspendisse et faucibus felis, sed
-                                    pulvinar purus.</p>
-                                <ul>
-                                    <li><i class='bx bx-user'></i> 4 Person</li>
-                                    <li><i class='bx bx-expand'></i> 35m2 / 376ft2</li>
-                                </ul>
 
-                                <ul>
-                                    <li><i class='bx bx-show-alt'></i> Sea Balcony</li>
-                                    <li><i class='bx bxs-hotel'></i> Kingsize / Twin</li>
-                                </ul>
-
-                                <a href="room-details.html" class="book-more-btn">
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="room-card-two">
-                    <div class="row align-items-center">
-                        <div class="col-lg-5 col-md-4 p-0">
-                            <div class="room-card-img">
-                                <a href="room-details.html">
-                                    <img src="{{ asset('frontend/assets/img/room/room-style-img2.jpg') }}" alt="Images">
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-7 col-md-8 p-0">
-                            <div class="room-card-content">
-                                <h3>
-                                    <a href="room-details.html">Single Room</a>
-                                </h3>
-                                <span>300 / Per Night </span>
-                                <div class="rating">
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
+                           
+                                <div class="room-desc">
+                                    {!! html_entity_decode($room->description ?? '') !!}
                                 </div>
-                                <p>Lorem ipsum dolor sit amet, adipiscing elit. Suspendisse et faucibus felis, sed
-                                    pulvinar purus.</p>
+
                                 <ul>
-                                    <li><i class='bx bx-user'></i> 1 Person</li>
-                                    <li><i class='bx bx-expand'></i> 25m2 / 276ft2</li>
+                                    <li><i class='bx bx-user'></i>
+                                    {{ ($room->total_adult ?? 0) + ($room->total_child ?? 0) }} Person
+                                    <li><i class='bx bx-expand'></i> {{ $room->size ?? 0 }} m2</li>
                                 </ul>
 
                                 <ul>
-                                    <li><i class='bx bx-show-alt'></i> Sea Balcony</li>
-                                    <li><i class='bx bxs-hotel'></i> Smallsize / Twin</li>
+                                    <li><i class='bx bx-show-alt'></i> {{ $room->view ?? '' }}</li>
+                                    <li><i class='bx bxs-hotel'></i> {{ $room->bed_style ?? '' }}</li>
                                 </ul>
 
-                                <a href="room-details.html" class="book-more-btn">
+                                <a href="#" class="book-more-btn">
                                     Book Now
                                 </a>
+
                             </div>
-                        </div>
+                            </div>
+
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-6">
-                <div class="room-card-two">
-                    <div class="row align-items-center">
-                        <div class="col-lg-5 col-md-4 p-0">
-                            <div class="room-card-img">
-                                <a href="room-details.html">
-                                    <img src="{{ asset('frontend/assets/img/room/room-style-img3.jpg') }}" alt="Images">
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-7 col-md-8 p-0">
-                            <div class="room-card-content">
-                                <h3>
-                                    <a href="room-details.html">Family Room</a>
-                                </h3>
-                                <span>400 / Per Night </span>
-                                <div class="rating">
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                </div>
-                                <p>Lorem ipsum dolor sit amet, adipiscing elit. Suspendisse et faucibus felis, sed
-                                    pulvinar purus.</p>
-                                <ul>
-                                    <li><i class='bx bx-user'></i> 6 Person</li>
-                                    <li><i class='bx bx-expand'></i> 55m2 / 476ft2</li>
-                                </ul>
-
-                                <ul>
-                                    <li><i class='bx bx-show-alt'></i> Sea Balcony</li>
-                                    <li><i class='bx bxs-hotel'></i> Kingsize / Twin</li>
-                                </ul>
-
-                                <a href="room-details.html" class="book-more-btn">
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="room-card-two">
-                    <div class="row align-items-center">
-                        <div class="col-lg-5 col-md-4 p-0">
-                            <div class="room-card-img">
-                                <a href="room-details.html">
-                                    <img src="{{ asset('frontend/assets/img/room/room-style-img4.jpg') }}" alt="Images">
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-7 col-md-8 p-0">
-                            <div class="room-card-content">
-                                <h3>
-                                    <a href="room-details.html">Deluxe Room</a>
-                                </h3>
-                                <span>340 / Per Night </span>
-                                <div class="rating">
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                </div>
-                                <p>Lorem ipsum dolor sit amet, adipiscing elit. Suspendisse et faucibus felis, sed
-                                    pulvinar purus.</p>
-                                <ul>
-                                    <li><i class='bx bx-user'></i> 4 Person</li>
-                                    <li><i class='bx bx-expand'></i> 45m2 / 376ft2</li>
-                                </ul>
-
-                                <ul>
-                                    <li><i class='bx bx-show-alt'></i> Sea Balcony</li>
-                                    <li><i class='bx bxs-hotel'></i> Kingsize / Twin</li>
-                                </ul>
-
-                                <a href="room-details.html" class="book-more-btn">
-                                    Book Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
+
+        {{-- VIEW ALL --}}
+        @if(count($rooms) > 4)
+        <div class="text-center mt-4">
+            <button id="toggleBtn" class="default-btn">View All Rooms</button>
+        </div>
+        @endif
+
     </div>
 </div>
+
+{{-- JS --}}
+<script>
+    let expanded = false;
+
+    document.getElementById('toggleBtn')?.addEventListener('click', function () {
+        const extraRooms = document.querySelectorAll('.extra-room');
+
+        expanded = !expanded;
+
+        extraRooms.forEach(room => {
+            room.classList.toggle('d-none');
+        });
+
+        this.innerText = expanded ? 'Hide Rooms' : 'View All Rooms';
+    });
+</script>
+
+{{-- INLINE CSS --}}
+<style>
+.room-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  line-height: 1.6;
+  min-height: 6.4em;
+}
+</style>

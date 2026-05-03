@@ -107,7 +107,7 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
 // Room All Routes
 Route::controller(FrontendRoomController::class)->group(function () {
     Route::get('/rooms', 'AllFrontendRoomList')->name('room.all');
-    Route::get('/room/details', 'RoomDetailsPage');
+    Route::get('/room/details/{id}', 'RoomDetailsPage')->name('room.details');
 });
 
 require __DIR__ . '/auth.php';

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Room;
+use App\Models\Facility;
+use App\Models\MultiImage;
 use Illuminate\Http\Request;
 
 class FrontendRoomController extends Controller
@@ -16,8 +18,16 @@ class FrontendRoomController extends Controller
     }
 
     // Frontend Room Details Method
-    public function RoomDetailsPage()
+    public function RoomDetailsPage($id)
     {
-        return view('frontend.room.room_details');
+        $roomdetails = Room::find($id);
+        $facilities = Facility::where('rooms_id', $id)->get();
+        $multiImages = MultiImage::where('rooms_id', $id)->get();
+
+        return view('frontend.room.room_details', compact(
+            'roomdetails',
+            'facilities',
+            'multiImages'
+        ));
     }
 }

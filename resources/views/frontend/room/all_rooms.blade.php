@@ -26,137 +26,31 @@
                 <h2>Our Rooms & Rates</h2>
             </div>
             <div class="row pt-45">
-                <div class="col-lg-4 col-md-6">
-                    <div class="room-card">
-                        <a href="{{ url('room/details') }}">
-                            <img src="{{ asset('frontend/assets/img/room/room-img1.jpg') }}" alt="Images">
-                        </a>
-                        <div class="content">
-                            <h3><a href="{{ url('room/details') }}">Luxury Room</a></h3>
-                            <ul>
-                                <li class="text-color">320</li>
-                                <li class="text-color">Per Night</li>
-                            </ul>
-                            <div class="rating text-color">
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star-half'></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="col-lg-4 col-md-6">
-                    <div class="room-card">
-                        <a href="room-details.html">
-                            <img src="{{ asset('frontend/assets/img/room/room-img2.jpg') }}" alt="Images">
-                        </a>
-                        <div class="content">
-                            <h3><a href="room-details.html">Single Room</a></h3>
-                            <ul>
-                                <li class="text-color">300</li>
-                                <li class="text-color">Per Night</li>
-                            </ul>
-                            <div class="rating text-color">
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star-half'></i>
+                @foreach ($rooms as $item)
+                    <div class="col-lg-4 col-md-6">
+                        <div class="room-card">
+                            <a href="{{ route('room.details', $item->id) }}">
+                                <img src="{{ asset('upload/room_images/' . $item->image) }}" alt="Images" width="550"
+                                    height="450">
+                            </a>
+                            <div class="content">
+                                <h3><a href="{{ route('room.details', $item->id) }}">{{ $item->type->name }}</a></h3>
+                                <ul>
+                                    <li class="text-color">${{ $item->price }}</li>
+                                    <li class="text-color">Per Night</li>
+                                </ul>
+                                <div class="rating text-color">
+                                    <i class='bx bxs-star'></i>
+                                    <i class='bx bxs-star'></i>
+                                    <i class='bx bxs-star'></i>
+                                    <i class='bx bxs-star'></i>
+                                    <i class='bx bxs-star-half'></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="room-card">
-                        <a href="room-details.html">
-                            <img src="{{ asset('frontend/assets/img/room/room-img3.jpg') }}" alt="Images">
-                        </a>
-                        <div class="content">
-                            <h3><a href="room-details.html">Double Room</a></h3>
-                            <ul>
-                                <li class="text-color">350</li>
-                                <li class="text-color">Per Night</li>
-                            </ul>
-                            <div class="rating text-color">
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star-half'></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="room-card">
-                        <a href="room-details.html">
-                            <img src="{{ asset('frontend/assets/img/room/room-img4.jpg') }}" alt="Images">
-                        </a>
-                        <div class="content">
-                            <h3><a href="room-details.html">Family Room</a></h3>
-                            <ul>
-                                <li class="text-color">370</li>
-                                <li class="text-color">Per Night</li>
-                            </ul>
-                            <div class="rating text-color">
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star-half'></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="room-card">
-                        <a href="room-details.html">
-                            <img src="{{ asset('frontend/assets/img/room/room-img5.jpg') }}" alt="Images">
-                        </a>
-                        <div class="content">
-                            <h3><a href="room-details.html">Deluxe Room</a></h3>
-                            <ul>
-                                <li class="text-color">270</li>
-                                <li class="text-color">Per Night</li>
-                            </ul>
-                            <div class="rating text-color">
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star-half'></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="room-card">
-                        <a href="room-details.html">
-                            <img src="{{ asset('frontend/assets/img/room/room-img6.jpg') }}" alt="Images">
-                        </a>
-                        <div class="content">
-                            <h3><a href="room-details.html">Presidential Room</a></h3>
-                            <ul>
-                                <li class="text-color">270</li>
-                                <li class="text-color">Per Night</li>
-                            </ul>
-                            <div class="rating text-color">
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star'></i>
-                                <i class='bx bxs-star-half'></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
 
                 <div class="col-lg-12 col-md-12">
                     <div class="pagination-area">

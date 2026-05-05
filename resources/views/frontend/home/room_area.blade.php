@@ -6,7 +6,6 @@
         </div>
 
         @php
-
             $rooms = App\Models\Room::latest()->get();
         @endphp
 

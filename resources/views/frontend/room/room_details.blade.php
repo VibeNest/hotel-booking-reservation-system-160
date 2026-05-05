@@ -203,99 +203,65 @@
     <div class="room-details-other pb-70">
         <div class="container">
             <div class="room-details-text">
-                <h2>Our Related Offer</h2>
+                <h2>Other Rooms</h2>
             </div>
 
             <div class="row ">
-                <div class="col-lg-6">
-                    <div class="room-card-two">
-                        <div class="row align-items-center">
-                            <div class="col-lg-5 col-md-4 p-0">
-                                <div class="room-card-img">
-                                    <a href="room-details.html">
-                                        <img src="assets/img/room/room-style-img1.jpg" alt="Images">
-                                    </a>
-                                </div>
-                            </div>
 
-                            <div class="col-lg-7 col-md-8 p-0">
-                                <div class="room-card-content">
-                                    <h3>
-                                        <a href="room-details.html">Luxury Room</a>
-                                    </h3>
-                                    <span>320 / Per Night </span>
-                                    <div class="rating">
-                                        <i class='bx bxs-star'></i>
-                                        <i class='bx bxs-star'></i>
-                                        <i class='bx bxs-star'></i>
-                                        <i class='bx bxs-star'></i>
-                                        <i class='bx bxs-star'></i>
+                @foreach ($otherRooms as $room)
+                    <div class="col-lg-6">
+                        <div class="room-card-two">
+                            <div class="row align-items-center">
+                                <div class="col-lg-5 col-md-4 p-0">
+                                    <div class="room-card-img">
+                                        <a href="{{ route('room.details', $room->id) }}">
+                                            <img src="{{ asset('upload/room_images/' . $room->image) }}" alt="Images">
+                                        </a>
                                     </div>
-                                    <p>Lorem ipsum dolor sit amet, adipiscing elit. Suspendisse et faucibus felis, sed
-                                        pulvinar purus.</p>
-                                    <ul>
-                                        <li><i class='bx bx-user'></i> 4 Person</li>
-                                        <li><i class='bx bx-expand'></i> 35m2 / 376ft2</li>
-                                    </ul>
+                                </div>
 
-                                    <ul>
-                                        <li><i class='bx bx-show-alt'></i> Sea Balcony</li>
-                                        <li><i class='bx bxs-hotel'></i> Kingsize / Twin</li>
-                                    </ul>
+                                <div class="col-lg-7 col-md-8 p-0">
+                                    <div class="room-card-content">
+                                        <h3>
+                                            <a href="{{ route('room.details', $room->id) }}">{{ $room->type->name }}</a>
+                                        </h3>
+                                        <span>{{ $room->price ?? 0 }} / Per Night </span>
 
-                                    <a href="room-details.html" class="book-more-btn">
-                                        Book Now
-                                    </a>
+                                        <div class="rating">
+                                            <i class='bx bxs-star'></i>
+                                            <i class='bx bxs-star'></i>
+                                            <i class='bx bxs-star'></i>
+                                            <i class='bx bxs-star'></i>
+                                            <i class='bx bxs-star'></i>
+                                        </div>
+
+
+                                        <div class="room-desc">
+                                            {!! html_entity_decode($room->short_desc ?? '') !!}
+                                        </div>
+
+                                        <ul>
+                                            <li><i class='bx bx-user'></i>
+                                                {{ $room->room_capacity }} Person
+                                            </li>
+                                            <li><i class='bx bx-expand'></i> {{ $room->size ?? 0 }} m2</li>
+                                        </ul>
+
+                                        <ul>
+                                            <li><i class='bx bx-show-alt'></i> {{ $room->view ?? '' }}</li>
+                                            <li><i class='bx bxs-hotel'></i> {{ $room->bed_style ?? '' }}</li>
+                                        </ul>
+
+                                        <a href="room-details.html" class="book-more-btn">
+                                            Book Now
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @endforeach
 
-                <div class="col-lg-6">
-                    <div class="room-card-two">
-                        <div class="row align-items-center">
-                            <div class="col-lg-5 col-md-4 p-0">
-                                <div class="room-card-img">
-                                    <a href="room-details.html">
-                                        <img src="assets/img/room/room-style-img2.jpg" alt="Images">
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-7 col-md-8 p-0">
-                                <div class="room-card-content">
-                                    <h3>
-                                        <a href="room-details.html">Single Room</a>
-                                    </h3>
-                                    <span>300 / Per Night </span>
-                                    <div class="rating">
-                                        <i class='bx bxs-star'></i>
-                                        <i class='bx bxs-star'></i>
-                                        <i class='bx bxs-star'></i>
-                                        <i class='bx bxs-star'></i>
-                                        <i class='bx bxs-star'></i>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, adipiscing elit. Suspendisse et faucibus felis, sed
-                                        pulvinar purus.</p>
-                                    <ul>
-                                        <li><i class='bx bx-user'></i> 1 Person</li>
-                                        <li><i class='bx bx-expand'></i> 25m2 / 276ft2</li>
-                                    </ul>
-
-                                    <ul>
-                                        <li><i class='bx bx-show-alt'></i> Sea Balcony</li>
-                                        <li><i class='bx bxs-hotel'></i> Smallsize / Twin</li>
-                                    </ul>
-
-                                    <a href="room-details.html" class="book-more-btn">
-                                        Book Now
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

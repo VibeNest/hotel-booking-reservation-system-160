@@ -16,8 +16,9 @@ class FrontendRoomController extends Controller
     }
 
     // Frontend Room Details Method
-    public function RoomDetailsPage()
+    public function RoomDetailsPage($id)
     {
-        return view('frontend.room.room_details');
+        $room = Room::findOrFail($id);
+        return view('frontend.room.room_details', compact('room'));
     }
 }

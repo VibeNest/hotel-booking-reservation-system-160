@@ -138,7 +138,7 @@ class RoomController extends Controller
                         $img->move($path, $name);
                     } else {
                         $manager = new ImageManager(new Driver());
-                        $manager->read($img)->cover(550, 850)->save($path . $name);
+                        $manager->read($img)->save($path . $name);
                     }
 
                     MultiImage::create([

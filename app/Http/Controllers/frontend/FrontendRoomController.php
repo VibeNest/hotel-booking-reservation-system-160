@@ -20,13 +20,12 @@ class FrontendRoomController extends Controller
     // Frontend Room Details Method
     public function RoomDetailsPage($id)
     {
-        $room = Room::findOrFail($id);
-
+        $roomdetails = Room::find($id);
         $facilities = Facility::where('rooms_id', $id)->get();
         $multiImages = MultiImage::where('rooms_id', $id)->get();
 
         return view('frontend.room.room_details', compact(
-            'room',
+            'roomdetails',
             'facilities',
             'multiImages'
         ));

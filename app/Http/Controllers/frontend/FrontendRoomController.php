@@ -13,7 +13,8 @@ class FrontendRoomController extends Controller
     // Frontend Room All Method
     public function AllFrontendRoomList()
     {
-        $rooms = Room::latest()->get();
+
+        $rooms = Room::latest()->paginate(6);
         return view('frontend.room.all_rooms', compact('rooms'));
     }
 

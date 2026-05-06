@@ -53,22 +53,50 @@
                 @endforeach
 
                 <div class="col-lg-12 col-md-12">
-                    <div class="pagination-area">
-                        <a href="#" class="prev page-numbers">
-                            <i class='bx bx-chevrons-left'></i>
-                        </a>
-
-                        <span class="page-numbers current" aria-current="page">1</span>
-                        <a href="#" class="page-numbers">2</a>
-                        <a href="#" class="page-numbers">3</a>
-
-                        <a href="#" class="next page-numbers">
-                            <i class='bx bx-chevrons-right'></i>
-                        </a>
-                    </div>
+                    {{ $rooms->links('vendor.pagination.custom') }}
                 </div>
             </div>
         </div>
     </div>
     <!-- Room Area End -->
 @endsection
+<style>
+.custom-pagination {
+    gap: 10px;
+}
+
+.custom-pagination li {
+    list-style: none;
+}
+
+.custom-pagination li a,
+.custom-pagination li span {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 50%;
+    display: inline-block;
+    text-align: center;
+    background: #f2f2f2;
+    color: #333;
+    font-weight: 500;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.custom-pagination li.active span {
+    background: #ff6b4a; 
+    color: #fff;
+}
+
+.custom-pagination li a:hover {
+    background: #ff6b4a;
+    color: #fff;
+}
+
+.custom-pagination li.disabled span {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+``
+</style>

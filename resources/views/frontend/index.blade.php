@@ -17,25 +17,30 @@
     <div class="banner-form-area">
         <div class="container">
             <div class="banner-form">
+
                 <form>
                     <div class="row align-items-center">
+
+                        <!-- CHECK IN -->
                         <div class="col-lg-3 col-md-3">
                             <div class="form-group">
                                 <label>CHECK IN TIME</label>
                                 <div class="input-group">
-                                    <input id="datetimepicker" type="text" class="form-control" placeholder="11/02/2020">
+                                    <input id="startdate" autocomplete="off" name="check_in" type="text" required
+                                        class="form-control">
                                     <span class="input-group-addon"></span>
                                 </div>
                                 <i class='bx bxs-chevron-down'></i>
                             </div>
                         </div>
 
+                        <!-- CHECK OUT -->
                         <div class="col-lg-3 col-md-3">
                             <div class="form-group">
                                 <label>CHECK OUT TIME</label>
                                 <div class="input-group">
-                                    <input id="datetimepicker-check" type="text" class="form-control"
-                                        placeholder="11/02/2020">
+                                    <input id="enddate" autocomplete="off" name="check_out" type="text" required
+                                        class="form-control">
                                     <span class="input-group-addon"></span>
                                 </div>
                                 <i class='bx bxs-chevron-down'></i>
@@ -59,8 +64,10 @@
                                 Search Now
                             </button>
                         </div>
+
                     </div>
                 </form>
+
             </div>
         </div>
     </div>

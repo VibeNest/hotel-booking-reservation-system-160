@@ -62,6 +62,7 @@ class RoomController extends Controller
                 'discount' => $request->discount ?? 0,
                 'short_desc' => $request->short_desc,
                 'description' => $request->description,
+                'status' => 1
             ];
 
             // =============================

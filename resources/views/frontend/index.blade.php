@@ -18,7 +18,7 @@
         <div class="container">
             <div class="banner-form">
 
-                <form>
+                <form method="get" action="{{ route('booking.search') }}">
                     <div class="row align-items-center">
 
                         <!-- CHECK IN -->
@@ -50,11 +50,17 @@
                         <div class="col-lg-2 col-md-2">
                             <div class="form-group">
                                 <label>GUESTS</label>
-                                <select class="form-control">
-                                    <option>01</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                    <option>04</option>
+
+                                <select name="person" class="form-control">
+
+                                    @for ($i = 1; $i <= 5; $i++)
+
+                                        <option value="{{ $i }}">
+                                            {{ str_pad($i, 2, '0', STR_PAD_LEFT) }}
+                                        </option>
+
+                                    @endfor
+
                                 </select>
                             </div>
                         </div>

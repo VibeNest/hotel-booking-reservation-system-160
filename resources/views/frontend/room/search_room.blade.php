@@ -1,18 +1,30 @@
 @extends('frontend.home_page')
 
 @section('home')
+
     <!-- Inner Banner -->
     <div class="inner-banner inner-bg9">
         <div class="container">
             <div class="inner-title">
+
                 <ul>
                     <li>
                         <a href="/">Home</a>
                     </li>
-                    <li><i class='bx bx-chevron-right'></i></li>
-                    <li>Rooms</li>
+
+                    <li>
+                        <i class='bx bx-chevron-right'></i>
+                    </li>
+
+                    <li>
+                        Search Rooms
+                    </li>
                 </ul>
-                <h3>Rooms</h3>
+
+                <h3>
+                    Rooms
+                </h3>
+
             </div>
         </div>
     </div>
@@ -20,14 +32,17 @@
 
     <!-- Room Area -->
     <div class="room-area pt-100 pb-70">
+
         <div class="container">
             <div class="section-title text-center">
                 <span class="sp-color">ROOMS</span>
                 <h2>Our Rooms & Rates</h2>
             </div>
+
+            <!-- Room List -->
             <div class="row pt-45">
 
-                @foreach ($rooms as $item)
+                @forelse ($rooms as $item)
                     <div class="col-lg-4 col-md-6">
                         <div class="room-card">
                             <a href="{{ route('room.details', $item->id) }}">
@@ -57,11 +72,23 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
 
-                <div class="col-lg-12 col-md-12">
-                    {{ $rooms->links('vendor.pagination.custom') }}
-                </div>
+                @empty
+                    <!-- Empty State -->
+                    <div class="col-lg-12">
+                        <div class="alert alert-danger text-center">
+                            No rooms available for the selected dates
+                            and number of guests.
+                        </div>
+                    </div>
+                @endforelse
+
+                <!-- Pagination -->
+                @if ($rooms->count() > 0)
+                    <div class="col-lg-12 col-md-12">
+                        {{ $rooms->links('vendor.pagination.custom') }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

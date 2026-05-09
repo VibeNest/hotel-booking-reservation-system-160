@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use App\Models\Room;
 use App\Models\Facility;
 use App\Models\MultiImage;
@@ -25,7 +26,7 @@ class FrontendRoomController extends Controller
     // Frontend Room Details Method
     public function RoomDetailsPage($id)
     {
-        $roomdetails = Room::findOrFail($id);
+        $roomdetails = Room::find($id);
         $facilities = Facility::where('rooms_id', $id)->get();
         $multiImages = MultiImage::where('rooms_id', $id)->get();
 
@@ -109,5 +110,74 @@ class FrontendRoomController extends Controller
         );
 
         return view('frontend.room.search_room', ['rooms' => $paginatedRooms]);
+    }
+
+    // Search Room Details Method
+    public function SearchRoomDetails(Request $request, $id)
+    {
+        // Lưu dữ liệu vào session để hiển thị lại trên form
+        $request->flash();
+
+        $roomdetails = Room::find($id);
+        $facilities = Facility::where('rooms_id', $id)->get();
+        $multiImages = MultiImage::where('rooms_id', $id)->get();
+
+        $otherRooms = Room::where('id', '!=', $id)->orderBy('id', 'DESC')->limit(2)->get();
+        $room_id = $id;
+        $total_person = $roomdetails->total_adult + $roomdetails->total_child;
+
+        return view('frontend.room.search_room_details', compact(
+            'roomdetails',
+            'facilities',
+            'multiImages',
+            'otherRooms',
+            'room_id',
+            'total_person'
+        ));
+    }
+
+    // Check Room Availability Method
+    public function CheckRoomAvailability(Request $request)
+    {
+        // Chuyển đổi string sang timestamp
+        $startDate = date('d-m-Y', strtotime($request->check_in));
+        $endDate = date('d-m-Y', strtotime($request->check_out));
+
+        // Trừ đi 1 ngày checkout => để không tính ngày checkout vào danh sách ngày booking
+        $allDate = Carbon::create($endDate)->subDay();
+
+        // Tạo danh sách các ngày booking
+        $day_period = CarbonPeriod::create($startDate, $allDate);
+
+        $date_array = [];
+
+        // Lưu các ngày booking vào trong mảng
+        foreach ($day_period as $period) {
+            array_push($date_array, date('d-m-Y', strtotime($period)));
+        }
+
+        // Lấy danh sách booking_id không trùng nhau thỏa mãn điều kiện ngày booking trùng với ngày trong mảng $date_array
+        $check_date_booking_ids = RoomBookedDate::whereIn('book_date', $date_array)->distinct()->pluck('booking_id')->toArray();
+
+        // Lấy tổng số phòng
+        $room = Room::withCount('rooms_numbers')->find($request->room_id);
+
+        // Lấy danh sách booking đã đặt
+        $bookings = Booking::withCount('assign_rooms')->whereIn('id', $check_date_booking_ids)->where('rooms_id', $room->id)->get()->toArray();
+
+        // Tính tổng số phòng đã đặt
+        $total_book_room = array_sum(array_column($bookings, 'assign_rooms_count'));
+
+        // Số phòng còn trống = tổng số phòng - số phòng đã đặt
+        $available_room = $room->rooms_numbers_count - $total_book_room;
+
+        $toDate = Carbon::parse($request->check_in);
+        $fromDate = Carbon::parse($request->check_out);
+        $nights = $toDate->diffInDays($fromDate);
+
+        return response()->json([
+            'available_room' => $available_room,
+            'total_nights' => $nights,
+        ]);
     }
 }

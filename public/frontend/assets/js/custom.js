@@ -262,13 +262,13 @@
         tomorrow.setDate(today.getDate() + 1);
 
         // Checkout
-        $("#enddate").datepicker({
+        $("#enddate1").datepicker({
             dateFormat: "dd-mm-yy",
             minDate: 1,
         });
 
         // Checkin
-        $("#startdate").datepicker({
+        $("#startdate1").datepicker({
             dateFormat: "dd-mm-yy",
             minDate: 0,
 
@@ -281,27 +281,80 @@
                 minCheckout.setDate(minCheckout.getDate() + 1);
 
                 // Update minDate checkout
-                $("#enddate").datepicker("option", "minDate", minCheckout);
+                $("#enddate1").datepicker("option", "minDate", minCheckout);
 
                 // Checkout hiện tại
-                let currentCheckout = $("#enddate").datepicker("getDate");
+                let currentCheckout = $("#enddate1").datepicker("getDate");
 
                 // Nếu checkout không hợp lệ thì update
                 if (!currentCheckout || currentCheckout <= checkinDate) {
-                    $("#enddate").datepicker("setDate", minCheckout);
+                    $("#enddate1").datepicker("setDate", minCheckout);
                 }
 
                 // FIX highlight
-                $("#startdate").datepicker("setDate", checkinDate);
+                $("#startdate1").datepicker("setDate", checkinDate);
 
                 $(this).blur();
             },
         });
 
         // Set mặc định
-        $("#startdate").datepicker("setDate", today);
-        $("#enddate").datepicker("setDate", tomorrow);
+        $("#startdate1").datepicker("setDate", today);
+        $("#enddate1").datepicker("setDate", tomorrow);
     });
+
+    //     // Init Check In
+    //     $("#check_in").datepicker({
+    //         dateFormat: "dd-mm-yy",
+    //         minDate: 0,
+
+    //         onSelect: function () {
+    //             // Lấy ngày checkin mới
+    //             let checkInDate = $(this).datepicker("getDate");
+
+    //             // Checkout tối thiểu = checkin + 1 ngày
+    //             let minCheckout = new Date(checkInDate);
+    //             minCheckout.setDate(minCheckout.getDate() + 1);
+
+    //             // Update minDate cho checkout
+    //             $("#check_out").datepicker("option", "minDate", minCheckout);
+
+    //             // Lấy checkout hiện tại
+    //             let currentCheckout = $("#check_out").datepicker("getDate");
+
+    //             // Nếu checkout chưa có hoặc <= checkin
+    //             if (!currentCheckout || currentCheckout <= checkInDate) {
+    //                 $("#check_out").datepicker("setDate", minCheckout);
+    //             }
+    //         },
+    //     });
+
+    //     // Init Check Out
+    //     $("#check_out").datepicker({
+    //         dateFormat: "dd-mm-yy",
+    //         minDate: 1,
+    //     });
+
+    //     // =========================
+    //     // FIX khi reload sau search
+    //     // =========================
+
+    //     let oldCheckIn = $("#check_in").datepicker("getDate");
+
+    //     if (oldCheckIn) {
+    //         let minCheckout = new Date(oldCheckIn);
+    //         minCheckout.setDate(minCheckout.getDate() + 1);
+
+    //         $("#check_out").datepicker("option", "minDate", minCheckout);
+
+    //         let oldCheckout = $("#check_out").datepicker("getDate");
+
+    //         // Nếu checkout cũ không hợp lệ
+    //         if (!oldCheckout || oldCheckout <= oldCheckIn) {
+    //             $("#check_out").datepicker("setDate", minCheckout);
+    //         }
+    //     }
+    // });
 
     // WOW JS
     new WOW().init();

@@ -45,12 +45,15 @@
                 @forelse ($rooms as $item)
                     <div class="col-lg-4 col-md-6">
                         <div class="room-card">
-                            <a href="{{ route('room.details', $item->id) }}">
+                            <a
+                                href="{{ route('search_room_details', $item->id . '?check_in=' . old('check_in') . '&check_out=' . old('check_out') . '&person=' . old('person')) }}">
                                 <img src="{{ asset('upload/room_images/' . $item->image) }}" alt="Images" width="550"
                                     height="350">
                             </a>
                             <div class="content">
-                                <h3><a href="{{ route('room.details', $item->id) }}">{{ $item->type->name }}</a></h3>
+                                <h3><a
+                                        href="{{ route('search_room_details', $item->id . '?check_in=' . old('check_in') . '&check_out=' . old('check_out') . '&person=' . old('person')) }}">{{ $item->type->name }}</a>
+                                </h3>
                                 <ul>
                                     <li class="text-color">${{ $item->price }}</li>
                                     <li class="text-color">Per Night</li>
@@ -64,7 +67,7 @@
                                 </div>
 
                                 <div class="room-btn mt-1">
-                                    <a href="{{ route('room.details', $item->id) }}"
+                                    <a href="{{ route('search_room_details', $item->id . '?check_in=' . old('check_in') . '&check_out=' . old('check_out') . '&person=' . old('person')) }}"
                                         class="default-btn btn-bg-one border-radius-5">
                                         View Details
                                     </a>

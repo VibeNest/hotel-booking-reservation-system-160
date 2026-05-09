@@ -26,7 +26,7 @@
                             <div class="form-group">
                                 <label>CHECK IN TIME</label>
                                 <div class="input-group">
-                                    <input id="startdate" autocomplete="off" name="check_in" type="text" required
+                                    <input id="startdate1" autocomplete="off" name="check_in" type="text" required
                                         class="form-control">
                                     <span class="input-group-addon"></span>
                                 </div>
@@ -39,7 +39,7 @@
                             <div class="form-group">
                                 <label>CHECK OUT TIME</label>
                                 <div class="input-group">
-                                    <input id="enddate" autocomplete="off" name="check_out" type="text" required
+                                    <input id="enddate1" autocomplete="off" name="check_out" type="text" required
                                         class="form-control">
                                     <span class="input-group-addon"></span>
                                 </div>
@@ -55,7 +55,7 @@
 
                                     @for ($i = 1; $i <= 5; $i++)
 
-                                        <option value="{{ $i }}">
+                                        <option value="{{ 0 . $i }}">
                                             {{ str_pad($i, 2, '0', STR_PAD_LEFT) }}
                                         </option>
 

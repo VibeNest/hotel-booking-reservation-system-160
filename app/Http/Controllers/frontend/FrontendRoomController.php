@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\frontend;
+namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
@@ -171,6 +171,7 @@ class FrontendRoomController extends Controller
         // Số phòng còn trống = tổng số phòng - số phòng đã đặt
         $available_room = $room->rooms_numbers_count - $total_book_room;
 
+        // Tính số nights giữa check_in và check_out
         $toDate = Carbon::parse($request->check_in);
         $fromDate = Carbon::parse($request->check_out);
         $nights = $toDate->diffInDays($fromDate);

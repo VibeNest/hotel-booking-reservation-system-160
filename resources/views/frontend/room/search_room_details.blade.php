@@ -29,7 +29,7 @@
                         <div class="side-bar-form">
                             <h3>Booking Sheet </h3>
 
-                            <form action="" method="post" id="form">
+                            <form action="{{ route('user_booking_store', $room_id)  }}" method="post" id="form">
                                 @CSRF
 
                                 <input type="hidden" name="room_id" value="{{ $room_id }}">
@@ -425,9 +425,9 @@
             var total_price = sub_total - discount_price;
 
             // Hiển thị giá tiền lên giao diện
-            $('.subtotal').text(sub_total);
-            $('.t_discount').text(discount_price);
-            $('.total_price').text(total_price);
+            $('.subtotal').text('$' + sub_total);
+            $('.t_discount').text('$' + discount_price);
+            $('.total_price').text('$' + total_price);
         };
 
 

@@ -73,7 +73,7 @@ class FrontendRoomController extends Controller
 
         foreach ($rooms as $room) {
             // Lấy danh sách booking đã đặt
-            $bookings = \App\Models\Booking::withCount('assign_rooms')->whereIn('id', $check_date_booking_ids)->where('rooms_id', $room->id)->get()->toArray();
+            $bookings = Booking::withCount('assign_rooms')->whereIn('id', $check_date_booking_ids)->where('rooms_id', $room->id)->get()->toArray();
 
             // Tính tổng số phòng đã đặt
             $total_book_room = array_sum(array_column($bookings, 'assign_rooms_count'));

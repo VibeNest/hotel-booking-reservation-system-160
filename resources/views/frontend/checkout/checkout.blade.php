@@ -104,6 +104,9 @@
                                         @endif
                                     </div>
                                 </div>
+
+                                <p>Session value: {{ json_encode(session('book_date')) }}</p>
+
                             </div>
                         </div>
                     </div>

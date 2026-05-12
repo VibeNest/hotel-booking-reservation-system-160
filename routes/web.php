@@ -120,6 +120,8 @@ Route::middleware('auth')->group(function () {
     Route::controller(BookingController::class)->group(function () {
         Route::get('/checkout', 'Checkout')->name('checkout');
         Route::post('/booking/store/{id}', 'BookingStore')->name('user_booking_store');
+        // Place Order when success
+        Route::get('/place/order', 'PlaceOrder')->name('place.order');
     });
 });
 

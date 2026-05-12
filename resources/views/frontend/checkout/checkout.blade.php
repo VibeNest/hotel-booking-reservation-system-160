@@ -230,7 +230,7 @@
                             <div class="payment-method">
 
                                 <label class="payment-card">
-                                    <input type="radio" name="payment_method" id="cash-on-delivery" value="cod">
+                                    <input type="radio" name="payment_method" id="cash-on-delivery" value="COD">
 
                                     <div class="payment-content">
                                         <div class="payment-left">
@@ -243,7 +243,7 @@
                                 </label>
 
                                 <label class="payment-card">
-                                    <input type="radio" name="payment_method" id="paypal" value="paypal">
+                                    <input type="radio" name="payment_method" id="paypal" value="PayPal">
 
                                     <div class="payment-content">
                                         <div class="payment-left">
@@ -256,7 +256,7 @@
                                 </label>
 
                                 <label class="payment-card">
-                                    <input type="radio" name="payment_method" id="stripe" value="stripe">
+                                    <input type="radio" name="payment_method" id="stripe" value="Stripe">
 
                                     <div class="payment-content">
                                         <div class="payment-left">
@@ -269,7 +269,7 @@
                                 </label>
 
                                 <label class="payment-card">
-                                    <input type="radio" name="payment_method" id="vnpay" value="vnpay">
+                                    <input type="radio" name="payment_method" id="vnpay" value="VN Pay">
 
                                     <div class="payment-content">
                                         <div class="payment-left">

@@ -68,4 +68,10 @@ class BookingController extends Controller
 
         return redirect()->route('checkout');
     }
+
+    // Place Order Method
+    public function PlaceOrder()
+    {
+        return view('frontend.checkout.place_order');
+    }
 }

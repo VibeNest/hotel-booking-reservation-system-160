@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->string('person')->nullable();
             $table->string('number_of_rooms')->nullable();
 
-            $table->float('total_night')->default(0);
+            $table->integer('total_night')->default(0);
             $table->float('actual_price')->default(0);
             $table->float('subtotal')->default(0);
             $table->integer('discount')->default(0);

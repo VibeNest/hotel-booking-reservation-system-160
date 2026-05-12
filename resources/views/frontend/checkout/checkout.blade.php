@@ -32,85 +32,76 @@
                                     <div class="form-group">
                                         <label>Country <span class="required">*</span></label>
                                         <div class="select-box">
-                                            <select class="form-control">
-                                                <option value="5">United Arab Emirates</option>
-                                                <option value="1">China</option>
-                                                <option value="2">United Kingdom</option>
-                                                <option value="0">Germany</option>
-                                                <option value="3">France</option>
-                                                <option value="4">Japan</option>
+                                            <select class="form-control" name="country">
+                                                <option>Select a country...</option>
+                                                <option value="Vietnam">Vietnam</option>
+                                                <option value="China">China</option>
+                                                <option value="United Kingdom">United Kingdom</option>
+                                                <option value="Germany">Germany</option>
+                                                <option value="France">France</option>
+                                                <option value="Japan">Japan</option>
+                                                <option value="United States">United States</option>
+                                                <option value="Thailand">Thailand</option>
+                                                <option value="Singapore">Singapore</option>
+                                                <option value="Malaysia">Malaysia</option>
+                                                <option value="India">India</option>
+                                                <option value="Canada">Canada</option>
+                                                <option value="Australia">Australia</option>
+                                                <option value="Italy">Italy</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-lg-6 col-md-6">
+                                <div class="col-lg-12 col-md-12">
                                     <div class="form-group">
-                                        <label>First Name <span class="required">*</span></label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-6 col-md-6">
-                                    <div class="form-group">
-                                        <label>Last Name <span class="required">*</span></label>
-                                        <input type="text" class="form-control">
+                                        <label> Name <span class="required">*</span></label>
+                                        <input type="text" name="name" class="form-control" value="{{ Auth::user()->name }}"
+                                            readonly>
                                     </div>
                                 </div>
 
                                 <div class="col-lg-12 col-md-12">
                                     <div class="form-group">
-                                        <label>Company Name</label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-12 col-md-6">
-                                    <div class="form-group">
-                                        <label>Address <span class="required">*</span></label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-12 col-md-6">
-                                    <div class="form-group">
-                                        <label>Town / City <span class="required">*</span></label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-6 col-md-6">
-                                    <div class="form-group">
-                                        <label>State / County <span class="required">*</span></label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-6 col-md-6">
-                                    <div class="form-group">
-                                        <label>Postcode / Zip <span class="required">*</span></label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-6 col-md-6">
-                                    <div class="form-group">
-                                        <label>Email Address <span class="required">*</span></label>
-                                        <input type="email" class="form-control">
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-6 col-md-6">
-                                    <div class="form-group">
-                                        <label>Phone <span class="required">*</span></label>
-                                        <input type="text" class="form-control">
+                                        <label> Email <span class="required">*</span></label>
+                                        <input type="email" name="email" class="form-control"
+                                            value="{{ Auth::user()->email }}" readonly>
                                     </div>
                                 </div>
 
                                 <div class="col-lg-12 col-md-12">
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="create-an-account">
-                                        <label class="form-check-label" for="create-an-account">Create an account?</label>
+                                    <div class="form-group">
+                                        <label> Phone <span class="required">*</span></label>
+                                        <input type="text" name="phone" class="form-control"
+                                            value="{{ Auth::user()->phone }}" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="form-group">
+                                        <label> Address <span class="required">*</span></label>
+                                        <input type="text" name="address" class="form-control"
+                                            value="{{ Auth::user()->address }}" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="form-group">
+                                        <label> State <span class="required">*</span></label>
+                                        <input type="text" name="state" class="form-control">
+                                        @if ($errors->has('state'))
+                                            <span class="text-danger">{{ $errors->first('state') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="form-group">
+                                        <label> Zip Code <span class="required">*</span></label>
+                                        <input type="text" name="zip_code" class="form-control">
+                                        @if ($errors->has('zip_code'))
+                                            <span class="text-danger">{{ $errors->first('zip_code') }}</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -236,7 +227,7 @@
                             <div class="payment-method">
 
                                 <label class="payment-card">
-                                    <input type="radio" name="payment_method" value="cod">
+                                    <input type="radio" name="payment_method" id="cash-on-delivery" value="cod">
 
                                     <div class="payment-content">
                                         <div class="payment-left">
@@ -249,7 +240,7 @@
                                 </label>
 
                                 <label class="payment-card">
-                                    <input type="radio" name="payment_method" value="paypal">
+                                    <input type="radio" name="payment_method" id="paypal" value="paypal">
 
                                     <div class="payment-content">
                                         <div class="payment-left">
@@ -262,7 +253,7 @@
                                 </label>
 
                                 <label class="payment-card">
-                                    <input type="radio" name="payment_method" value="stripe">
+                                    <input type="radio" name="payment_method" id="stripe" value="stripe">
 
                                     <div class="payment-content">
                                         <div class="payment-left">
@@ -275,7 +266,7 @@
                                 </label>
 
                                 <label class="payment-card">
-                                    <input type="radio" name="payment_method" value="vnpay">
+                                    <input type="radio" name="payment_method" id="vnpay" value="vnpay">
 
                                     <div class="payment-content">
                                         <div class="payment-left">
@@ -289,9 +280,9 @@
 
                             </div>
 
-                            <a href="#" class="order-btn three place-order-btn">
-                                Place Order
-                            </a>
+                            <button type="submit" class="order-btn three place-order-btn">
+                                Place to Order
+                            </button>
                         </div>
                     </div>
                 </div>

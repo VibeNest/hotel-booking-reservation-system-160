@@ -56,8 +56,8 @@
                                 <div class="col-lg-12 col-md-12">
                                     <div class="form-group">
                                         <label> Name <span class="required">*</span></label>
-                                        <input type="text" name="name" class="form-control" value="{{ Auth::user()->name }}"
-                                            readonly>
+                                        <input type="text" name="name" class="form-control"
+                                            value="{{ Auth::user()->name }}">
                                     </div>
                                 </div>
 
@@ -65,7 +65,7 @@
                                     <div class="form-group">
                                         <label> Email <span class="required">*</span></label>
                                         <input type="email" name="email" class="form-control"
-                                            value="{{ Auth::user()->email }}" readonly>
+                                            value="{{ Auth::user()->email }}">
                                     </div>
                                 </div>
 
@@ -73,7 +73,7 @@
                                     <div class="form-group">
                                         <label> Phone <span class="required">*</span></label>
                                         <input type="text" name="phone" class="form-control"
-                                            value="{{ Auth::user()->phone }}" readonly>
+                                            value="{{ Auth::user()->phone }}">
                                     </div>
                                 </div>
 
@@ -81,7 +81,7 @@
                                     <div class="form-group">
                                         <label> Address <span class="required">*</span></label>
                                         <input type="text" name="address" class="form-control"
-                                            value="{{ Auth::user()->address }}" readonly>
+                                            value="{{ Auth::user()->address }}">
                                     </div>
                                 </div>
 

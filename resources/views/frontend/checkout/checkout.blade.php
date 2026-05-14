@@ -147,40 +147,41 @@
                                                         ({{ $book_data['check_in'] }} -
                                                         {{ $book_data['check_out'] }})</b></p>
                                             </td>
-                                            <td style="text-align: right">
-                                                <p>{{ $nights }}</p>
+                                            <td style="text-align: right;">
+                                                <p style="color: red; font-weight: 600">{{ $nights }}</p>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <p style="font-weight: 600">Total Room</p>
                                             </td>
-                                            <td style=" text-align: right">
-                                                <p>{{ $book_data['number_of_rooms'] }}</p>
+                                            <td style=" text-align: right; color: red;">
+                                                <p style="color: red; font-weight: 600">{{ $book_data['number_of_rooms'] }}
+                                                </p>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <p style="font-weight: 600">Subtotal</p>
                                             </td>
-                                            <td style="text-align: right">
-                                                <p>${{ $subtotal }}</p>
+                                            <td style="text-align: right;">
+                                                <p style="color: red; font-weight: 600">${{ $subtotal }}</p>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <p style="font-weight: 600">Discount</p>
                                             </td>
-                                            <td style="text-align:right">
-                                                <p>${{ $discount }}</p>
+                                            <td style="text-align:right; ">
+                                                <p style="color: red; font-weight: 600">${{ $discount }}</p>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <p style="font-weight: 600">Total</p>
                                             </td>
-                                            <td style="text-align:right">
-                                                <p>${{ $total }}</p>
+                                            <td style="text-align:right;">
+                                                <p style="color: red; font-weight: 600">${{ $total }}</p>
                                             </td>
                                         </tr>
                                     </table>

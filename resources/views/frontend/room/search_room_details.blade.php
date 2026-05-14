@@ -98,19 +98,22 @@
                                                     <td>
                                                         <p>Sub Total</p>
                                                     </td>
-                                                    <td style="text-align: right"><span class="subtotal">0</span></td>
+                                                    <td style="text-align: right"><span class="subtotal"
+                                                            style="color: red; font-weight: 600;">0</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td>
                                                         <p>Discount</p>
                                                     </td>
-                                                    <td style="text-align: right"><span class="t_discount">0</span></td>
+                                                    <td style="text-align: right"><span class="t_discount"
+                                                            style="color: red; font-weight: 600;">0</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td>
                                                         <p>Total</p>
                                                     </td>
-                                                    <td style="text-align: right"><span class="total_price">0</span></td>
+                                                    <td style="text-align: right"><span class="total_price"
+                                                            style="color: red; font-weight: 600;">0</span></td>
                                                 </tr>
                                             </tbody>
                                         </table>

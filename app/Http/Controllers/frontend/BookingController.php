@@ -7,6 +7,10 @@ use App\Models\Room;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use App\Models\Booking;
+use App\Models\RoomBookedDate;
+use Carbon\CarbonPeriod;
+use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
 {
@@ -73,5 +77,119 @@ class BookingController extends Controller
     public function PlaceOrder()
     {
         return view('frontend.checkout.place_order');
+    }
+
+    // Checkout Store Method
+    public function CheckoutStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'country' => 'required',
+            'phone' => 'required',
+            'address' => 'required',
+            'state' => 'required',
+            'zip_code' => 'required',
+            'payment_method' => 'required',
+        ]);
+
+        // Lấy dữ liệu từ session
+        $book_data = Session::get('book_date');
+
+        // Lấy room
+        $room = Room::find($book_data['room_id']);
+
+        // Tính số đêm
+        $toDate = Carbon::parse($book_data['check_in']);
+        $fromDate = Carbon::parse($book_data['check_out']);
+
+        $total_nights = $toDate->diffInDays($fromDate);
+
+        // Tính tiền
+        $subtotal = $room->price * $total_nights * $book_data['number_of_rooms'];
+
+        // Discount
+        $discount = ($room->discount / 100) * $subtotal;
+
+        // Total Price
+        $total_price = $subtotal - $discount;
+
+        // Generate booking code 9 số
+        $code = rand(100000000, 999999999);
+
+        // Insert Data Booking
+        $booking = new Booking();
+
+        $booking->rooms_id = $room->id;
+        $booking->user_id = Auth::id();
+
+        $booking->check_in = date('Y-m-d', strtotime($book_data['check_in']));
+        $booking->check_out = date('Y-m-d', strtotime($book_data['check_out']));
+
+        $booking->person = $book_data['person'];
+        $booking->number_of_rooms = $book_data['number_of_rooms'];
+
+        $booking->total_night = $total_nights;
+
+        $booking->actual_price = $room->price;
+
+        $booking->subtotal = $subtotal;
+        $booking->discount = $discount;
+        $booking->total_price = $total_price;
+
+        $booking->payment_method = $request->payment_method;
+        $booking->transaction_id = "";
+        $booking->payment_status = 0;
+
+        $booking->name = $request->name;
+        $booking->email = $request->email;
+        $booking->phone = $request->phone;
+        $booking->country = $request->country;
+        $booking->state = $request->state;
+        $booking->zip_code = $request->zip_code;
+        $booking->address = $request->address;
+
+        $booking->code = $code;
+        $booking->status = 0;
+
+        $booking->created_at = Carbon::now();
+
+        $booking->save();
+
+
+        // Room Booked Dates
+        $startDate = Carbon::parse($book_data['check_in']);
+        $endDate = Carbon::parse($book_data['check_out']);
+
+        // Không lấy ngày checkout
+        $allDate = CarbonPeriod::create($startDate, $endDate->subDay());
+
+        $day_period = [];
+
+        foreach ($allDate as $date) {
+            $day_period[] = $date->format('Y-m-d');
+        }
+
+        foreach ($day_period as $day) {
+
+            $booked_dates = new RoomBookedDate();
+
+            $booked_dates->booking_id = $booking->id;
+            $booked_dates->room_id = $room->id;
+            $booked_dates->book_date = $day;
+
+            $booked_dates->save();
+        }
+
+        // Clear Session
+        Session::forget('book_date');
+
+        // Notification
+        $notification = array(
+            'message' => 'Add Booking Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('place.order')->with($notification);
     }
 }

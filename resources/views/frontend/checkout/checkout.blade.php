@@ -21,7 +21,8 @@
     <!-- Checkout Area -->
     <section class="checkout-area pt-100 pb-70">
         <div class="container">
-            <form>
+            <form method="POST" action="{{ route('checkout.store') }}">
+                @csrf
                 <div class="row">
                     <div class="col-lg-8">
                         <div class="billing-details">
@@ -73,7 +74,7 @@
                                     <div class="form-group">
                                         <label> Phone <span class="required">*</span></label>
                                         <input type="text" name="phone" class="form-control"
-                                            value="{{ Auth::user()->phone }}">
+                                            value="{{ Auth::user()->phone ?? '' }}">
                                     </div>
                                 </div>
 
@@ -81,7 +82,7 @@
                                     <div class="form-group">
                                         <label> Address <span class="required">*</span></label>
                                         <input type="text" name="address" class="form-control"
-                                            value="{{ Auth::user()->address }}">
+                                            value="{{ Auth::user()->address ?? '' }}">
                                     </div>
                                 </div>
 
@@ -229,6 +230,11 @@
                             <h4 class="payment-title">Choose Payment Method</h4>
 
                             <div class="payment-method">
+                                @if ($errors->has('payment_method'))
+                                    <span class="text-danger">
+                                        {{ $errors->first('payment_method') }}
+                                    </span>
+                                @endif
 
                                 <label class="payment-card">
                                     <input type="radio" name="payment_method" id="cash-on-delivery" value="COD">

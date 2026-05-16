@@ -21,7 +21,8 @@
     <!-- Checkout Area -->
     <section class="checkout-area pt-100 pb-70">
         <div class="container">
-            <form>
+            <form method="POST" action="{{ route('checkout.store') }}">
+                @csrf
                 <div class="row">
                     <div class="col-lg-8">
                         <div class="billing-details">
@@ -33,7 +34,6 @@
                                         <label>Country <span class="required">*</span></label>
                                         <div class="select-box">
                                             <select class="form-control" name="country">
-                                                <option>Select a country...</option>
                                                 <option value="Vietnam">Vietnam</option>
                                                 <option value="China">China</option>
                                                 <option value="United Kingdom">United Kingdom</option>
@@ -73,7 +73,7 @@
                                     <div class="form-group">
                                         <label> Phone <span class="required">*</span></label>
                                         <input type="text" name="phone" class="form-control"
-                                            value="{{ Auth::user()->phone }}">
+                                            value="{{ Auth::user()->phone ?? '' }}">
                                     </div>
                                 </div>
 
@@ -81,7 +81,7 @@
                                     <div class="form-group">
                                         <label> Address <span class="required">*</span></label>
                                         <input type="text" name="address" class="form-control"
-                                            value="{{ Auth::user()->address }}">
+                                            value="{{ Auth::user()->address ?? '' }}">
                                     </div>
                                 </div>
 
@@ -229,6 +229,11 @@
                             <h4 class="payment-title">Choose Payment Method</h4>
 
                             <div class="payment-method">
+                                @if ($errors->has('payment_method'))
+                                    <span class="text-danger">
+                                        {{ $errors->first('payment_method') }}
+                                    </span>
+                                @endif
 
                                 <label class="payment-card">
                                     <input type="radio" name="payment_method" id="cash-on-delivery" value="COD">
@@ -237,19 +242,6 @@
                                         <div class="payment-left">
                                             <i class="fa-solid fa-money-bill-wave payment-icon cod"></i>
                                             <span>Cash On Delivery</span>
-                                        </div>
-
-                                        <div class="checkmark"></div>
-                                    </div>
-                                </label>
-
-                                <label class="payment-card">
-                                    <input type="radio" name="payment_method" id="paypal" value="PayPal">
-
-                                    <div class="payment-content">
-                                        <div class="payment-left">
-                                            <i class="fa-brands fa-paypal payment-icon paypal"></i>
-                                            <span>PayPal</span>
                                         </div>
 
                                         <div class="checkmark"></div>
@@ -269,24 +261,29 @@
                                     </div>
                                 </label>
 
-                                <label class="payment-card">
-                                    <input type="radio" name="payment_method" id="vnpay" value="VN Pay">
-
-                                    <div class="payment-content">
-                                        <div class="payment-left">
-                                            <i class="fa-solid fa-wallet payment-icon vnpay"></i>
-                                            <span>VN Pay</span>
-                                        </div>
-
-                                        <div class="checkmark"></div>
-                                    </div>
-                                </label>
-
                             </div>
 
-                            <button type="submit" class="order-btn three place-order-btn">
-                                Place to Order
-                            </button>
+                            <div class="payment-actions">
+                                <button type="submit" class="order-btn three place-order-btn">
+                                    Place to Order
+                                </button>
+
+                                <div class="payment-separator">Or pay directly</div>
+
+                                <div class="direct-payment-actions">
+                                    <button type="submit" name="payment_method" value="PayPal"
+                                        class="direct-payment-btn paypal-btn">
+                                        <i class="fa-brands fa-paypal payment-icon"></i>
+                                        <span>Pay with PayPal</span>
+                                    </button>
+
+                                    <button type="submit" name="payment_method" value="VN Pay"
+                                        class="direct-payment-btn vnpay-btn">
+                                        <i class="fa-solid fa-wallet payment-icon"></i>
+                                        <span>Pay with VN Pay</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -419,5 +416,104 @@
     .place-order-btn:hover {
         transform: translateY(-2px);
         color: #fff;
+    }
+
+    .payment-actions {
+        margin-top: 30px;
+    }
+
+    .payment-separator {
+        margin: 18px 0 14px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 600;
+        color: #7a7a7a;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .direct-payment-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .direct-payment-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        padding: 15px 16px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #fff;
+        transition: 0.3s ease;
+        box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .direct-payment-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .direct-payment-btn .payment-icon {
+        font-size: 20px;
+    }
+
+    .paypal-btn {
+        background: #ffc439;
+        color: #003087;
+        border: 1px solid #f0b800;
+        border-radius: 999px;
+        min-height: 44px;
+        padding: 10px 18px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        font-weight: 700;
+    }
+
+    .vnpay-btn {
+        background: #f6f7f9;
+        color: #003087;
+        border: 1px solid #d7dbe3;
+        border-left: 5px solid #003087;
+        border-radius: 12px;
+        min-height: 44px;
+        padding: 10px 18px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        font-weight: 700;
+    }
+
+    .vnpay-btn .payment-icon,
+    .vnpay-btn span {
+        color: #003087;
+    }
+
+    .vnpay-btn:hover {
+        background: #eef1f5;
+        color: #003087;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .paypal-btn .payment-icon,
+    .paypal-btn span {
+        color: #003087;
+    }
+
+    .paypal-btn .payment-icon {
+        font-size: 22px;
+    }
+
+    .paypal-btn:hover {
+        background: #ffd34d;
+        color: #003087;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 575px) {
+        .direct-payment-actions {
+            grid-template-columns: 1fr;
+        }
     }
 </style>

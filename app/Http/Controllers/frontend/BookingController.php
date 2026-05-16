@@ -123,8 +123,8 @@ class BookingController extends Controller
         $booking->rooms_id = $room->id;
         $booking->user_id = Auth::id();
 
-        $booking->check_in = date('Y-m-d', strtotime($book_data['check_in']));
-        $booking->check_out = date('Y-m-d', strtotime($book_data['check_out']));
+        $booking->check_in = date('d-m-Y', strtotime($book_data['check_in']));
+        $booking->check_out = date('d-m-Y', strtotime($book_data['check_out']));
 
         $booking->person = $book_data['person'];
         $booking->number_of_rooms = $book_data['number_of_rooms'];
@@ -158,26 +158,20 @@ class BookingController extends Controller
 
 
         // Room Booked Dates
-        $startDate = Carbon::parse($book_data['check_in']);
-        $endDate = Carbon::parse($book_data['check_out']);
+        $startDate = Carbon::createFromFormat('d-m-Y', $book_data['check_in']);
+        $endDate = Carbon::createFromFormat('d-m-Y', $book_data['check_out']);
 
-        // Không lấy ngày checkout
-        $allDate = CarbonPeriod::create($startDate, $endDate->subDay());
+        // Không lấy ngày checkout - trừ 1 ngày
+        $endDate = $endDate->subDay();
 
-        $day_period = [];
+        // Tạo danh sách các ngày booking
+        $day_period = CarbonPeriod::create($startDate, $endDate);
 
-        foreach ($allDate as $date) {
-            $day_period[] = $date->format('Y-m-d');
-        }
-
-        foreach ($day_period as $day) {
-
+        foreach ($day_period as $period) {
             $booked_dates = new RoomBookedDate();
-
             $booked_dates->booking_id = $booking->id;
             $booked_dates->room_id = $room->id;
-            $booked_dates->book_date = $day;
-
+            $booked_dates->book_date = $period->format('Y-m-d');
             $booked_dates->save();
         }
 

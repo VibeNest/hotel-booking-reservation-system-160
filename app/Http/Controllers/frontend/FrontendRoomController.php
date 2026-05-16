@@ -60,7 +60,7 @@ class FrontendRoomController extends Controller
 
         // Lưu các ngày booking vào trong mảng
         foreach ($day_period as $period) {
-            array_push($date_array, date('d-m-Y', strtotime($period)));
+            array_push($date_array, date('Y-m-d', strtotime($period)));
         }
 
         // Lấy danh sách booking_id không trùng nhau thỏa mãn điều kiện ngày booking trùng với ngày trong mảng $date_array

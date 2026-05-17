@@ -123,7 +123,13 @@ Route::middleware('auth')->group(function () {
         // Place Order when success
         Route::get('/place/order', 'PlaceOrder')->name('place.order');
         // Payment by cash
-        Route::post('/checkout/store', [BookingController::class, 'checkoutStore'])->name('checkout.store');
+        Route::post('/checkout/store', 'CheckoutStore')->name('checkout.store');
+        // Payment by paypal
+        Route::prefix('paypal')->group(function () {
+            Route::get('/payment', 'PaypalPayment')->name('paypal.payment');
+            Route::get('/success', 'PaypalSuccess')->name('paypal.success');
+            Route::get('/cancel', 'PaypalCancel')->name('paypal.cancel');
+        });
     });
 });
 

@@ -73,7 +73,7 @@
                                     <div class="form-group">
                                         <label> Phone <span class="required">*</span></label>
                                         <input type="text" name="phone" class="form-control"
-                                            value="{{ Auth::user()->phone ?? '' }}">
+                                            value="{{ optional(Auth::user())->phone }}">
                                     </div>
                                 </div>
 
@@ -81,7 +81,7 @@
                                     <div class="form-group">
                                         <label> Address <span class="required">*</span></label>
                                         <input type="text" name="address" class="form-control"
-                                            value="{{ Auth::user()->address ?? '' }}">
+                                            value="{{ optional(Auth::user())->address }}">
                                     </div>
                                 </div>
 
@@ -105,7 +105,7 @@
                                     </div>
                                 </div>
 
-                                <p>Session value: {{ json_encode(session('book_date')) }}</p>
+                              
 
                             </div>
                         </div>
@@ -236,7 +236,7 @@
                                 @endif
 
                                 <label class="payment-card">
-                                    <input type="radio" name="payment_method" id="cash-on-delivery" value="COD">
+                                    <input type="radio" name="payment_method" id="cash-on-delivery" value="COD" checked>
 
                                     <div class="payment-content">
                                         <div class="payment-left">
@@ -271,7 +271,7 @@
                                 <div class="payment-separator">Or pay directly</div>
 
                                 <div class="direct-payment-actions">
-                                    <button type="submit" name="payment_method" value="PayPal"
+                                    <button type="submit" name="payment_method" value="paypal"
                                         class="direct-payment-btn paypal-btn">
                                         <i class="fa-brands fa-paypal payment-icon"></i>
                                         <span>Pay with PayPal</span>
@@ -359,6 +359,7 @@
 
     .paypal {
         color: #003087;
+        min-height: 56px;
     }
 
     .stripe {
@@ -367,6 +368,7 @@
 
     .vnpay {
         color: #005baa;
+        min-height: 56px;
     }
 
     .checkmark {

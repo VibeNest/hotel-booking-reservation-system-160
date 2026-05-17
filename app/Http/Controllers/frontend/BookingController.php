@@ -11,6 +11,7 @@ use App\Models\Booking;
 use App\Models\RoomBookedDate;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Auth;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class BookingController extends Controller
 {
@@ -82,9 +83,16 @@ class BookingController extends Controller
     // Checkout Store Method
     public function CheckoutStore(Request $request)
     {
+        // Check session tồn tại
+        if (!Session::has('book_date')) {
+            return redirect()
+                ->route('checkout')
+                ->with('error', 'Session expired');
+        }
+
         $request->validate([
             'name' => 'required',
-            'email' => 'required',
+            'email' => 'required|email',
             'country' => 'required',
             'phone' => 'required',
             'address' => 'required',
@@ -116,6 +124,29 @@ class BookingController extends Controller
 
         // Generate booking code 9 số
         $code = rand(100000000, 999999999);
+
+        if ($request->payment_method == 'paypal') {
+
+            Session::put('checkout_data', [
+
+                'name' => $request->name,
+                'email' => $request->email,
+                'country' => $request->country,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'state' => $request->state,
+                'zip_code' => $request->zip_code,
+
+                'subtotal' => $subtotal,
+                'discount' => $discount,
+                'total_price' => $total_price,
+                'total_nights' => $total_nights,
+
+            ]);
+
+            return redirect()
+                ->route('paypal.payment');
+        }
 
         // Insert Data Booking
         $booking = new Booking();
@@ -186,4 +217,225 @@ class BookingController extends Controller
 
         return redirect()->route('place.order')->with($notification);
     }
+
+    // Paypal Payment
+    public function PaypalPayment()
+    {
+        $checkout = Session::get('checkout_data');
+
+        if (!$checkout) {
+            return redirect()
+                ->route('checkout')
+                ->with('error', 'Session expired');
+        }
+
+        if (
+            !isset($checkout['total_price']) ||
+            $checkout['total_price'] <= 0
+        ) {
+            return redirect()
+                ->route('checkout')
+                ->with('error', 'Invalid payment amount');
+        }
+
+        $provider = new PayPalClient();
+        $provider->setApiCredentials(config('paypal'));
+        $token = $provider->getAccessToken();
+        $provider->setAccessToken($token);
+        $response = $provider->createOrder([
+            "intent" => "CAPTURE",
+
+            "application_context" => [
+                "return_url" => route('paypal.success'),
+                "cancel_url" => route('paypal.cancel'),
+            ],
+
+            "purchase_units" => [
+                [
+                    "amount" => [
+
+                        "currency_code" => "USD",
+
+                        "value" => number_format(
+                            $checkout['total_price'],
+                            2,
+                            '.',
+                            ''
+                        )
+                    ]
+                ]
+            ]
+        ]);
+
+        if (!empty($response['id']) && isset($response['links'])) {
+            foreach ($response['links'] as $link) {
+                if ($link['rel'] == 'approve') {
+                    return redirect()
+                        ->away($link['href']);
+                }
+            }
+        }
+
+        return redirect()->route('checkout')
+            ->with('error', 'Paypal payment failed');
+    }
+
+    // Paypal Success
+
+    public function PaypalSuccess(Request $request)
+    {
+        if (!Session::has('checkout_data') || !Session::has('book_date')) {
+            return redirect()
+                ->route('checkout')
+                ->with('error', 'Session expired');
+        }
+
+        if (!$request->token || empty($request->token)) {
+            return redirect()
+                ->route('checkout')
+                ->with('error', 'Invalid PayPal token');
+        }
+
+        $provider = new PayPalClient();
+        $provider->setApiCredentials(config('paypal'));
+        $token = $provider->getAccessToken();
+        $provider->setAccessToken($token);
+        $response = $provider->capturePaymentOrder($request->token);
+
+        $existingBooking = Booking::where(
+            'transaction_id',
+            $response['id']
+        )->first();
+
+        if ($existingBooking) {
+            return redirect()
+                ->route('place.order')
+                ->with('success', 'Payment already processed');
+        }
+
+        if (isset($response['status']) && $response['status'] == 'COMPLETED' && isset($response['id'])) {
+
+            $book_data = Session::get('book_date');
+            $checkout = Session::get('checkout_data');
+            $room = Room::find($book_data['room_id']);
+            if (!$room) {
+                Session::forget('book_date');
+                Session::forget('checkout_data');
+                return redirect('/')
+                    ->with('error', 'Room not found');
+            }
+            $booking = new Booking();
+
+            $booking->rooms_id = $room->id;
+            $booking->user_id = Auth::id();
+            $booking->check_in = $book_data['check_in'];
+            $booking->check_out = $book_data['check_out'];
+            $booking->person = $book_data['person'];
+            $booking->number_of_rooms = $book_data['number_of_rooms'];
+            $booking->total_night = $checkout['total_nights'];
+            $booking->actual_price = $room->price;
+            $booking->subtotal = $checkout['subtotal'];
+            $booking->discount = $checkout['discount'];
+            $booking->total_price = $checkout['total_price'];
+            $booking->payment_method = "paypal";
+
+            $booking->transaction_id = $response['id'];
+
+            $booking->payment_status = 1;
+
+            $booking->name = $checkout['name'];
+            $booking->email = $checkout['email'];
+            $booking->phone = $checkout['phone'];
+            $booking->country = $checkout['country'];
+            $booking->state = $checkout['state'];
+            $booking->zip_code = $checkout['zip_code'];
+            $booking->address = $checkout['address'];
+
+            $booking->code = rand(100000000, 999999999);
+
+            $booking->status = 0;
+
+            $booking->created_at = Carbon::now();
+
+            $booking->save();
+
+            // Room booked dates
+
+            $startDate =
+                Carbon::createFromFormat(
+                    'd-m-Y',
+                    $book_data['check_in']
+                );
+
+            $endDate =
+                Carbon::createFromFormat(
+                    'd-m-Y',
+                    $book_data['check_out']
+                );
+
+            $endDate = $endDate->subDay();
+
+            $day_period =
+                CarbonPeriod::create(
+                    $startDate,
+                    $endDate
+                );
+
+            foreach ($day_period as $period) {
+
+                $booked_dates = new RoomBookedDate();
+
+                $booked_dates->booking_id = $booking->id;
+
+                $booked_dates->room_id = $room->id;
+
+                $booked_dates->book_date = $period->format('Y-m-d');
+
+                $booked_dates->save();
+            }
+
+            Session::forget('book_date');
+
+            Session::forget('checkout_data');
+
+            // Notification
+            $notification = array(
+                'message' => 'Paypal Payment Successfully',
+                'alert-type' => 'success'
+            );
+
+            return redirect()->route('place.order')->with($notification);
+        }
+
+        return redirect()
+            ->route('checkout')
+            ->with('error', 'Payment Failed');
+    }
+
+    // Paypal Cancel
+
+    public function PaypalCancel()
+    {
+        Session::forget('checkout_data');
+        return redirect()
+            ->route('checkout')
+            ->with('error', 'Payment Cancelled');
+    }
 }
+
+// test Paypal tk personal
+// email: personal2026@personal.example.com
+// password: 12345678
+
+// email: tungdev2k4@personal.example.com
+// password: 12345678
+
+// paypal tk business
+// business2026@business.example.com
+// 12345678
+
+// email: tungdevbussiness@business.example.com
+// password: 12345678
+
+// Kiểm tra lịch sử thanh toán paypal
+// https://www.sandbox.paypal.com/myaccount/summary

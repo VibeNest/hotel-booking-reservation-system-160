@@ -105,7 +105,7 @@
                                     </div>
                                 </div>
 
-                              
+
 
                             </div>
                         </div>
@@ -236,7 +236,7 @@
                                 @endif
 
                                 <label class="payment-card">
-                                    <input type="radio" name="payment_method" id="cash-on-delivery" value="COD" checked>
+                                    <input type="radio" name="payment_method" id="cash-on-delivery" value="COD">
 
                                     <div class="payment-content">
                                         <div class="payment-left">

@@ -89,7 +89,7 @@ class BookingController extends Controller
                 ->route('checkout')
                 ->with('error', 'Session expired');
         }
-    
+
         $request->validate([
             'name' => 'required',
             'email' => 'required|email',
@@ -243,29 +243,29 @@ class BookingController extends Controller
         $token = $provider->getAccessToken();
         $provider->setAccessToken($token);
         $response = $provider->createOrder([
-                "intent" => "CAPTURE",
+            "intent" => "CAPTURE",
 
-                "application_context" => [
-                    "return_url" => route('paypal.success'),
-                    "cancel_url" => route('paypal.cancel'),
-                ],
+            "application_context" => [
+                "return_url" => route('paypal.success'),
+                "cancel_url" => route('paypal.cancel'),
+            ],
 
-                "purchase_units" => [
-                    [
-                        "amount" => [
+            "purchase_units" => [
+                [
+                    "amount" => [
 
-                            "currency_code" => "USD",
+                        "currency_code" => "USD",
 
-                            "value" => number_format(
-                                $checkout['total_price'],
-                                2,
-                                '.',
-                                ''
-                            )
-                        ]
+                        "value" => number_format(
+                            $checkout['total_price'],
+                            2,
+                            '.',
+                            ''
+                        )
                     ]
                 ]
-            ]);
+            ]
+        ]);
 
         if (!empty($response['id']) && isset($response['links'])) {
             foreach ($response['links'] as $link) {
@@ -284,8 +284,7 @@ class BookingController extends Controller
 
     public function PaypalSuccess(Request $request)
     {
-        if (!Session::has('checkout_data') || !Session::has('book_date'))
-        {
+        if (!Session::has('checkout_data') || !Session::has('book_date')) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Session expired');
@@ -399,9 +398,13 @@ class BookingController extends Controller
 
             Session::forget('checkout_data');
 
-            return redirect()
-                ->route('place.order')
-                ->with('success', 'Paypal Payment Successfully');
+            // Notification
+            $notification = array(
+                'message' => 'Paypal Payment Successfully',
+                'alert-type' => 'success'
+            );
+
+            return redirect()->route('place.order')->with($notification);
         }
 
         return redirect()
@@ -424,6 +427,15 @@ class BookingController extends Controller
 // email: personal2026@personal.example.com
 // password: 12345678
 
+// email: tungdev2k4@personal.example.com
+// password: 12345678
+
 // paypal tk business
 // business2026@business.example.com
 // 12345678
+
+// email: tungdevbussiness@business.example.com
+// password: 12345678
+
+// Kiểm tra lịch sử thanh toán paypal
+// https://www.sandbox.paypal.com/myaccount/summary

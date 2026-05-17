@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/pdo_mysql_polyfill.php';
+
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\RedirectIfAdmin;
 use App\Http\Middleware\Role;

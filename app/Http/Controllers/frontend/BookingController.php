@@ -420,6 +420,10 @@ class BookingController extends Controller
     }
 }
 
-// test Paypal 
+// test Paypal tk personal
 // email: personal2026@personal.example.com
 // password: 12345678
+
+// paypal tk business
+// business2026@business.example.com
+// 12345678

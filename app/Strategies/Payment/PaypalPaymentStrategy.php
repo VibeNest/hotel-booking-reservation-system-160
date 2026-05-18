@@ -8,7 +8,7 @@ class PaypalPaymentStrategy implements PaymentStrategy
 {
     public function pay($request, $booking)
     {
-        $provider = new PayPalClient();
+        $provider = new PayPalClient;
 
         $provider->setApiCredentials(config('paypal'));
 
@@ -17,21 +17,21 @@ class PaypalPaymentStrategy implements PaymentStrategy
         $provider->setAccessToken($token);
 
         $response = $provider->createOrder([
-            "intent" => "CAPTURE",
+            'intent' => 'CAPTURE',
 
-            "application_context" => [
-                "return_url" => route('paypal.success'),
-                "cancel_url" => route('paypal.cancel'),
+            'application_context' => [
+                'return_url' => route('paypal.success'),
+                'cancel_url' => route('paypal.cancel'),
             ],
 
-            "purchase_units" => [
+            'purchase_units' => [
                 [
-                    "amount" => [
-                        "currency_code" => "USD",
-                        "value" => $booking['total_price']
-                    ]
-                ]
-            ]
+                    'amount' => [
+                        'currency_code' => 'USD',
+                        'value' => $booking['total_price'],
+                    ],
+                ],
+            ],
         ]);
 
         if (isset($response['id']) && $response['id'] != null) {

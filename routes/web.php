@@ -95,7 +95,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::post('/update/roomnumber/{id}', 'UpdateRoomNumber')
             ->name('update.roomnumber');
 
-        //Delete
+        // Delete
         Route::get('/delete/room/number/{id}', 'DeleteRoomNumber')->name('delete.room.number');
     });
 });
@@ -114,14 +114,19 @@ Route::controller(FrontendRoomController::class)->group(function () {
     Route::get('/check_room_availability', 'CheckRoomAvailability')->name('check_room_availability');
 });
 
+// VNPay return callback (no auth required)
+Route::get('/vnpay-return', [BookingController::class, 'vnpayReturn'])->name('vnpay.return');
+
+// Place Order success page (no auth required)
+Route::get('/place/order', [BookingController::class, 'PlaceOrder'])->name('place.order');
+
 // Auth Middleware, User mush have login for access this routes
 Route::middleware('auth')->group(function () {
     // Checkout All Routes
     Route::controller(BookingController::class)->group(function () {
         Route::get('/checkout', 'Checkout')->name('checkout');
         Route::post('/booking/store/{id}', 'BookingStore')->name('user_booking_store');
-        // Place Order when success
-        Route::get('/place/order', 'PlaceOrder')->name('place.order');
+        Route::post('/vnpay-payment', 'vnpayPayment')->name('vnpay.payment');
         // Payment by cash
         Route::post('/checkout/store', 'CheckoutStore')->name('checkout.store');
         // Payment by paypal
@@ -133,4 +138,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

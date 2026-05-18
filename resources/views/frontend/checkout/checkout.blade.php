@@ -278,7 +278,7 @@
                                     </button>
 
                                     <button type="submit" name="payment_method" value="VN Pay"
-                                        class="direct-payment-btn vnpay-btn">
+                                        formaction="{{ route('vnpay.payment') }}" class="direct-payment-btn vnpay-btn">
                                         <i class="fa-solid fa-wallet payment-icon"></i>
                                         <span>Pay with VN Pay</span>
                                     </button>

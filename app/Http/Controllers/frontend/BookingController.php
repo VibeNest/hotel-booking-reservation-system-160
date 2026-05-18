@@ -11,6 +11,8 @@ use App\Models\Booking;
 use App\Models\RoomBookedDate;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Auth;
+use Omnipay\Common\Message\RedirectResponseInterface;
+use Omnipay\Omnipay;
 
 class BookingController extends Controller
 {
@@ -185,5 +187,166 @@ class BookingController extends Controller
         );
 
         return redirect()->route('place.order')->with($notification);
+    }
+
+    public function vnpayPayment(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'country' => 'required',
+            'phone' => 'required',
+            'address' => 'required',
+            'state' => 'required',
+            'zip_code' => 'required',
+            'payment_method' => 'required',
+        ]);
+
+        $book_data = Session::get('book_date');
+        if (empty($book_data)) {
+            $notification = array(
+                'message' => 'Missing booking session data.',
+                'alert-type' => 'error'
+            );
+
+            return redirect()->route('checkout')->with($notification);
+        }
+
+        $room = Room::find($book_data['room_id']);
+        if (!$room) {
+            $notification = array(
+                'message' => 'Room not found.',
+                'alert-type' => 'error'
+            );
+
+            return redirect()->route('checkout')->with($notification);
+        }
+
+        $toDate = Carbon::parse($book_data['check_in']);
+        $fromDate = Carbon::parse($book_data['check_out']);
+        $total_nights = $toDate->diffInDays($fromDate);
+
+        $subtotal = $room->price * $total_nights * $book_data['number_of_rooms'];
+        $discount = ($room->discount / 100) * $subtotal;
+        $total_price = $subtotal - $discount;
+
+        $code = rand(100000000, 999999999);
+
+        Session::put('vnpay_booking_data', [
+            'rooms_id' => $room->id,
+            'user_id' => Auth::id(),
+            'check_in' => $book_data['check_in'],
+            'check_out' => $book_data['check_out'],
+            'person' => $book_data['person'],
+            'number_of_rooms' => $book_data['number_of_rooms'],
+            'total_night' => $total_nights,
+            'actual_price' => $room->price,
+            'subtotal' => $subtotal,
+            'discount' => $discount,
+            'total_price' => $total_price,
+            'payment_method' => 'VN Pay',
+            'code' => $code,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'country' => $validated['country'],
+            'state' => $validated['state'],
+            'zip_code' => $validated['zip_code'],
+            'address' => $validated['address'],
+        ]);
+
+        $gateway = Omnipay::create('VnPay');
+        $gateway->initialize([
+            'tmnCode' => config('omnipay.gateways.VNPay.tmn_code'),
+            'hashSecret' => config('omnipay.gateways.VNPay.hash_secret'),
+            'returnUrl' => config('omnipay.gateways.VNPay.return_url'),
+            'testMode' => (bool) config('omnipay.gateways.VNPay.test_mode'),
+        ]);
+
+        $response = $gateway->purchase([
+            'txnRef' => (string) $code,
+            'orderInfo' => 'Thanh toan don hang ' . $code,
+            'amount' => (int) round($total_price),
+            'currency' => config('omnipay.gateways.VNPay.currency', 'VND'),
+            'returnUrl' => config('omnipay.gateways.VNPay.return_url'),
+            'locale' => config('omnipay.gateways.VNPay.locale', 'vi'),
+        ])->send();
+
+        if ($response->isRedirect() && $response instanceof RedirectResponseInterface) {
+            return redirect()->away($response->getRedirectUrl());
+        }
+
+        return back()->with('error', 'Unable to create VNPay payment request.');
+    }
+
+    public function vnpayReturn(Request $request)
+    {
+        $gateway = Omnipay::create('VnPay');
+        $gateway->initialize([
+            'tmnCode' => config('omnipay.gateways.VNPay.tmn_code'),
+            'hashSecret' => config('omnipay.gateways.VNPay.hash_secret'),
+            'testMode' => (bool) config('omnipay.gateways.VNPay.test_mode'),
+        ]);
+
+        $response = $gateway->completePurchase()->send();
+
+        if ($response->isSuccessful()) {
+            $bookingData = Session::get('vnpay_booking_data');
+            if (empty($bookingData)) {
+                return redirect()->route('place.order')->with('error', 'Missing VNPay booking data.');
+            }
+
+            $booking = new Booking();
+            $booking->rooms_id = $bookingData['rooms_id'];
+            $booking->user_id = $bookingData['user_id'];
+            $booking->check_in = $bookingData['check_in'];
+            $booking->check_out = $bookingData['check_out'];
+            $booking->person = $bookingData['person'];
+            $booking->number_of_rooms = $bookingData['number_of_rooms'];
+            $booking->total_night = $bookingData['total_night'];
+            $booking->actual_price = $bookingData['actual_price'];
+            $booking->subtotal = $bookingData['subtotal'];
+            $booking->discount = $bookingData['discount'];
+            $booking->total_price = $bookingData['total_price'];
+            $booking->payment_method = $bookingData['payment_method'];
+            $booking->payment_status = 1;
+            $booking->transaction_id = $response->getTransactionReference() ?? '';
+            $booking->code = $bookingData['code'];
+            $booking->status = 0;
+            $booking->name = $bookingData['name'];
+            $booking->email = $bookingData['email'];
+            $booking->phone = $bookingData['phone'];
+            $booking->country = $bookingData['country'];
+            $booking->state = $bookingData['state'];
+            $booking->zip_code = $bookingData['zip_code'];
+            $booking->address = $bookingData['address'];
+            $booking->created_at = Carbon::now();
+            $booking->save();
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $bookingData['check_in']);
+            $endDate = Carbon::createFromFormat('d-m-Y', $bookingData['check_out']);
+            $endDate = $endDate->subDay();
+
+            $day_period = CarbonPeriod::create($startDate, $endDate);
+            foreach ($day_period as $period) {
+                $booked_dates = new RoomBookedDate();
+                $booked_dates->booking_id = $booking->id;
+                $booked_dates->room_id = $bookingData['rooms_id'];
+                $booked_dates->book_date = $period->format('Y-m-d');
+                $booked_dates->save();
+            }
+
+            Session::forget('vnpay_booking_data');
+            Session::forget('book_date');
+
+            $notification = array(
+                'message' => 'Add Booking Successfully',
+                'alert-type' => 'success'
+            );
+
+            return redirect()->route('place.order')->with($notification);
+        }
+
+        return redirect()->route('place.order')->with('error', 'VNPay payment failed: ' . $response->getMessage());
     }
 }

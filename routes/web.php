@@ -122,6 +122,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/booking/store/{id}', 'BookingStore')->name('user_booking_store');
         // Place Order when success
         Route::get('/place/order', 'PlaceOrder')->name('place.order');
+        Route::post('/vnpay-payment', 'vnpayPayment')->name('vnpay.payment');
+        Route::get('/vnpay-return', 'vnpayReturn')->name('vnpay.return');
         // Payment by cash
         Route::post('/checkout/store', [BookingController::class, 'checkoutStore'])->name('checkout.store');
     });

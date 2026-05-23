@@ -1,6 +1,8 @@
 @extends('frontend.home_page')
 
 @section('home')
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <!-- Inner Banner -->
     <div class="inner-banner inner-bg7">
         <div class="container">
@@ -21,8 +23,10 @@
     <!-- Checkout Area -->
     <section class="checkout-area pt-100 pb-70">
         <div class="container">
-            <form method="POST" action="{{ route('checkout.store') }}">
+            <form role="form" method="POST" action="{{ route('checkout.store') }}" class="stripe_form require-validation"
+                data-cc-on-file="false" data-stripe-publishable-key="{{ env('STRIPE_KEY') }}">
                 @csrf
+
                 <div class="row">
                     <div class="col-lg-8">
                         <div class="billing-details">
@@ -34,7 +38,7 @@
                                         <label>Country <span class="required">*</span></label>
                                         <div class="select-box">
                                             <select class="form-control" name="country">
-                                                <option value="Vietnam">Vietnam</option>
+                                                <option value="Viet Nam">Viet Nam</option>
                                                 <option value="China">China</option>
                                                 <option value="United Kingdom">United Kingdom</option>
                                                 <option value="Germany">Germany</option>
@@ -236,7 +240,8 @@
                                 @endif
 
                                 <label class="payment-card">
-                                    <input type="radio" name="payment_method" id="cash-on-delivery" value="COD">
+                                    <input type="radio" class="pay_method" name="payment_method" id="cash-on-delivery"
+                                        value="COD">
 
                                     <div class="payment-content">
                                         <div class="payment-left">
@@ -249,7 +254,7 @@
                                 </label>
 
                                 <label class="payment-card">
-                                    <input type="radio" name="payment_method" id="stripe" value="Stripe">
+                                    <input type="radio" class="pay_method" name="payment_method" id="stripe" value="Stripe">
 
                                     <div class="payment-content">
                                         <div class="payment-left">
@@ -261,10 +266,46 @@
                                     </div>
                                 </label>
 
+                                <div id="stripe_pay" class="stripe-payment-form d-none">
+
+                                    <div class="stripe-header">
+                                        <i class="fa-brands fa-cc-stripe"></i>
+                                        <span>Secure Stripe Payment</span>
+                                    </div>
+
+                                    <div class="stripe-card-box">
+
+                                        <div class="form-group mb-3">
+                                            <label class="stripe-label">
+                                                Name on Card
+                                            </label>
+
+                                            <input type="text" id="card-holder-name" class="form-control stripe-input"
+                                                placeholder="John Doe">
+                                        </div>
+
+                                        <div class="form-group">
+
+                                            <label class="stripe-label">
+                                                Card Information
+                                            </label>
+
+                                            <div id="card-element"></div>
+
+                                            <small class="text-muted d-block mt-2">
+                                                Test card: 4242 4242 4242 4242
+                                            </small>
+
+                                            <div id="card-errors" class="text-danger mt-2"></div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="payment-actions">
-                                <button type="submit" class="order-btn three place-order-btn">
+                                <button type="submit" class="order-btn three place-order-btn" id="myButton">
                                     Place to Order
                                 </button>
 
@@ -291,6 +332,251 @@
         </div>
     </section>
     <!-- Checkout Area End -->
+
+    <style>
+        .hide {
+            display: none
+        }
+    </style>
+
+    <script src="https://js.stripe.com/v3/"></script>
+
+    {{--
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $(".pay_method").on('click', function () {
+                var payment_method = $(this).val();
+                if (payment_method == 'Stripe') {
+                    $("#stripe_pay").removeClass('d-none');
+                } else {
+                    $("#stripe_pay").addClass('d-none');
+                }
+            });
+
+        });
+
+        $(function () {
+            var $form = $(".require-validation");
+            $('form.require-validation').bind('submit', function (e) {
+                var pay_method = $('input[name="payment_method"]:checked').val();
+                if (pay_method == undefined) {
+                    alert('Please select a payment method');
+                    return false;
+                } else if (pay_method == 'COD') {
+
+                } else {
+                    document.getElementById('myButton').disabled = true;
+
+                    var $form = $(".require-validation"),
+                        inputSelector = ['input[type=email]', 'input[type=password]',
+                            'input[type=text]', 'input[type=file]',
+                            'textarea'].join(', '),
+                        $inputs = $form.find('.required').find(inputSelector),
+                        $errorMessage = $form.find('div.error'),
+                        valid = true;
+                    $errorMessage.addClass('hide');
+
+                    $('.has-error').removeClass('has-error');
+                    $inputs.each(function (i, el) {
+                        var $input = $(el);
+                        if ($input.val() === '') {
+                            $input.parent().addClass('has-error');
+                            $errorMessage.removeClass('hide');
+                            e.preventDefault();
+                        }
+                    });
+
+                    if (!$form.data('cc-on-file')) {
+                        e.preventDefault();
+                        Stripe.setPublishableKey($form.data('stripe-publishable-key'));
+                        Stripe.createToken({
+                            number: $('.card-number').val(),
+                            cvc: $('.card-cvc').val(),
+                            exp_month: $('.card-expiry-month').val(),
+                            exp_year: $('.card-expiry-year').val()
+                        }, stripeResponseHandler);
+                    }
+                }
+            });
+
+            function stripeResponseHandler(status, response) {
+                if (response.error) {
+                    document.getElementById('myButton').disabled = false;
+                    $('.error')
+                        .removeClass('hide')
+                        .find('.alert')
+                        .text(response.error.message);
+                } else {
+                    document.getElementById('myButton').disabled = true;
+                    document.getElementById('myButton').value = 'Please Wait...';
+                    // token contains id, last4, and card type
+                    var token = response['id'];
+                    // insert the token into the form so it gets submitted to the server
+                    $form.find('input[type=text]').empty();
+                    $form.append("<input type='hidden' name='stripeToken' value='" + token + "'/>");
+                    $form.get(0).submit();
+                }
+            }
+        });
+    </script> --}}
+
+    <script>
+
+        // SHOW / HIDE STRIPE FORM
+
+        $(document).ready(function () {
+
+            $(".pay_method").on('change', function () {
+
+                let payment_method = $(this).val();
+
+                if (payment_method === 'Stripe') {
+
+                    $("#stripe_pay").removeClass('d-none');
+
+                } else {
+
+                    $("#stripe_pay").addClass('d-none');
+
+                }
+
+            });
+
+        });
+
+        // STRIPE V3
+
+        const stripe = Stripe("{{ env('STRIPE_KEY') }}");
+
+        const elements = stripe.elements();
+
+        const card = elements.create('card', {
+            style: {
+                base: {
+                    color: '#32325d',
+                    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                    fontSmoothing: 'antialiased',
+                    fontSize: '16px',
+
+                    '::placeholder': {
+                        color: '#aab7c4'
+                    }
+                },
+
+                invalid: {
+                    color: '#dc3545',
+                    iconColor: '#dc3545'
+                }
+            }
+        });
+
+        card.mount('#card-element');
+
+        // REALTIME ERROR
+
+        card.on('change', function (event) {
+
+            const displayError =
+                document.getElementById('card-errors');
+
+            if (event.error) {
+
+                displayError.textContent =
+                    event.error.message;
+
+            } else {
+
+                displayError.textContent = '';
+            }
+        });
+
+        // FORM SUBMIT
+
+        const form =
+            document.querySelector('.stripe_form');
+
+        form.addEventListener('submit', async function (e) {
+
+            const selectedPayment =
+                document.querySelector(
+                    'input[name="payment_method"]:checked'
+                );
+
+            // NO PAYMENT
+
+            if (!selectedPayment) {
+
+                e.preventDefault();
+
+                alert('Please select payment method');
+
+                return;
+            }
+
+            // COD
+
+            if (selectedPayment.value === 'COD') {
+
+                return true;
+            }
+
+            // STRIPE
+
+            if (selectedPayment.value === 'Stripe') {
+
+                e.preventDefault();
+
+                const submitBtn =
+                    document.getElementById('myButton');
+
+                submitBtn.disabled = true;
+
+                submitBtn.innerHTML =
+                    'Processing...';
+
+                const { token, error } =
+                    await stripe.createToken(card);
+
+                if (error) {
+
+                    document.getElementById(
+                        'card-errors'
+                    ).textContent = error.message;
+
+                    submitBtn.disabled = false;
+
+                    submitBtn.innerHTML =
+                        'Place to Order';
+
+                } else {
+
+                    const hiddenInput =
+                        document.createElement('input');
+
+                    hiddenInput.setAttribute(
+                        'type',
+                        'hidden'
+                    );
+
+                    hiddenInput.setAttribute(
+                        'name',
+                        'stripeToken'
+                    );
+
+                    hiddenInput.setAttribute(
+                        'value',
+                        token.id
+                    );
+
+                    form.appendChild(hiddenInput);
+
+                    form.submit();
+                }
+            }
+        });
+
+    </script>
 @endsection
 
 <style>
@@ -517,5 +803,22 @@
         .direct-payment-actions {
             grid-template-columns: 1fr;
         }
+    }
+
+    #card-element {
+        padding: 16px;
+        border: 1px solid #dcdfe6;
+        border-radius: 12px;
+        background: #fff;
+        transition: 0.3s;
+    }
+
+    #card-element.StripeElement--focus {
+        border-color: #635bff;
+        box-shadow: 0 0 0 4px rgba(99, 91, 255, 0.12);
+    }
+
+    #card-element.StripeElement--invalid {
+        border-color: #dc3545;
     }
 </style>

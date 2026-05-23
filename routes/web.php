@@ -126,9 +126,16 @@ Route::middleware('auth')->group(function () {
     Route::controller(BookingController::class)->group(function () {
         Route::get('/checkout', 'Checkout')->name('checkout');
         Route::post('/booking/store/{id}', 'BookingStore')->name('user_booking_store');
-        Route::post('/vnpay-payment', 'vnpayPayment')->name('vnpay.payment');
+
         // Payment by cash
         Route::post('/checkout/store', 'CheckoutStore')->name('checkout.store');
+
+        // Payment by Stripe
+        Route::match(['get', 'post'], '/stripe_pay', [BookingController::class, 'stripe_pay'])->name('stripe_pay');
+
+        // Payment by VNPay
+        Route::post('/vnpay-payment', 'vnpayPayment')->name('vnpay.payment');
+
         // Payment by paypal
         Route::prefix('paypal')->group(function () {
             Route::get('/payment', 'PaypalPayment')->name('paypal.payment');
@@ -138,4 +145,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

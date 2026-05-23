@@ -34,7 +34,7 @@
                                         </a>
                                     </h3>
 
-                                    <span>{{ $room->price ?? 0 }} / Per Night </span>
+                                    <span>${{ $room->price ?? 0 }} / Per Night </span>
 
                                     <div class="rating">
                                         <i class='bx bxs-star'></i>

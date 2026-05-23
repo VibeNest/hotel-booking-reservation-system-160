@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Session;
 use Omnipay\Common\Message\RedirectResponseInterface;
 use Omnipay\Omnipay;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
+use Stripe;
 
 class BookingController extends Controller
 {
@@ -87,11 +88,11 @@ class BookingController extends Controller
     // Checkout Store Method
     public function CheckoutStore(Request $request)
     {
+        // dd(env('STRIPE_SECRET'));
+
         // Check session tồn tại
-        if (! Session::has('book_date')) {
-            return redirect()
-                ->route('checkout')
-                ->with('error', 'Session expired');
+        if (!Session::has('book_date')) {
+            return redirect()->route('checkout')->with('error', 'Session expired');
         }
 
         $request->validate([
@@ -129,10 +130,9 @@ class BookingController extends Controller
         // Generate booking code 9 số
         $code = rand(100000000, 999999999);
 
+        // Nếu chọn thanh toán bằng Paypal thì lưu dữ liệu vào session và redirect sang trang Paypal
         if ($request->payment_method == 'paypal') {
-
             Session::put('checkout_data', [
-
                 'name' => $request->name,
                 'email' => $request->email,
                 'country' => $request->country,
@@ -140,16 +140,42 @@ class BookingController extends Controller
                 'address' => $request->address,
                 'state' => $request->state,
                 'zip_code' => $request->zip_code,
-
                 'subtotal' => $subtotal,
                 'discount' => $discount,
                 'total_price' => $total_price,
                 'total_nights' => $total_nights,
-
             ]);
 
-            return redirect()
-                ->route('paypal.payment');
+            return redirect()->route('paypal.payment');
+        }
+
+        // Xử lý thanh toán Stripe
+        if ($request->payment_method == "Stripe") {
+            Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+            $s_pay = Stripe\Charge::create([
+                'amount' => $total_price * 100, // Số tiền tính bằng cent
+                'currency' => 'usd',
+                'source' => $request->stripeToken,
+                'description' => 'Payment For Booking. Booking Number: ' . $code,
+            ]);
+
+            if ($s_pay['status'] == 'succeeded') {
+                // Nếu thanh toán thành công thì lưu trạng thái thanh toán và transaction_id vào database
+                $payment_status = 1;
+                $transaction_id = $s_pay['id'];
+            } else {
+                // Nếu thanh toán thất bại thì redirect về trang chủ với thông báo lỗi
+                $notification = [
+                    'message' => 'Sorry! Payment Failed.',
+                    'alert-type' => 'error',
+                ];
+
+                return redirect('/')->with($notification);
+            }
+        } else {
+            // Nếu chọn thanh toán bằng tiền mặt thì lưu trạng thái thanh toán là 0 và transaction_id là rỗng
+            $payment_status = 0;
+            $transaction_id = '';
         }
 
         // Insert Data Booking
@@ -173,8 +199,8 @@ class BookingController extends Controller
         $booking->total_price = $total_price;
 
         $booking->payment_method = $request->payment_method;
-        $booking->transaction_id = '';
-        $booking->payment_status = 0;
+        $booking->transaction_id = $transaction_id;
+        $booking->payment_status = $payment_status;
 
         $booking->name = $request->name;
         $booking->email = $request->email;
@@ -245,7 +271,7 @@ class BookingController extends Controller
         }
 
         $room = Room::find($book_data['room_id']);
-        if (! $room) {
+        if (!$room) {
             $notification = [
                 'message' => 'Room not found.',
                 'alert-type' => 'error',
@@ -301,7 +327,7 @@ class BookingController extends Controller
 
         $response = $gateway->purchase([
             'txnRef' => (string) $code,
-            'orderInfo' => 'Thanh toan don hang '.$code,
+            'orderInfo' => 'Thanh toan don hang ' . $code,
             'amount' => (int) round($total_price),
             'currency' => config('omnipay.gateways.VNPay.currency', 'VND'),
             'returnUrl' => route('vnpay.return'),
@@ -323,18 +349,18 @@ class BookingController extends Controller
         }
 
         $bookingCode = $data['vnp_TxnRef'] ?? null;
-        if (! $bookingCode) {
+        if (!$bookingCode) {
             return redirect()->route('place.order')->with('error', 'Missing VNPay transaction reference.');
         }
 
         $booking = Booking::where('code', $bookingCode)->first();
-        if (! $booking) {
+        if (!$booking) {
             return redirect()->route('place.order')->with('error', 'Booking not found for VNPay response.');
         }
 
         $hashSecret = config('omnipay.gateways.VNPay.hash_secret');
         $secureHash = $data['vnp_SecureHash'] ?? '';
-        if (! $hashSecret || ! $secureHash) {
+        if (!$hashSecret || !$secureHash) {
             return redirect()->route('place.order')->with('error', 'Missing VNPay signature data.');
         }
 
@@ -346,8 +372,8 @@ class BookingController extends Controller
         $hashStringEncoded = '';
         foreach ($hashData as $key => $value) {
             if (strpos($key, 'vnp_') === 0 && $value !== '' && $value !== null) {
-                $hashString .= $key.'='.$value.'&';
-                $hashStringEncoded .= urlencode($key).'='.urlencode((string) $value).'&';
+                $hashString .= $key . '=' . $value . '&';
+                $hashStringEncoded .= urlencode($key) . '=' . urlencode((string) $value) . '&';
             }
         }
 
@@ -361,7 +387,7 @@ class BookingController extends Controller
             hash_equals(strtolower($secureHash), strtolower($calculatedHash)) ||
             hash_equals(strtolower($secureHash), strtolower($calculatedHashEncoded));
 
-        if (! $isValidSignature) {
+        if (!$isValidSignature) {
             return redirect()->route('place.order')->with('error', 'Invalid VNPay signature.');
         }
 
@@ -392,7 +418,7 @@ class BookingController extends Controller
         $booking->save();
 
         $alreadyBooked = RoomBookedDate::where('booking_id', $booking->id)->exists();
-        if (! $alreadyBooked) {
+        if (!$alreadyBooked) {
             $startDate = Carbon::createFromFormat('d-m-Y', $booking->check_in);
             $endDate = Carbon::createFromFormat('d-m-Y', $booking->check_out);
             $endDate = $endDate->subDay();
@@ -422,14 +448,14 @@ class BookingController extends Controller
     {
         $checkout = Session::get('checkout_data');
 
-        if (! $checkout) {
+        if (!$checkout) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Session expired');
         }
 
         if (
-            ! isset($checkout['total_price']) ||
+            !isset($checkout['total_price']) ||
             $checkout['total_price'] <= 0
         ) {
             return redirect()
@@ -466,7 +492,7 @@ class BookingController extends Controller
             ],
         ]);
 
-        if (! empty($response['id']) && isset($response['links'])) {
+        if (!empty($response['id']) && isset($response['links'])) {
             foreach ($response['links'] as $link) {
                 if ($link['rel'] == 'approve') {
                     return redirect()
@@ -483,13 +509,13 @@ class BookingController extends Controller
 
     public function PaypalSuccess(Request $request)
     {
-        if (! Session::has('checkout_data') || ! Session::has('book_date')) {
+        if (!Session::has('checkout_data') || !Session::has('book_date')) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Session expired');
         }
 
-        if (! $request->token || empty($request->token)) {
+        if (!$request->token || empty($request->token)) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Invalid PayPal token');
@@ -517,7 +543,7 @@ class BookingController extends Controller
             $book_data = Session::get('book_date');
             $checkout = Session::get('checkout_data');
             $room = Room::find($book_data['room_id']);
-            if (! $room) {
+            if (!$room) {
                 Session::forget('book_date');
                 Session::forget('checkout_data');
 

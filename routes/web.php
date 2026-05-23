@@ -117,9 +117,6 @@ Route::controller(FrontendRoomController::class)->group(function () {
 // VNPay return callback (no auth required)
 Route::get('/vnpay-return', [BookingController::class, 'vnpayReturn'])->name('vnpay.return');
 
-// Place Order success page (no auth required)
-Route::get('/place/order', [BookingController::class, 'PlaceOrder'])->name('place.order');
-
 // Auth Middleware, User mush have login for access this routes
 Route::middleware('auth')->group(function () {
     // Checkout All Routes
@@ -142,6 +139,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/success', 'PaypalSuccess')->name('paypal.success');
             Route::get('/cancel', 'PaypalCancel')->name('paypal.cancel');
         });
+
+        // Place Order success page 
+        Route::get('/place/order', [BookingController::class, 'PlaceOrder'])->name('place.order');
     });
 });
 

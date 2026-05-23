@@ -341,108 +341,18 @@
 
     <script src="https://js.stripe.com/v3/"></script>
 
-    {{--
-    <script type="text/javascript">
-
-        $(document).ready(function () {
-            $(".pay_method").on('click', function () {
-                var payment_method = $(this).val();
-                if (payment_method == 'Stripe') {
-                    $("#stripe_pay").removeClass('d-none');
-                } else {
-                    $("#stripe_pay").addClass('d-none');
-                }
-            });
-
-        });
-
-        $(function () {
-            var $form = $(".require-validation");
-            $('form.require-validation').bind('submit', function (e) {
-                var pay_method = $('input[name="payment_method"]:checked').val();
-                if (pay_method == undefined) {
-                    alert('Please select a payment method');
-                    return false;
-                } else if (pay_method == 'COD') {
-
-                } else {
-                    document.getElementById('myButton').disabled = true;
-
-                    var $form = $(".require-validation"),
-                        inputSelector = ['input[type=email]', 'input[type=password]',
-                            'input[type=text]', 'input[type=file]',
-                            'textarea'].join(', '),
-                        $inputs = $form.find('.required').find(inputSelector),
-                        $errorMessage = $form.find('div.error'),
-                        valid = true;
-                    $errorMessage.addClass('hide');
-
-                    $('.has-error').removeClass('has-error');
-                    $inputs.each(function (i, el) {
-                        var $input = $(el);
-                        if ($input.val() === '') {
-                            $input.parent().addClass('has-error');
-                            $errorMessage.removeClass('hide');
-                            e.preventDefault();
-                        }
-                    });
-
-                    if (!$form.data('cc-on-file')) {
-                        e.preventDefault();
-                        Stripe.setPublishableKey($form.data('stripe-publishable-key'));
-                        Stripe.createToken({
-                            number: $('.card-number').val(),
-                            cvc: $('.card-cvc').val(),
-                            exp_month: $('.card-expiry-month').val(),
-                            exp_year: $('.card-expiry-year').val()
-                        }, stripeResponseHandler);
-                    }
-                }
-            });
-
-            function stripeResponseHandler(status, response) {
-                if (response.error) {
-                    document.getElementById('myButton').disabled = false;
-                    $('.error')
-                        .removeClass('hide')
-                        .find('.alert')
-                        .text(response.error.message);
-                } else {
-                    document.getElementById('myButton').disabled = true;
-                    document.getElementById('myButton').value = 'Please Wait...';
-                    // token contains id, last4, and card type
-                    var token = response['id'];
-                    // insert the token into the form so it gets submitted to the server
-                    $form.find('input[type=text]').empty();
-                    $form.append("<input type='hidden' name='stripeToken' value='" + token + "'/>");
-                    $form.get(0).submit();
-                }
-            }
-        });
-    </script> --}}
-
     <script>
-
         // SHOW / HIDE STRIPE FORM
-
         $(document).ready(function () {
-
             $(".pay_method").on('change', function () {
-
                 let payment_method = $(this).val();
 
                 if (payment_method === 'Stripe') {
-
                     $("#stripe_pay").removeClass('d-none');
-
                 } else {
-
                     $("#stripe_pay").addClass('d-none');
-
                 }
-
             });
-
         });
 
         // STRIPE V3
@@ -476,98 +386,70 @@
         // REALTIME ERROR
 
         card.on('change', function (event) {
-
-            const displayError =
-                document.getElementById('card-errors');
+            const displayError = document.getElementById('card-errors');
 
             if (event.error) {
-
-                displayError.textContent =
-                    event.error.message;
-
+                displayError.textContent = event.error.message;
             } else {
-
                 displayError.textContent = '';
             }
         });
 
         // FORM SUBMIT
 
-        const form =
-            document.querySelector('.stripe_form');
+        const form = document.querySelector('.stripe_form');
 
         form.addEventListener('submit', async function (e) {
+            // BUTTON ĐƯỢC CLICK
+            const clickedButton = document.activeElement;
 
-            const selectedPayment =
-                document.querySelector(
-                    'input[name="payment_method"]:checked'
-                );
+            // PAYPAL / VNPAY => CHO SUBMIT THẲNG
+            if (clickedButton && (clickedButton.value === 'paypal' || clickedButton.value === 'VN Pay')) {
+                return true;
+            }
+
+            // PLACE ORDER BUTTON
+            const selectedPayment = document.querySelector('input[name="payment_method"]:checked');
 
             // NO PAYMENT
-
             if (!selectedPayment) {
-
                 e.preventDefault();
-
                 alert('Please select payment method');
-
                 return;
             }
 
             // COD
 
             if (selectedPayment.value === 'COD') {
-
                 return true;
             }
 
             // STRIPE
-
             if (selectedPayment.value === 'Stripe') {
-
                 e.preventDefault();
 
-                const submitBtn =
-                    document.getElementById('myButton');
+                const submitBtn = document.getElementById('myButton');
 
                 submitBtn.disabled = true;
 
-                submitBtn.innerHTML =
-                    'Processing...';
+                submitBtn.innerHTML = 'Processing...';
 
-                const { token, error } =
-                    await stripe.createToken(card);
+                const { token, error } = await stripe.createToken(card);
 
                 if (error) {
-
-                    document.getElementById(
-                        'card-errors'
-                    ).textContent = error.message;
+                    document.getElementById('card-errors').textContent = error.message;
 
                     submitBtn.disabled = false;
 
-                    submitBtn.innerHTML =
-                        'Place to Order';
-
+                    submitBtn.innerHTML = 'Place to Order';
                 } else {
+                    const hiddenInput = document.createElement('input');
 
-                    const hiddenInput =
-                        document.createElement('input');
+                    hiddenInput.setAttribute('type', 'hidden');
 
-                    hiddenInput.setAttribute(
-                        'type',
-                        'hidden'
-                    );
+                    hiddenInput.setAttribute('name', 'stripeToken');
 
-                    hiddenInput.setAttribute(
-                        'name',
-                        'stripeToken'
-                    );
-
-                    hiddenInput.setAttribute(
-                        'value',
-                        token.id
-                    );
+                    hiddenInput.setAttribute('value', token.id);
 
                     form.appendChild(hiddenInput);
 
@@ -575,7 +457,6 @@
                 }
             }
         });
-
     </script>
 @endsection
 

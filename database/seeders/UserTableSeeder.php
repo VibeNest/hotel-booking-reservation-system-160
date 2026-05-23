@@ -16,6 +16,8 @@ class UserTableSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'username' => 'admin',
+                'phone' => "0123456789",
+                'address' => "Hưng Yên",
                 'password' => Hash::make('12345678'),
                 'role' => 'admin',
                 'status' => '1',
@@ -28,6 +30,8 @@ class UserTableSeeder extends Seeder
             [
                 'name' => 'Instructor',
                 'username' => 'instructor',
+                'phone' => "0123456789",
+                'address' => "Hưng Yên",
                 'password' => Hash::make('12345678'),
                 'role' => 'instructor',
                 'status' => '1',
@@ -40,6 +44,8 @@ class UserTableSeeder extends Seeder
             [
                 'name' => 'User',
                 'username' => 'user',
+                'phone' => "0123456789",
+                'address' => "Hưng Yên",
                 'password' => Hash::make('12345678'),
                 'role' => 'user',
                 'status' => '1',

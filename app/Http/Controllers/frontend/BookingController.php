@@ -82,14 +82,25 @@ class BookingController extends Controller
     // Place Order Method
     public function PlaceOrder()
     {
-        return view('frontend.checkout.place_order');
+        // Lấy booking mới nhất của user đang đăng nhập
+        $booking = Auth::user()->bookings()->latest()->first();
+
+        // Không tìm thấy booking khi thanh toán 
+        if (!$booking) {
+            $notification = [
+                'message' => 'No Booking Found!',
+                'alert-type' => 'error',
+            ];
+
+            return redirect('/')->with($notification);
+        }
+
+        return view('frontend.checkout.place_order', compact('booking'));
     }
 
     // Checkout Store Method
     public function CheckoutStore(Request $request)
     {
-        // dd(env('STRIPE_SECRET'));
-
         // Check session tồn tại
         if (!Session::has('book_date')) {
             return redirect()->route('checkout')->with('error', 'Session expired');

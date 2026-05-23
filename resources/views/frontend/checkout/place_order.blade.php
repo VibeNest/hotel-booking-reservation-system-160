@@ -42,21 +42,21 @@
                                 <div class="col-md-4">
                                     <div class="info-box">
                                         <h5>Order Number</h5>
-                                        <span>#ORD12345</span>
+                                        <span>#{{ $booking->code }}</span>
                                     </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <div class="info-box">
                                         <h5>Payment</h5>
-                                        <span>Confirmed</span>
+                                        <span>{{ $booking->payment_status == 1 ? 'Paid' : 'Unpaid' }}</span>
                                     </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <div class="info-box">
                                         <h5>Status</h5>
-                                        <span>Processing</span>
+                                        <span>{{ $booking->status == 1 ? 'Confirmed' : 'Pending' }}</span>
                                     </div>
                                 </div>
                             </div>

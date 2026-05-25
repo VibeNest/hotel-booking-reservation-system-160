@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Backend\AdminBookingController;
 use App\Http\Controllers\Backend\BookAreaController;
 use App\Http\Controllers\Backend\RoomController;
 use App\Http\Controllers\Backend\RoomTypeController;
@@ -97,6 +98,11 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 
         // Delete
         Route::get('/delete/room/number/{id}', 'DeleteRoomNumber')->name('delete.room.number');
+    });
+
+    // Admin Booking Management Routes
+    Route::controller(AdminBookingController::class)->group(function () {
+        Route::get('/booking/list', 'BookingList')->name('booking.list');
     });
 });
 

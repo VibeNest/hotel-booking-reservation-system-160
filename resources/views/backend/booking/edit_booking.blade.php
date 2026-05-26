@@ -79,8 +79,8 @@
                         <div class="d-flex align-items-center">
                             <div>
                                 <p class="mb-0 text-secondary">Booking Status</p>
-                                <h4 class="my-1 text-warning">@if ($editData->booking_status == 1) <span
-                                class="text-success">Active</span> @else
+                                <h4 class="my-1 text-warning">@if ($editData->status == 1) <span
+                                class="text-success">Complete</span> @else
                                         <span class="text-danger">Pending</span> @endif
                                 </h4>
                             </div>
@@ -261,7 +261,7 @@
                             </div>
 
                             <!-- Form -->
-                            <form action="" method="POST">
+                            <form action="{{ route('update.booking.status', $editData->id) }}" method="POST">
                                 @csrf
 
                                 <div class="row mt-5">

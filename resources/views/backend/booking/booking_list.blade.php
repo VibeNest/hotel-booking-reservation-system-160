@@ -58,7 +58,7 @@
                                     <td>@if ($item->payment_status == '1') <span class="badge bg-success">Complete</span> @else
                                     <span class="badge bg-danger">Pending</span> @endif
                                     </td>
-                                    <td>@if ($item->status == 1) <span class="badge bg-success">Active</span> @else
+                                    <td>@if ($item->status == 1) <span class="badge bg-success">Complete</span> @else
                                     <span class="badge bg-danger">Pending</span> @endif
                                     </td>
                                     <td>

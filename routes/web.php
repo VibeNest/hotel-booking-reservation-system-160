@@ -103,6 +103,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     // Admin Booking Management Routes
     Route::controller(AdminBookingController::class)->group(function () {
         Route::get('/booking/list', 'BookingList')->name('booking.list');
+        Route::get('/edit/booking/{id}', 'EditBooking')->name('edit_booking');
     });
 });
 

@@ -105,6 +105,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/booking/list', 'BookingList')->name('booking.list');
         Route::get('/edit/booking/{id}', 'EditBooking')->name('edit_booking');
         Route::post('/update/booking/status/{id}', 'UpdateBookingStatus')->name('update.booking.status');
+        Route::post('/update/booking/{id}', 'UpdateBooking')->name('update.booking');
     });
 });
 

@@ -4,7 +4,9 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -20,10 +22,11 @@ class User extends Authenticatable
      */
     protected $guarded = [];
 
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class, 'user_id');
-    }
+    /**
+     * Get all bookings for the user.
+     *
+     * 
+     */
 
     /**
      * The attributes that should be hidden for serialization.

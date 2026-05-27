@@ -83,7 +83,7 @@ class BookingController extends Controller
     public function PlaceOrder()
     {
         // Lấy booking mới nhất của user đang đăng nhập
-        $booking = Auth::user()->bookings()->latest()->first();
+        $booking = Booking::where('user_id', Auth::id())->latest()->first();
 
         // Không tìm thấy booking khi thanh toán 
         if (!$booking) {
@@ -620,7 +620,7 @@ class BookingController extends Controller
 
             foreach ($day_period as $period) {
 
-                $booked_dates = new RoomBookedDate;
+                $booked_dates = new RoomBookedDate();
 
                 $booked_dates->booking_id = $booking->id;
 

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\BookingRoomList;
 use App\Models\RoomBookedDate;
+use App\Models\RoomNumber;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
@@ -62,8 +64,10 @@ class AdminBookingController extends Controller
         $data->save();
 
         // Cập nhật ngày đặt phòng mới
-        // Xóa các ngày đã đặt cũ
-        RoomBookedDate::where('booking_id', $id)->delete(); 
+        // Xóa các ngày cũ đã đặt 
+        RoomBookedDate::where('booking_id', $id)->delete();
+        // Xóa các phòng đã gán khi thay đổi ngày đặt phòng
+        BookingRoomList::where('booking_id', $id)->delete();
 
         // Room Booked Dates
         $startDate = date('d-m-Y', strtotime($request->check_in));
@@ -84,10 +88,67 @@ class AdminBookingController extends Controller
         }
 
         $notification = array(
-                'message' => 'Updated booking successfully!',
+            'message' => 'Updated booking successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+    }
+
+    // Assign Room Method
+    public function AssignRoom($booking_id)
+    {
+        $booking = Booking::find($booking_id);
+
+        // Lấy danh sách tất cả ngày đã đặt của một booking
+        $booking_date_array = RoomBookedDate::where('booking_id', $booking_id)->pluck('book_date')->toArray();
+
+        // Kiểm tra các ngày booking bị trùng nhau => Lấy ra danh sách các booking_id
+        $check_date_booking_ids = RoomBookedDate::whereIn('book_date', $booking_date_array)
+            ->where('room_id', $booking->rooms_id)->distinct()->pluck('booking_id')->toArray();
+
+        // Lấy ra danh sách bookings bị trùng nhau
+        $bookings_ids = Booking::whereIn('id', $check_date_booking_ids)->pluck('id')->toArray();
+
+        // Lấy ra danh sách các số phòng đã đặt -> tương ứng các phòng
+        $assign_room_ids = BookingRoomList::whereIn('booking_id', $bookings_ids)->pluck('room_number_id')->toArray();
+
+        // Lấy ra danh sách các số phòng chưa được đặt (Chưa được gán)
+        $room_numbers = RoomNumber::where('rooms_id', $booking->rooms_id)->whereNotIn('id', $assign_room_ids)
+            ->where('status', 'Active')->get();
+
+        return view('backend.booking.assign_room', compact('booking', 'room_numbers'));
+    }
+
+    // Assign Room Store Method
+    public function AssignRoomStore($booking_id, $room_number_id)
+    {
+        $booking = Booking::find($booking_id);
+
+        // Đếm số lượng phòng đã gán của đơn đặt phòng đó
+        $check_data = BookingRoomList::where('booking_id', $booking_id)->count();
+
+        // Số lượng phòng đã gán không được vượt quá số lượng phòng đã đặt
+        if ($check_data < $booking->number_of_rooms) {
+            $assign_data = new BookingRoomList();
+            $assign_data->booking_id = $booking_id;
+            $assign_data->room_id = $booking->rooms_id;
+            $assign_data->room_number_id = $room_number_id;
+            $assign_data->save();
+
+            $notification = array(
+                'message' => 'Assign room successfully!',
                 'alert-type' => 'success'
             );
-            
-        return redirect()->back()->with($notification);
+
+            return redirect()->back()->with($notification);
+        } else {
+            $notification = array(
+                'message' => 'Assign room already',
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification);
+        }
     }
 }

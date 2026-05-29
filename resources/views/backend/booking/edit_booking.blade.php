@@ -260,7 +260,13 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div style="clear: both"></div>
+                                <div style="margin-top: 40px; margin-bottom: 20px;">
+                                    <a href="javascript:void(0)" class="btn btn-primary assign_room">Assign Room</a>
+                                </div>
                             </div>
+                            {{-- End Table Responsive --}}
 
                             <!-- Form -->
                             <form action="{{ route('update.booking.status', $editData->id) }}" method="POST">
@@ -512,10 +518,36 @@
             </div><!--end row-->
         </div>
 
+        <!-- Modal -->
+        <div class="modal fade myModal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Rooms</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body"></div>
+                </div>
+            </div>
+        </div>
 
+        {{-- Check Availability --}}
         <script>
             $(document).ready(function () {
                 getAvailability();
+
+                $(".assign_room").on("click", function () {
+                    $.ajax({
+                        url: "{{ route('assign_room', $editData->id) }}",
+                        success: function (data) {
+                            $('.myModal .modal-body').html(data);
+                            $('.myModal').modal('show');
+                        }
+                    })
+
+                    return false;
+                })
             });
 
             function getAvailability() {

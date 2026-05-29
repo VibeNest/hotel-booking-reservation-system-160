@@ -151,4 +151,18 @@ class AdminBookingController extends Controller
             return redirect()->back()->with($notification);
         }
     }
+
+    // Assign Room Delete Method
+    public function AssignRoomDelete($id)
+    {
+        $assign_room = BookingRoomList::find($id);
+        $assign_room->delete();
+
+        $notification = array(
+            'message' => 'Deleted assign room successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+    }
 }

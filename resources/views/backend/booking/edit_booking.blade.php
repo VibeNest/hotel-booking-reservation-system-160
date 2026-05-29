@@ -287,6 +287,10 @@
                                                 </tr>
                                             @endforeach
                                         </table>
+                                    @else
+                                        <div class="alert alert-danger text-center">
+                                            Not Found Assign Room
+                                        </div>
                                     @endif
                                 </div>
                             </div>

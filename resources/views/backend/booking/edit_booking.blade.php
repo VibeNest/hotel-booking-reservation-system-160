@@ -262,8 +262,31 @@
                                 </div>
 
                                 <div style="clear: both"></div>
-                                <div style="margin-top: 40px; margin-bottom: 20px;">
-                                    <a href="javascript:void(0)" class="btn btn-primary assign_room">Assign Room</a>
+                                <div style="margin-top: 40px;">
+                                    <a href="javascript::void(0)" class="btn btn-primary assign_room"
+                                        style="margin-bottom: 20px">Assign Room</a>
+
+                                    @php
+                                        // Lấy tất cả phòng đã gán cho booking hiện tại
+                                        $assign_rooms = App\Models\BookingRoomList::with('room_numbers')->where('booking_id', $editData->id)->get();
+                                    @endphp
+
+                                    @if (count($assign_rooms) > 0)
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th>Room Number</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            @foreach ($assign_rooms as $assign_room)
+                                                <tr>
+                                                    <td>{{ $assign_room->room_numbers->room_number }}</td>
+                                                    <td>
+                                                        <a href="" class="btn btn-danger px-2 radius-30">Delete</a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </table>
+                                    @endif
                                 </div>
                             </div>
                             {{-- End Table Responsive --}}

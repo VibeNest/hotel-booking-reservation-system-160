@@ -64,12 +64,8 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Numbers of Persons</label>
-                                            <select class="form-control" name="person" id="number_of_person">
-                                                @for ($i = 1; $i <= 5; $i++)
-                                                    <option {{ old('person') == $i ? 'selected' : '' }} value="0{{ $i }}">
-                                                        0{{ $i }}</option>
-                                                @endfor
-                                            </select>
+                                            <input type="text" class="form-control" name="person" id="number_of_person"
+                                                value="{{ old('person') }}" readonly>
                                         </div>
                                     </div>
 

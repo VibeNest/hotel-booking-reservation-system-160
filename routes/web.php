@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Backend\AdminBookingController;
 use App\Http\Controllers\Backend\BookAreaController;
 use App\Http\Controllers\Backend\RoomController;
+use App\Http\Controllers\Backend\RoomListController;
 use App\Http\Controllers\Backend\RoomTypeController;
 use App\Http\Controllers\Backend\TeamController;
 use App\Http\Controllers\Frontend\BookingController;
@@ -111,7 +112,11 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/assign_room/{id}', 'AssignRoom')->name('assign_room');
         Route::get('/assign_room/store/{booking_id}/{room_number_id}', 'AssignRoomStore')->name('assign_room_store');
         Route::get('/assign_room/delete/{id}', 'AssignRoomDelete')->name('assign_room_delete');
+    });
 
+    // Admin Room List Management Routes
+    Route::controller(RoomListController::class)->group(function () {
+        Route::get('/view/room/list', 'ViewRoomList')->name('view.room.list');
     });
 });
 

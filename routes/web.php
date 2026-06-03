@@ -117,6 +117,8 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     // Admin Room List Management Routes
     Route::controller(RoomListController::class)->group(function () {
         Route::get('/view/room/list', 'ViewRoomList')->name('view.room.list');
+        Route::get('/add/room/list', 'AddRoomList')->name('add.room.list');
+        Route::post('/store/room/list', 'StoreRoomList')->name('store.room.list');
     });
 });
 

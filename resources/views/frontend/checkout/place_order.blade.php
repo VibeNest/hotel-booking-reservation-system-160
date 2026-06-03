@@ -41,7 +41,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="info-box">
-                                        <h5>Order Number</h5>
+                                        <h5>Booking Number</h5>
                                         <span>#{{ $booking->code }}</span>
                                     </div>
                                 </div>

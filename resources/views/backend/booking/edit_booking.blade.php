@@ -81,9 +81,8 @@
                         <div class="d-flex align-items-center">
                             <div>
                                 <p class="mb-0 text-secondary">Booking Status</p>
-                                <h4 class="my-1 text-warning">@if ($editData->status == 1) <span
-                                class="text-success">Complete</span> @else
-                                        <span class="text-danger">Pending</span> @endif
+                                <h4 class="my-1 text-warning"><span
+                                        class="text-{{ $editData->getStatusColor() }}">{{ $editData->getStatusLabel() }}</span>
                                 </h4>
                             </div>
                             <div class="widgets-icons-2 rounded-circle bg-gradient-orange text-white ms-auto"><i
@@ -327,11 +326,11 @@
 
                                         <select name="status" class="form-select custom-select">
 
-                                            <option value="0" {{ $editData->status == 0 ? 'selected' : '' }}>
+                                            <option value="0" {{ $editData->isPending() ? 'selected' : '' }}>
                                                 Pending
                                             </option>
 
-                                            <option value="1" {{ $editData->status == 1 ? 'selected' : '' }}>
+                                            <option value="1" {{ $editData->isComplete() ? 'selected' : '' }}>
                                                 Complete
                                             </option>
 

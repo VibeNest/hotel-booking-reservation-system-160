@@ -177,6 +177,6 @@ class AdminBookingController extends Controller
                     'chroot' => public_path(),
                 ]);
 
-        return $pdf->download('booking_invoice.pdf');
+        return $pdf->download('Booking Invoice.pdf');
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Room;
 use App\Models\RoomBookedDate;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
@@ -650,7 +651,6 @@ class BookingController extends Controller
     }
 
     // Paypal Cancel
-
     public function PaypalCancel()
     {
         Session::forget('checkout_data');
@@ -658,6 +658,27 @@ class BookingController extends Controller
         return redirect()
             ->route('checkout')
             ->with('error', 'Payment Cancelled');
+    }
+
+    // User Booking Method
+    public function UserBooking()
+    {
+        $id = Auth::user()->id;
+        $allData = Booking::where('user_id', $id)->orderBy('id', 'desc')->get();
+        return view('frontend.booking.user_booking', compact('allData'));
+    }
+
+    // User Invoice Method
+    public function UserInvoice($id)
+    {
+        $editData = Booking::with('room')->find($id);
+        $pdf = Pdf::loadView('backend.booking.booking_invoice', compact('editData'))
+            ->setPaper('a4')->setOption([
+                    'tempDir' => public_path(),
+                    'chroot' => public_path(),
+                ]);
+
+        return $pdf->download('Booking Invoice.pdf');
     }
 }
 

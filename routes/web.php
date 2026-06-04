@@ -27,6 +27,7 @@ Route::get('/dashboard', function () {
 
 // User Group Middleware
 Route::middleware('auth')->group(function () {
+    // Auth Routes
     Route::get('/logout', [UserController::class, 'UserLogout'])->name('user.logout');
     Route::get('/profile', [UserController::class, 'UserProfile'])->name('user.profile');
     Route::post('/profile/store', [UserController::class, 'UserProfileStore'])->name('user.profile.store');
@@ -165,6 +166,10 @@ Route::middleware('auth')->group(function () {
 
         // Place Order success page 
         Route::get('/place/order', [BookingController::class, 'PlaceOrder'])->name('place.order');
+
+        // User Booking Routes
+        Route::get('/user/booking', 'UserBooking')->name('user.booking');
+        Route::get('/user/invoice/{id}', 'UserInvoice')->name('user.invoice');
     });
 });
 

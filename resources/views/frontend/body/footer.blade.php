@@ -5,7 +5,7 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="footer-widget">
                         <div class="footer-logo">
-                            <a href="index.html">
+                            <a href="/">
                                 <img src="{{ asset('frontend/assets/img/logos/footer-logo1.png') }}" alt="Images">
                             </a>
                         </div>
@@ -79,7 +79,7 @@
                         <h3>Useful Links</h3>
                         <ul class="footer-list">
                             <li>
-                                <a href="index.html" target="_blank">
+                                <a href="/" target="_blank">
                                     <i class='bx bx-caret-right'></i>
                                     Home
                                 </a>

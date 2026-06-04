@@ -342,6 +342,9 @@
                                             <i class='bx bx-save'></i>
                                             Update Booking
                                         </button>
+                                        <a href="{{ route('download.invoice', $editData->id) }}"
+                                            class="btn btn-warning text-white btn-update"><i
+                                                class='bx bx-download'></i>Download Invoice</a>
                                     </div>
 
                                 </div>

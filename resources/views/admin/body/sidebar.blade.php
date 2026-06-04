@@ -5,7 +5,7 @@
                 <img src="{{ asset('backend/assets/images/logo-icon.png') }}" class="logo-icon" alt="logo icon">
             </div>
             <div>
-                <h4 class="logo-text">Thanh Tùng</h4>
+                <h4 class="logo-text">HotelHub</h4>
             </div>
         </a>
         <div class="toggle-icon ms-auto"><i class='bx bx-arrow-back'></i>

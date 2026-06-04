@@ -440,16 +440,20 @@
     {{-- Lấy date của checkin và checkout --}}
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const today = new Date();
+            const today = new Date().toISOString().split('T')[0];
 
-            // Check in = hôm nay
-            document.getElementById('check_in').value = today.toISOString().split('T')[0];
+            // Không cho chọn ngày quá khứ
+            document.getElementById('check_in').min = today;
+            document.getElementById('check_out').min = today;
 
-            // Check out = hôm nay + 1 ngày
-            const tomorrow = new Date(today);
+            // Giá trị mặc định
+            document.getElementById('check_in').value = today;
+
+            const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
 
-            document.getElementById('check_out').value = tomorrow.toISOString().split('T')[0];
+            document.getElementById('check_out').value =
+                tomorrow.toISOString().split('T')[0];
         });
     </script>
 
@@ -466,14 +470,21 @@
             $('#check_in').on('change', function () {
 
                 let checkIn = new Date($(this).val());
+
+                // Checkout phải lớn hơn Checkin ít nhất 1 ngày
+                let minCheckout = new Date(checkIn);
+                minCheckout.setDate(minCheckout.getDate() + 1);
+
+                $('#check_out').attr(
+                    'min',
+                    minCheckout.toISOString().split('T')[0]
+                );
+
                 let checkOut = new Date($('#check_out').val());
 
-                // Nếu checkout chưa có hoặc <= checkin
                 if (!$('#check_out').val() || checkOut <= checkIn) {
-                    checkIn.setDate(checkIn.getDate() + 1);
-
                     $('#check_out').val(
-                        checkIn.toISOString().split('T')[0]
+                        minCheckout.toISOString().split('T')[0]
                     );
                 }
 

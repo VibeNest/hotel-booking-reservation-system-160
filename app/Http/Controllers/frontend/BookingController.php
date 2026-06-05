@@ -16,6 +16,8 @@ use Omnipay\Common\Message\RedirectResponseInterface;
 use Omnipay\Omnipay;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Stripe;
+use App\Services\Payment\StripeStrategy;
+use App\Services\Payment\CodStrategy;
 
 class BookingController extends Controller
 {
@@ -161,34 +163,22 @@ class BookingController extends Controller
             return redirect()->route('paypal.payment');
         }
 
-        // Xử lý thanh toán Stripe
-        if ($request->payment_method == "Stripe") {
-            Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-            $s_pay = Stripe\Charge::create([
-                'amount' => $total_price * 100, // Số tiền tính bằng cent
-                'currency' => 'usd',
-                'source' => $request->stripeToken,
-                'description' => 'Payment For Booking. Booking Number: ' . $code,
-            ]);
-
-            if ($s_pay['status'] == 'succeeded') {
-                // Nếu thanh toán thành công thì lưu trạng thái thanh toán và transaction_id vào database
-                $payment_status = 1;
-                $transaction_id = $s_pay['id'];
-            } else {
-                // Nếu thanh toán thất bại thì redirect về trang chủ với thông báo lỗi
-                $notification = [
-                    'message' => 'Sorry! Payment Failed.',
-                    'alert-type' => 'error',
-                ];
-
-                return redirect('/')->with($notification);
-            }
+        if ($request->payment_method == 'Stripe') {
+            $strategy = new StripeStrategy();
+        } elseif ($request->payment_method == 'COD') {
+            $strategy = new CodStrategy();
         } else {
-            // Nếu chọn thanh toán bằng tiền mặt thì lưu trạng thái thanh toán là 0 và transaction_id là rỗng
-            $payment_status = 0;
-            $transaction_id = '';
+            return back()->with('error', 'Invalid payment method');
         }
+
+        $result = $strategy->pay([
+            'total_price' => $total_price,
+            'stripeToken' => $request->stripeToken ?? null
+        ]);
+
+
+        $payment_status = $result['payment_status'];
+        $transaction_id = $result['transaction_id'];
 
         // Insert Data Booking
         $booking = new Booking;

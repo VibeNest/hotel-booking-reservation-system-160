@@ -113,6 +113,35 @@
 
                             </div>
                         </div>
+
+                        <div class="billing-details">
+                            <h3 class="title">Facility Add-ons</h3>
+
+                            @php
+                                $facilityFees = config('facilities.fees', []);
+                            @endphp
+
+                            @if (count($facilityFees) > 0)
+                                <div class="form-group">
+                                    @foreach ($facilityFees as $facility => $fee)
+                                        <div style="margin-bottom: 8px;">
+                                            <label style="display: flex; justify-content: space-between; gap: 12px;">
+                                                <span>
+                                                    <input type="checkbox" name="facility_addons[]" value="{{ $facility }}"
+                                                        data-fee="{{ (float) $fee }}">
+                                                    {{ $facility }}
+                                                </span>
+                                                <span>
+                                                    {{ $fee > 0 ? '$' . number_format((float) $fee, 2) : 'Free' }}
+                                                </span>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p>No add-ons available.</p>
+                            @endif
+                        </div>
                     </div>
 
 
@@ -186,6 +215,25 @@
                                             </td>
                                             <td style="text-align:right;">
                                                 <p style="color: red; font-weight: 600">${{ $total }}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p style="font-weight: 600">Facility Add-ons</p>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <p id="facility-addon-total" style="color: red; font-weight: 600"
+                                                    data-base-total="{{ $total }}">$0.00</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p style="font-weight: 600">Grand Total</p>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <p id="facility-grand-total" style="color: red; font-weight: 600">
+                                                    ${{ $total }}
+                                                </p>
                                             </td>
                                         </tr>
                                     </table>
@@ -327,6 +375,38 @@
                             </div>
                         </div>
                     </div>
+
+                    <script>
+                        const facilityInputs = document.querySelectorAll('input[name="facility_addons[]"]');
+                        const addonTotalEl = document.getElementById('facility-addon-total');
+                        const grandTotalEl = document.getElementById('facility-grand-total');
+
+                        const toMoney = (value) => `$${Number(value).toFixed(2)}`;
+
+                        const updateFacilityTotals = () => {
+                            if (!addonTotalEl || !grandTotalEl) {
+                                return;
+                            }
+
+                            const baseTotal = Number(addonTotalEl.dataset.baseTotal || 0);
+                            let addonTotal = 0;
+
+                            facilityInputs.forEach((input) => {
+                                if (input.checked) {
+                                    addonTotal += Number(input.dataset.fee || 0);
+                                }
+                            });
+
+                            addonTotalEl.textContent = toMoney(addonTotal);
+                            grandTotalEl.textContent = toMoney(baseTotal + addonTotal);
+                        };
+
+                        facilityInputs.forEach((input) => {
+                            input.addEventListener('change', updateFacilityTotals);
+                        });
+
+                        updateFacilityTotals();
+                    </script>
                 </div>
             </form>
         </div>

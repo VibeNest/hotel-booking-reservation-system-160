@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Room;
 use App\Models\RoomBookedDate;
+use App\Services\Payment\CodStrategy;
+use App\Services\Payment\StripeStrategy;
+use App\Services\Pricing\BaseRoomPrice;
+use App\Services\Pricing\FacilityPriceDecoratorBuilder;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -15,9 +19,6 @@ use Illuminate\Support\Facades\Session;
 use Omnipay\Common\Message\RedirectResponseInterface;
 use Omnipay\Omnipay;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
-use Stripe;
-use App\Services\Payment\StripeStrategy;
-use App\Services\Payment\CodStrategy;
 
 class BookingController extends Controller
 {
@@ -88,8 +89,8 @@ class BookingController extends Controller
         // Lấy booking mới nhất của user đang đăng nhập
         $booking = Booking::where('user_id', Auth::id())->latest()->first();
 
-        // Không tìm thấy booking khi thanh toán 
-        if (!$booking) {
+        // Không tìm thấy booking khi thanh toán
+        if (! $booking) {
             $notification = [
                 'message' => 'No Booking Found!',
                 'alert-type' => 'error',
@@ -105,7 +106,7 @@ class BookingController extends Controller
     public function CheckoutStore(Request $request)
     {
         // Check session tồn tại
-        if (!Session::has('book_date')) {
+        if (! Session::has('book_date')) {
             return redirect()->route('checkout')->with('error', 'Session expired');
         }
 
@@ -118,6 +119,8 @@ class BookingController extends Controller
             'state' => 'required',
             'zip_code' => 'required',
             'payment_method' => 'required',
+            'facility_addons' => ['sometimes', 'array'],
+            'facility_addons.*' => ['string'],
         ]);
 
         // Lấy dữ liệu từ session
@@ -140,6 +143,8 @@ class BookingController extends Controller
 
         // Total Price
         $total_price = $subtotal - $discount;
+
+        $total_price = $this->applyFacilityPricing($request, $total_price);
 
         // Generate booking code 9 số
         $code = rand(100000000, 999999999);
@@ -164,18 +169,17 @@ class BookingController extends Controller
         }
 
         if ($request->payment_method == 'Stripe') {
-            $strategy = new StripeStrategy();
+            $strategy = new StripeStrategy;
         } elseif ($request->payment_method == 'COD') {
-            $strategy = new CodStrategy();
+            $strategy = new CodStrategy;
         } else {
             return back()->with('error', 'Invalid payment method');
         }
 
         $result = $strategy->pay([
             'total_price' => $total_price,
-            'stripeToken' => $request->stripeToken ?? null
+            'stripeToken' => $request->stripeToken ?? null,
         ]);
-
 
         $payment_status = $result['payment_status'];
         $transaction_id = $result['transaction_id'];
@@ -260,6 +264,8 @@ class BookingController extends Controller
             'state' => 'required',
             'zip_code' => 'required',
             'payment_method' => 'required',
+            'facility_addons' => ['sometimes', 'array'],
+            'facility_addons.*' => ['string'],
         ]);
 
         $book_data = Session::get('book_date');
@@ -273,7 +279,7 @@ class BookingController extends Controller
         }
 
         $room = Room::find($book_data['room_id']);
-        if (!$room) {
+        if (! $room) {
             $notification = [
                 'message' => 'Room not found.',
                 'alert-type' => 'error',
@@ -289,6 +295,8 @@ class BookingController extends Controller
         $subtotal = $room->price * $total_nights * $book_data['number_of_rooms'];
         $discount = ($room->discount / 100) * $subtotal;
         $total_price = $subtotal - $discount;
+
+        $total_price = $this->applyFacilityPricing($request, $total_price);
 
         $code = rand(100000000, 999999999);
 
@@ -329,7 +337,7 @@ class BookingController extends Controller
 
         $response = $gateway->purchase([
             'txnRef' => (string) $code,
-            'orderInfo' => 'Thanh toan don hang ' . $code,
+            'orderInfo' => 'Thanh toan don hang '.$code,
             'amount' => (int) round($total_price),
             'currency' => config('omnipay.gateways.VNPay.currency', 'VND'),
             'returnUrl' => route('vnpay.return'),
@@ -351,18 +359,18 @@ class BookingController extends Controller
         }
 
         $bookingCode = $data['vnp_TxnRef'] ?? null;
-        if (!$bookingCode) {
+        if (! $bookingCode) {
             return redirect()->route('place.order')->with('error', 'Missing VNPay transaction reference.');
         }
 
         $booking = Booking::where('code', $bookingCode)->first();
-        if (!$booking) {
+        if (! $booking) {
             return redirect()->route('place.order')->with('error', 'Booking not found for VNPay response.');
         }
 
         $hashSecret = config('omnipay.gateways.VNPay.hash_secret');
         $secureHash = $data['vnp_SecureHash'] ?? '';
-        if (!$hashSecret || !$secureHash) {
+        if (! $hashSecret || ! $secureHash) {
             return redirect()->route('place.order')->with('error', 'Missing VNPay signature data.');
         }
 
@@ -374,8 +382,8 @@ class BookingController extends Controller
         $hashStringEncoded = '';
         foreach ($hashData as $key => $value) {
             if (strpos($key, 'vnp_') === 0 && $value !== '' && $value !== null) {
-                $hashString .= $key . '=' . $value . '&';
-                $hashStringEncoded .= urlencode($key) . '=' . urlencode((string) $value) . '&';
+                $hashString .= $key.'='.$value.'&';
+                $hashStringEncoded .= urlencode($key).'='.urlencode((string) $value).'&';
             }
         }
 
@@ -389,7 +397,7 @@ class BookingController extends Controller
             hash_equals(strtolower($secureHash), strtolower($calculatedHash)) ||
             hash_equals(strtolower($secureHash), strtolower($calculatedHashEncoded));
 
-        if (!$isValidSignature) {
+        if (! $isValidSignature) {
             return redirect()->route('place.order')->with('error', 'Invalid VNPay signature.');
         }
 
@@ -420,7 +428,7 @@ class BookingController extends Controller
         $booking->save();
 
         $alreadyBooked = RoomBookedDate::where('booking_id', $booking->id)->exists();
-        if (!$alreadyBooked) {
+        if (! $alreadyBooked) {
             $startDate = Carbon::createFromFormat('d-m-Y', $booking->check_in);
             $endDate = Carbon::createFromFormat('d-m-Y', $booking->check_out);
             $endDate = $endDate->subDay();
@@ -450,14 +458,14 @@ class BookingController extends Controller
     {
         $checkout = Session::get('checkout_data');
 
-        if (!$checkout) {
+        if (! $checkout) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Session expired');
         }
 
         if (
-            !isset($checkout['total_price']) ||
+            ! isset($checkout['total_price']) ||
             $checkout['total_price'] <= 0
         ) {
             return redirect()
@@ -494,7 +502,7 @@ class BookingController extends Controller
             ],
         ]);
 
-        if (!empty($response['id']) && isset($response['links'])) {
+        if (! empty($response['id']) && isset($response['links'])) {
             foreach ($response['links'] as $link) {
                 if ($link['rel'] == 'approve') {
                     return redirect()
@@ -511,13 +519,13 @@ class BookingController extends Controller
 
     public function PaypalSuccess(Request $request)
     {
-        if (!Session::has('checkout_data') || !Session::has('book_date')) {
+        if (! Session::has('checkout_data') || ! Session::has('book_date')) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Session expired');
         }
 
-        if (!$request->token || empty($request->token)) {
+        if (! $request->token || empty($request->token)) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Invalid PayPal token');
@@ -545,7 +553,7 @@ class BookingController extends Controller
             $book_data = Session::get('book_date');
             $checkout = Session::get('checkout_data');
             $room = Room::find($book_data['room_id']);
-            if (!$room) {
+            if (! $room) {
                 Session::forget('book_date');
                 Session::forget('checkout_data');
 
@@ -611,7 +619,7 @@ class BookingController extends Controller
 
             foreach ($day_period as $period) {
 
-                $booked_dates = new RoomBookedDate();
+                $booked_dates = new RoomBookedDate;
 
                 $booked_dates->booking_id = $booking->id;
 
@@ -640,6 +648,20 @@ class BookingController extends Controller
             ->with('error', 'Payment Failed');
     }
 
+    private function applyFacilityPricing(Request $request, float $baseTotal): float
+    {
+        $selectedFacilities = $request->input('facility_addons', []);
+
+        if (! is_array($selectedFacilities)) {
+            $selectedFacilities = [];
+        }
+
+        $decorated = FacilityPriceDecoratorBuilder::fromConfig()
+            ->build(new BaseRoomPrice($baseTotal), $selectedFacilities);
+
+        return $decorated->total();
+    }
+
     // Paypal Cancel
     public function PaypalCancel()
     {
@@ -655,6 +677,7 @@ class BookingController extends Controller
     {
         $id = Auth::user()->id;
         $allData = Booking::where('user_id', $id)->orderBy('id', 'desc')->get();
+
         return view('frontend.booking.user_booking', compact('allData'));
     }
 
@@ -664,9 +687,9 @@ class BookingController extends Controller
         $editData = Booking::with('room')->find($id);
         $pdf = Pdf::loadView('backend.booking.booking_invoice', compact('editData'))
             ->setPaper('a4')->setOption([
-                    'tempDir' => public_path(),
-                    'chroot' => public_path(),
-                ]);
+                'tempDir' => public_path(),
+                'chroot' => public_path(),
+            ]);
 
         return $pdf->download('Booking Invoice.pdf');
     }

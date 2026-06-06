@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
-use App\Models\Room;
 use App\Models\Facility;
 use App\Models\MultiImage;
+use App\Models\Room;
 use App\Models\RoomBookedDate;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -20,6 +20,7 @@ class FrontendRoomController extends Controller
     {
 
         $rooms = Room::latest()->paginate(6);
+
         return view('frontend.room.all_rooms', compact('rooms'));
     }
 

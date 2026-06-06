@@ -239,13 +239,20 @@
                                             <table class="table summary-table mb-0">
                                                 <tr>
                                                     <td>Subtotal</td>
-                                                    <td>${{ $editData->subtotal }}</td>
+                                                    <td><strong>${{ $editData->subtotal }}</strong></td>
                                                 </tr>
 
                                                 <tr>
                                                     <td>Discount</td>
                                                     <td class="text-danger">
-                                                        -${{ $editData->discount }}
+                                                        <strong>-${{ $editData->discount }}</strong>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>Add-ons</td>
+                                                    <td class="text-primary">
+                                                        <strong>+${{ number_format($editData->getAddonFee(), 0) }}</strong>
                                                     </td>
                                                 </tr>
 
@@ -267,7 +274,9 @@
 
                                     @php
                                         // Lấy tất cả phòng đã gán cho booking hiện tại
-                                        $assign_rooms = App\Models\BookingRoomList::with('room_numbers')->where('booking_id', $editData->id)->get();
+                                        $assign_rooms = App\Models\BookingRoomList::with('room_numbers')
+                                            ->where('booking_id', $editData->id)
+                                            ->get();
                                     @endphp
 
                                     @if (count($assign_rooms) > 0)

@@ -132,7 +132,7 @@
                                                     {{ $facility }}
                                                 </span>
                                                 <span>
-                                                    {{ $fee > 0 ? '$' . number_format((float) $fee, 2) : 'Free' }}
+                                                    {{ $fee > 0 ? '$' . number_format((float) $fee, 0) : 'Free' }}
                                                 </span>
                                             </label>
                                         </div>
@@ -223,7 +223,7 @@
                                             </td>
                                             <td style="text-align:right;">
                                                 <p id="facility-addon-total" style="color: red; font-weight: 600"
-                                                    data-base-total="{{ $total }}">$0.00</p>
+                                                    data-base-total="{{ $total }}">$0</p>
                                             </td>
                                         </tr>
                                         <tr>
@@ -243,34 +243,6 @@
                         </section>
 
                     </div>
-
-
-                    {{-- <div class="col-lg-8 col-md-8">
-                        <div class="payment-box">
-                            <div class="payment-method">
-                                <p>
-                                    <input type="radio" id="cash-on-delivery" name="radio-group">
-                                    <label for="cash-on-delivery">Cash On Delivery</label>
-                                </p>
-                                <p>
-                                    <input type="radio" id="paypal" name="radio-group">
-                                    <label for="paypal">PayPal</label>
-                                </p>
-                                <p>
-                                    <input type="radio" id="stripe" name="radio-group">
-                                    <label for="stripe">Stripe</label>
-                                </p>
-                                <p>
-                                    <input type="radio" id="vn-pay" name="radio-group">
-                                    <label for="vn-pay">VN Pay</label>
-                                </p>
-                            </div>
-
-                            <a href="#" class="order-btn three">
-                                Place to Order
-                            </a>
-                        </div>
-                    </div> --}}
 
                     <link rel="stylesheet"
                         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -381,7 +353,7 @@
                         const addonTotalEl = document.getElementById('facility-addon-total');
                         const grandTotalEl = document.getElementById('facility-grand-total');
 
-                        const toMoney = (value) => `$${Number(value).toFixed(2)}`;
+                        const toMoney = (value) => `$${Math.round(Number(value))}`;
 
                         const updateFacilityTotals = () => {
                             if (!addonTotalEl || !grandTotalEl) {

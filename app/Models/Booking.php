@@ -99,4 +99,9 @@ class Booking extends Model
     {
         return $this->status === 1;
     }
+
+    public function getAddonFee(): float
+    {
+        return (float) max(0, round($this->total_price - $this->subtotal + $this->discount, 2));
+    }
 }

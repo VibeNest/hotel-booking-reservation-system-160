@@ -67,7 +67,7 @@
                                 Back To Home
                             </a>
 
-                            <a href="/booking-history" class="default-btn btn-bg-two border-radius-5 ms-3">
+                            <a href="{{ route('user.booking') }}" class="default-btn btn-bg-two border-radius-5 ms-3">
                                 View Booking
                             </a>
                         </div>

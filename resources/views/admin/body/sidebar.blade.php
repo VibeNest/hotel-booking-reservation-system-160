@@ -89,11 +89,17 @@
             </ul>
         </li>
         <li class="menu-label">Others</li>
-        <a href="https://themeforest.net/user/codervent" target="_blank">
-            <div class="parent-icon"><i class="bx bx-support"></i>
-            </div>
-            <div class="menu-title">Support</div>
-        </a>
+
+        <li>
+            <a class="has-arrow" href="javascript:;">
+                <div class="parent-icon"><i class='bx bx-cog'></i>
+                </div>
+                <div class="menu-title">Setting</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route('smtp.setting') }}"><i class='bx bx-radio-circle'></i>SMTP Setting</a>
+                </li>
+            </ul>
         </li>
     </ul>
     <!--end navigation-->

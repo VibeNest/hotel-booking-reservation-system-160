@@ -51,6 +51,20 @@
 
         <li>
             <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bx bx-news"></i>
+                </div>
+                <div class="menu-title">Blog</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route("blog.category") }}"><i class='bx bx-radio-circle'></i>Blog Category</a>
+                </li>
+                <li> <a href="{{ route("add.testimonial") }}"><i class='bx bx-radio-circle'></i>Add Testimonial</a>
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <a href="javascript:;" class="has-arrow">
                 <div class="parent-icon"><i class="bx bx-building-house"></i>
                 </div>
                 <div class="menu-title">Book Area Management</div>

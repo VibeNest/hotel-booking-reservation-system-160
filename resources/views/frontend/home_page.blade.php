@@ -38,7 +38,7 @@
     <!-- Toaster -->
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
 
-    <title>HotelHub Hotel</title>
+    <title>HotelHub</title>
 </head>
 
 <body>

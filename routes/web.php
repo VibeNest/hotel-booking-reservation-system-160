@@ -147,6 +147,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/blog/category', 'BlogCategory')->name('blog.category');
         Route::post('/store/blog/category', 'StoreBlogCategory')->name('store.blog.category');
         Route::get('/edit/blog/category/{id}', 'EditBlogCategory');
+        Route::post('/update/blog/category', 'UpdateBlogCategory')->name('update.blog.category');
     });
 });
 

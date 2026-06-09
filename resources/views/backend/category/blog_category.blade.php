@@ -95,10 +95,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('store.blog.category') }}" method="post">
+                    <form action="{{ route('update.blog.category') }}" method="post">
                         @csrf
 
-                        <input type="text" name="cat_id" id="cat_id">
+                        <input type="hidden" name="cat_id" id="cat_id">
 
                         <div class="form-group mb-3">
                             <label for="" class="form-label">Blog Category Name</label>

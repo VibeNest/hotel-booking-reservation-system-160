@@ -38,4 +38,22 @@ class BlogController extends Controller
 
         return response()->json($categories);
     }
+
+    // Update Blog Category Method
+    public function UpdateBlogCategory(Request $request)
+    {
+        $cat_id = $request->cat_id;
+
+        BlogCategory::find($cat_id)->update([
+            'category_name' => $request->category_name,
+            'category_slug' => strtolower(str_replace(' ', '-', $request->category_name)),
+        ]);
+
+        $notification = array(
+            'message' => 'Updated blog category successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+    }
 }

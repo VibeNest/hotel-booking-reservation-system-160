@@ -57,8 +57,8 @@
                                         <a href="{{ route('edit.testimonial', $item->id) }}"
                                             class="btn btn-warning px-3 radius-30">Edit</a>
                                         {{-- form Xóa --}}
-                                        <a href="{{ route('delete.team', $item->id) }}" class="btn btn-danger px-3 radius-30"
-                                            id="delete">Delete</a>
+                                        <a href="{{ route('delete.testimonial', $item->id) }}"
+                                            class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
                                     </td>
                                 </tr>
                             @endforeach

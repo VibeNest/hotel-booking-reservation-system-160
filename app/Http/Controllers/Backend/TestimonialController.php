@@ -122,4 +122,23 @@ class TestimonialController extends Controller
             return redirect()->route('all.testimonial')->with($notification);
         }
     }
+
+    //Delete Testimonial Method
+    public function DeleteTestimonial($id)
+    {
+        $item = Testimonial::findOrFail($id);
+        $img = $item->image;
+        unlink($img);
+
+        Testimonial::findOrFail($id)->delete();
+
+        // Hiển thị thông báo toaster
+        $notification = array(
+            'message' => 'Deleted testimonial successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+
+    }
 }

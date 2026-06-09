@@ -37,6 +37,20 @@
 
         <li>
             <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bx bx-message-square-detail"></i>
+                </div>
+                <div class="menu-title">Testimonial Management</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route("all.testimonial") }}"><i class='bx bx-radio-circle'></i>All Testimonials</a>
+                </li>
+                <li> <a href="{{ route("add.testimonial") }}"><i class='bx bx-radio-circle'></i>Add Testimonial</a>
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <a href="javascript:;" class="has-arrow">
                 <div class="parent-icon"><i class="bx bx-building-house"></i>
                 </div>
                 <div class="menu-title">Book Area Management</div>

@@ -54,7 +54,7 @@
                                     <td>{{ $item->city }}</td>
                                     <td>{{ Str::limit($item->message, 20, '...') }}</td>
                                     <td>
-                                        <a href="{{ route('edit.team', $item->id) }}"
+                                        <a href="{{ route('edit.testimonial', $item->id) }}"
                                             class="btn btn-warning px-3 radius-30">Edit</a>
                                         {{-- form Xóa --}}
                                         <a href="{{ route('delete.team', $item->id) }}" class="btn btn-danger px-3 radius-30"

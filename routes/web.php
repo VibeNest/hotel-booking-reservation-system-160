@@ -136,6 +136,8 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/all/testimonial', 'AllTestimonial')->name('all.testimonial');
         Route::get('/add/testimonial', 'AddTestimonial')->name('add.testimonial');
         Route::post('/testimonial/store', 'TestimonialStore')->name('testimonial.store');
+        Route::get('/edit/testimonial/{id}', 'EditTestimonial')->name('edit.testimonial');
+        Route::post('/testimonial/update', 'TestimonialUpdate')->name('testimonial.update');
     });
 });
 

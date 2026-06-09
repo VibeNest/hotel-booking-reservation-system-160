@@ -48,7 +48,7 @@
                                             data-bs-target="#category" id="{{ $item->id }}"
                                             onclick="categoryEdit(this.id)">Edit</button>
                                         {{-- form Xóa --}}
-                                        <a href="{{ route('delete.testimonial', $item->id) }}"
+                                        <a href="{{ route('delete.blog.category', $item->id) }}"
                                             class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
                                     </td>
                                 </tr>

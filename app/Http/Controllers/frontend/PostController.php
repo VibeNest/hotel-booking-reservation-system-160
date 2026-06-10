@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Http\Controllers\frontend;
+
+use App\Http\Controllers\Controller;
+use App\Models\BlogCategory;
+use App\Models\BlogPost;
+use Illuminate\Http\Request;
+
+class PostController extends Controller
+{
+    // Blog Details Method
+    public function BlogDetails($slug)
+    {
+        $blog = BlogPost::where('post_slug', $slug)->first();
+        $blog_cat = BlogCategory::latest()->get();
+        $otherPost = BlogPost::where('post_slug', '!=', $slug)->orderBy('id', 'DESC')->limit(3)->get();
+
+        return view('frontend.blog.blog_details', compact('blog', 'blog_cat', 'otherPost'));
+    }
+}

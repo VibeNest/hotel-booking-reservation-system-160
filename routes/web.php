@@ -12,6 +12,7 @@ use App\Http\Controllers\Backend\TeamController;
 use App\Http\Controllers\Backend\TestimonialController;
 use App\Http\Controllers\Frontend\BookingController;
 use App\Http\Controllers\Frontend\FrontendRoomController;
+use App\Http\Controllers\frontend\PostController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -167,6 +168,7 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
     Route::get('/instructor/dashboard', [InstructorController::class, 'InstructorDashboard'])->name('instructor.dashboard');
 });
 
+// User not need login to access this routes
 // Room All Routes
 Route::controller(FrontendRoomController::class)->group(function () {
     Route::get('/rooms', 'AllFrontendRoomList')->name('room.all');
@@ -174,6 +176,11 @@ Route::controller(FrontendRoomController::class)->group(function () {
     Route::get('/bookings', 'BookingSearch')->name('booking.search');
     Route::get('/search/room/details/{id}', 'SearchRoomDetails')->name('search_room_details');
     Route::get('/check_room_availability', 'CheckRoomAvailability')->name('check_room_availability');
+});
+
+// Blog All Routes
+Route::controller(PostController::class)->group(function () {
+    Route::get('/blog/details/{slug}', 'BlogDetails');
 });
 
 // VNPay return callback (no auth required)

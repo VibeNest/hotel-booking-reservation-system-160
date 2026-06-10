@@ -123,7 +123,7 @@ class TestimonialController extends Controller
         }
     }
 
-    //Delete Testimonial Method
+    // Delete Testimonial Method
     public function DeleteTestimonial($id)
     {
         $item = Testimonial::findOrFail($id);
@@ -139,6 +139,5 @@ class TestimonialController extends Controller
         );
 
         return redirect()->back()->with($notification);
-
     }
 }

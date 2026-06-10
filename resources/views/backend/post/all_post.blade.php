@@ -46,10 +46,10 @@
                                     <td><img src="{{ asset($item->post_image) }}" alt="{{ $item->post_title }}"
                                             style="width: 50px; height: 50px;"></td>
                                     <td>
-                                        <a href="{{ route('edit.testimonial', $item->id) }}"
+                                        <a href="{{ route('edit.blog.post', $item->id) }}"
                                             class="btn btn-warning px-3 radius-30">Edit</a>
                                         {{-- form Xóa --}}
-                                        <a href="{{ route('delete.testimonial', $item->id) }}"
+                                        <a href="{{ route('delete.blog.post', $item->id) }}"
                                             class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
                                     </td>
                                 </tr>

@@ -43,7 +43,7 @@ class TestimonialController extends Controller
         $img->resize(50, 50)->save(public_path('upload/testimonials/' . $name_gen));
         $save_url = 'upload/testimonials/' . $name_gen;
 
-        // Lưu thông tin book area vào database
+        // Lưu thông tin testimonial vào database
         Testimonial::insert([
             'name' => $request->name,
             'city' => $request->city,
@@ -88,7 +88,7 @@ class TestimonialController extends Controller
             $img->resize(50, 50)->save(public_path('upload/testimonials/' . $name_gen));
             $save_url = 'upload/testimonials/' . $name_gen;
 
-            // Cập nhật thông tin book area vào database khi thay đổi ảnh
+            // Cập nhật thông tin testimonial vào database khi thay đổi ảnh
             Testimonial::findOrFail($testimonial_id)->update([
                 'name' => $request->name,
                 'city' => $request->city,
@@ -105,7 +105,7 @@ class TestimonialController extends Controller
 
             return redirect()->route('all.testimonial')->with($notification);
         } else {
-            // Cập nhật thông tin book area vào database mà không thay đổi ảnh
+            // Cập nhật thông tin testimonial vào database mà không thay đổi ảnh
             Testimonial::findOrFail($testimonial_id)->update([
                 'name' => $request->name,
                 'city' => $request->city,

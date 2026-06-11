@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Backend\AdminBookingController;
 use App\Http\Controllers\Backend\BlogController;
 use App\Http\Controllers\Backend\BookAreaController;
+use App\Http\Controllers\Backend\CommentController;
 use App\Http\Controllers\Backend\RoomController;
 use App\Http\Controllers\Backend\RoomListController;
 use App\Http\Controllers\Backend\RoomTypeController;
@@ -185,6 +186,11 @@ Route::controller(PostController::class)->group(function () {
     Route::get('/blog', 'BlogList')->name('blog.list');
     Route::get('/blog/search', 'BlogSearch')->name('blog.search');
     Route::get('/blog/category/list/{id}/search', 'BlogCategorySearch')->name('blog.category.search');
+});
+
+// Comment All Routes
+Route::controller(CommentController::class)->group(function () {
+    Route::post('/store/comment', 'StoreComment')->name('store.comment');
 });
 
 // VNPay return callback (no auth required)

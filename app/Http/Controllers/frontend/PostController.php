@@ -22,7 +22,7 @@ class PostController extends Controller
     // Blog Category List Method
     public function BlogCategoryList($id)
     {
-        $blog = BlogPost::where('blog_cat_id', $id)->get();
+        $blog = BlogPost::where('blog_cat_id', $id)->paginate(3);
         $blog_cat = BlogCategory::latest()->get();
         $blog_cat_name = BlogCategory::where('id', $id)->first();
         $otherPost = BlogPost::where('id', '!=', $id)->orderBy('id', 'DESC')->limit(3)->get();

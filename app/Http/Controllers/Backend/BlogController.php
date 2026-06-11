@@ -26,6 +26,7 @@ class BlogController extends Controller
         BlogCategory::insert([
             'category_name' => $request->category_name,
             'category_slug' => strtolower(str_replace(' ', '-', $request->category_name)),
+            'created_at' => Carbon::now()
         ]);
 
         $notification = array(
@@ -167,7 +168,6 @@ class BlogController extends Controller
                 'short_desc' => $request->short_desc,
                 'long_desc' => $request->long_desc,
                 'post_image' => $save_url,
-                'created_at' => Carbon::now()
             ]);
 
             // Hiển thị thông báo toaster
@@ -186,7 +186,6 @@ class BlogController extends Controller
                 'post_slug' => strtolower(str_replace(' ', '-', $request->post_title)),
                 'short_desc' => $request->short_desc,
                 'long_desc' => $request->long_desc,
-                'created_at' => Carbon::now()
             ]);
 
             // Hiển thị thông báo toaster

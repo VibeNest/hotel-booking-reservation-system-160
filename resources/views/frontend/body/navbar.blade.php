@@ -41,7 +41,8 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" class="nav-link {{ Request::is('blog') ? 'active' : '' }}">
+                            <a href="{{ route('blog.list') }}"
+                                class="nav-link {{ Request::is('blog') ? 'active' : '' }}">
                                 Blog
                             </a>
                         </li>

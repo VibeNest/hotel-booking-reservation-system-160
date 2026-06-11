@@ -181,6 +181,8 @@ Route::controller(FrontendRoomController::class)->group(function () {
 // Blog All Routes
 Route::controller(PostController::class)->group(function () {
     Route::get('/blog/details/{slug}', 'BlogDetails');
+    Route::get('/blog/category/list/{id}', 'BlogCategoryList');
+    Route::get('/blog', 'BlogList')->name('blog.list');
 });
 
 // VNPay return callback (no auth required)

@@ -33,7 +33,7 @@ class PostController extends Controller
     // Blog List Method
     public function BlogList()
     {
-        $blog = BlogPost::latest()->get();
+        $blog = BlogPost::latest()->paginate(3);
         $blog_cat = BlogCategory::latest()->get();
         $otherPost = BlogPost::latest()->limit(3)->get();
 

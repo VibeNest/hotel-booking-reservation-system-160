@@ -64,8 +64,10 @@
                 <div class="col-lg-4">
                     <div class="side-bar-wrap">
                         <div class="search-widget">
-                            <form class="search-form">
-                                <input type="search" class="form-control" placeholder="Search...">
+                            <form class="search-form" action="{{ route('blog.category.search', $blog_cat_name->id) }}"
+                                method="GET">
+                                <input type="search" name="search" class="form-control" placeholder="Search..."
+                                    value="{{ request()->search }}">
                                 <button type="submit">
                                     <i class="bx bx-search"></i>
                                 </button>

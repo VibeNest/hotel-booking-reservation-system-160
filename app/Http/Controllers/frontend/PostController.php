@@ -39,4 +39,29 @@ class PostController extends Controller
 
         return view('frontend.blog.blog_all', compact('blog', 'blog_cat', 'otherPost'));
     }
+
+    // Blog Search Method
+    public function BlogSearch(Request $request)
+    {
+        $search = $request->search;
+        $blog = BlogPost::where('post_title', 'LIKE', '%' . $search . '%')->paginate(3);
+        $blog_cat = BlogCategory::latest()->get();
+        $otherPost = BlogPost::latest()->limit(3)->get();
+
+        return view('frontend.blog.blog_all', compact('blog', 'blog_cat', 'otherPost'));
+    }
+
+    // Blog Category Search Method
+    public function BlogCategorySearch(Request $request, $id)
+    {
+        $search = $request->search;
+        $blog = BlogPost::where('blog_cat_id', $id)
+            ->where('post_title', 'LIKE', '%' . $search . '%')
+            ->paginate(3);
+        $blog_cat = BlogCategory::latest()->get();
+        $blog_cat_name = BlogCategory::where('id', $id)->first();
+        $otherPost = BlogPost::where('id', '!=', $id)->orderBy('id', 'DESC')->limit(3)->get();
+
+        return view('frontend.blog.blog_category_list', compact('blog', 'blog_cat', 'otherPost', 'blog_cat_name'));
+    }
 }

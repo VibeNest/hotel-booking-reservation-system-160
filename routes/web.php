@@ -183,6 +183,8 @@ Route::controller(PostController::class)->group(function () {
     Route::get('/blog/details/{slug}', 'BlogDetails');
     Route::get('/blog/category/list/{id}', 'BlogCategoryList');
     Route::get('/blog', 'BlogList')->name('blog.list');
+    Route::get('/blog/search', 'BlogSearch')->name('blog.search');
+    Route::get('/blog/category/list/{id}/search', 'BlogCategorySearch')->name('blog.category.search');
 });
 
 // VNPay return callback (no auth required)
@@ -211,7 +213,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/cancel', 'PaypalCancel')->name('paypal.cancel');
         });
 
-        // Place Order success page 
+        // Place Order success page
         Route::get('/place/order', [BookingController::class, 'PlaceOrder'])->name('place.order');
 
         // User Booking Routes

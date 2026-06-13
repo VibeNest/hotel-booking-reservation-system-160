@@ -2,12 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Room;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\User;
-use App\Models\MultiImage;
+use Illuminate\Http\UploadedFile;
+use Tests\TestCase;
 
 class MultiImageTest extends TestCase
 {

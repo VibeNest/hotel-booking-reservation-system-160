@@ -17,7 +17,7 @@ class AndSpecification implements RoomSpecification
     {
         foreach ($this->specifications as $spec) {
 
-            if (!$spec->isSatisfiedBy($room)) {
+            if (! $spec->isSatisfiedBy($room)) {
                 return false;
             }
 

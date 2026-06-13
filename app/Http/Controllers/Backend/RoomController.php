@@ -4,16 +4,15 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Facility;
-use App\Models\Room;
 use App\Models\MultiImage;
+use App\Models\Room;
 use App\Models\RoomNumber;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
-
+use Intervention\Image\ImageManager;
 
 class RoomController extends Controller
 {
@@ -24,6 +23,7 @@ class RoomController extends Controller
         $multi_images = MultiImage::where('rooms_id', $id)->get();
         $editData = Room::find($id);
         $roomNumbers = RoomNumber::where('rooms_id', $id)->get();
+
         return view('backend.all_room.rooms.edit_room', compact('editData', 'basic_facility', 'multi_images', 'roomNumbers'));
     }
 
@@ -38,7 +38,7 @@ class RoomController extends Controller
         if (empty($request->facility_name)) {
             return redirect()->back()->with([
                 'message' => 'Sorry! Not Any Basic Facility Select',
-                'alert-type' => 'error'
+                'alert-type' => 'error',
             ]);
         }
 
@@ -62,7 +62,7 @@ class RoomController extends Controller
                 'discount' => $request->discount ?? 0,
                 'short_desc' => $request->short_desc,
                 'description' => $request->description,
-                'status' => 1
+                'status' => 1,
             ];
 
             // =============================
@@ -72,23 +72,23 @@ class RoomController extends Controller
 
                 $path = public_path('upload/room_images/');
 
-                if (!File::exists($path)) {
+                if (! File::exists($path)) {
                     File::makeDirectory($path, 0777, true);
                 }
 
                 // xóa ảnh cũ
-                if (!empty($room->image) && File::exists($path . $room->image)) {
-                    File::delete($path . $room->image);
+                if (! empty($room->image) && File::exists($path.$room->image)) {
+                    File::delete($path.$room->image);
                 }
 
                 $image = $request->file('image');
-                $name = uniqid() . '.' . $image->getClientOriginalExtension();
+                $name = uniqid().'.'.$image->getClientOriginalExtension();
 
                 if (app()->environment('testing')) {
                     $image->move($path, $name);
                 } else {
-                    $manager = new ImageManager(new Driver());
-                    $manager->read($image)->cover(550, 850)->save($path . $name);
+                    $manager = new ImageManager(new Driver);
+                    $manager->read($image)->cover(550, 850)->save($path.$name);
                 }
 
                 $data['image'] = $name;
@@ -104,7 +104,7 @@ class RoomController extends Controller
             foreach ($request->facility_name as $item) {
                 Facility::create([
                     'rooms_id' => $room->id,
-                    'facility_name' => $item
+                    'facility_name' => $item,
                 ]);
             }
 
@@ -115,7 +115,7 @@ class RoomController extends Controller
 
                 $path = public_path('upload/room_images/multi_img/');
 
-                if (!File::exists($path)) {
+                if (! File::exists($path)) {
                     File::makeDirectory($path, 0777, true);
                 }
 
@@ -133,18 +133,18 @@ class RoomController extends Controller
                 // Lưu ảnh mới
                 foreach ($request->file('multi_img') as $img) {
 
-                    $name = uniqid() . '.' . $img->getClientOriginalExtension();
+                    $name = uniqid().'.'.$img->getClientOriginalExtension();
 
                     if (app()->environment('testing')) {
                         $img->move($path, $name);
                     } else {
-                        $manager = new ImageManager(new Driver());
-                        $manager->read($img)->save($path . $name);
+                        $manager = new ImageManager(new Driver);
+                        $manager->read($img)->save($path.$name);
                     }
 
                     MultiImage::create([
                         'rooms_id' => $room->id,
-                        'multi_img' => 'upload/room_images/multi_img/' . $name
+                        'multi_img' => 'upload/room_images/multi_img/'.$name,
                     ]);
                 }
             }
@@ -152,7 +152,7 @@ class RoomController extends Controller
 
         return redirect()->route('room.type.list')->with([
             'message' => 'Update Room Successfully',
-            'alert-type' => 'success'
+            'alert-type' => 'success',
         ]);
     }
 
@@ -162,16 +162,16 @@ class RoomController extends Controller
         $room = Room::find($id);
 
         // Xóa ảnh chính của phòng nếu tồn tại
-        if (!empty($room->image) && File::exists(public_path('upload/room_images/' . $room->image))) {
-            @unlink('upload/room_images/' . $room->image);
+        if (! empty($room->image) && File::exists(public_path('upload/room_images/'.$room->image))) {
+            @unlink('upload/room_images/'.$room->image);
         }
 
         // Xóa ảnh phụ của phòng nếu tồn tại
         $multiImages = MultiImage::where('rooms_id', $room->id)->get()->toArray();
 
-        if (!empty($multiImages)) {
+        if (! empty($multiImages)) {
             foreach ($multiImages as $img) {
-                if (!empty($img)) {
+                if (! empty($img)) {
                     @unlink($img['multi_img']);
                 }
             }
@@ -193,10 +193,10 @@ class RoomController extends Controller
         $room->delete();
 
         // Hiển thị thông báo xóa thành công
-        $notification = array(
+        $notification = [
             'message' => 'Deleted Room Successfully',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }
@@ -212,19 +212,19 @@ class RoomController extends Controller
             // Xóa file ảnh nếu tồn tại
             if (file_exists($imagePath)) {
                 unlink($imagePath);
-                echo "Image Unlinked Successfully";
+                echo 'Image Unlinked Successfully';
             } else {
-                echo "Image does not exist";
+                echo 'Image does not exist';
             }
 
             // Xóa bản ghi trong database
             $deleteData->delete();
         }
 
-        $notification = array(
+        $notification = [
             'message' => 'Deleted Multi Image Successfully',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }
@@ -234,15 +234,15 @@ class RoomController extends Controller
     {
         $request->validate([
             'room_number' => 'required',
-            'status' => 'required'
+            'status' => 'required',
         ]);
 
         $room = Room::find($id);
 
-        if (!$room) {
+        if (! $room) {
             return redirect()->back()->with([
                 'message' => 'Room Not Found',
-                'alert-type' => 'error'
+                'alert-type' => 'error',
             ]);
         }
 
@@ -255,7 +255,7 @@ class RoomController extends Controller
 
         return redirect()->back()->with([
             'message' => 'Added Room Number Successfully',
-            'alert-type' => 'success'
+            'alert-type' => 'success',
         ]);
     }
 
@@ -263,7 +263,6 @@ class RoomController extends Controller
     public function EditRoomNumber($id)
     {
         $editData = RoomNumber::findOrFail($id);
-
 
         return view('backend.all_room.rooms.edit_room_number', compact('editData'));
     }
@@ -273,7 +272,7 @@ class RoomController extends Controller
     {
         $request->validate([
             'room_number' => 'required',
-            'status' => 'required'
+            'status' => 'required',
         ]);
 
         $roomNumber = RoomNumber::findOrFail($id);
@@ -286,7 +285,7 @@ class RoomController extends Controller
         return redirect()->route('edit.room', $roomNumber->rooms_id)
             ->with([
                 'message' => 'Update Room Number Successfully',
-                'alert-type' => 'success'
+                'alert-type' => 'success',
             ]);
     }
 
@@ -295,10 +294,10 @@ class RoomController extends Controller
     {
         $roomNumber = RoomNumber::find($id);
 
-        if (!$roomNumber) {
+        if (! $roomNumber) {
             return redirect()->back()->with([
                 'message' => 'Room Number Not Found',
-                'alert-type' => 'error'
+                'alert-type' => 'error',
             ]);
         }
 
@@ -306,7 +305,7 @@ class RoomController extends Controller
 
         return redirect()->back()->with([
             'message' => 'Deleted Room Number Successfully',
-            'alert-type' => 'success'
+            'alert-type' => 'success',
         ]);
     }
 }

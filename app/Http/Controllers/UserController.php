@@ -2,33 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-
 class UserController extends Controller
 {
-    // Home Page 
+    // Home Page
     public function Index()
     {
-      
-        return view("frontend.index");
+
+        return view('frontend.index');
 
     }
 
-    // User Profile 
+    // User Profile
     public function UserProfile()
     {
         // Lấy id người đang đăng nhập (User)
         $id = Auth::user()->id;
         // Lấy thông tin của người đăng nhập (User) thông qua id
         $profileData = User::find($id);
-        return view("frontend.dashboard.edit_profile", compact("profileData"));
+
+        return view('frontend.dashboard.edit_profile', compact('profileData'));
     }
 
-    // User Profile Store Data 
+    // User Profile Store Data
     public function UserProfileStore(Request $request)
     {
         $id = Auth::user()->id;
@@ -44,12 +44,12 @@ class UserController extends Controller
         // Kiểm tra có photo không -> nếu có thì update photo
         if ($request->file('photo')) {
             // Xóa ảnh cũ nếu tồn tại
-            if ($oldPhoto && file_exists(public_path('upload/user_images/' . $oldPhoto))) {
-                unlink(public_path('upload/user_images/' . $oldPhoto));
+            if ($oldPhoto && file_exists(public_path('upload/user_images/'.$oldPhoto))) {
+                unlink(public_path('upload/user_images/'.$oldPhoto));
             }
 
             $file = $request->file('photo');
-            $filename = date('YmdHi') . '-' . $file->getClientOriginalName();
+            $filename = date('YmdHi').'-'.$file->getClientOriginalName();
             $file->move(public_path('upload/user_images'), $filename);
             $data->photo = $filename;
         }
@@ -57,10 +57,10 @@ class UserController extends Controller
         $data->save();
 
         // Hiển thị thông báo toaster
-        $notification = array(
+        $notification = [
             'message' => 'Updated user profile successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }
@@ -75,10 +75,10 @@ class UserController extends Controller
         $request->session()->regenerateToken();
 
         // Hiển thị thông báo toaster
-        $notification = array(
+        $notification = [
             'message' => 'Logout successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect('/login')->with($notification);
     }
@@ -86,7 +86,7 @@ class UserController extends Controller
     // User Change Password
     public function UserChangePassword()
     {
-        return view("frontend.dashboard.user_change_password");
+        return view('frontend.dashboard.user_change_password');
     }
 
     // User Password Update
@@ -95,16 +95,16 @@ class UserController extends Controller
         // Validation
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|confirmed'
+            'new_password' => 'required|confirmed',
         ]);
 
         // Nếu password không khớp nhau
-        if (!Hash::check($request->current_password, Auth::user()->password)) {
+        if (! Hash::check($request->current_password, Auth::user()->password)) {
             // Hiển thị thông báo toaster
-            $notification = array(
+            $notification = [
                 'message' => 'Current password does not match!',
-                'alert-type' => 'error'
-            );
+                'alert-type' => 'error',
+            ];
 
             return back()->with($notification);
         }
@@ -112,14 +112,14 @@ class UserController extends Controller
         // Update new password
         $id = Auth::user()->id;
         User::whereId($id)->update([
-            'password' => Hash::make($request->new_password)
+            'password' => Hash::make($request->new_password),
         ]);
 
         // Hiển thị thông báo toaster
-        $notification = array(
+        $notification = [
             'message' => 'Updated password successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }

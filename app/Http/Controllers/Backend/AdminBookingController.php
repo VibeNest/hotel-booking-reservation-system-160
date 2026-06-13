@@ -20,6 +20,7 @@ class AdminBookingController extends Controller
     public function BookingList()
     {
         $allData = Booking::orderBy('id', 'desc')->get();
+
         return view('backend.booking.booking_list', compact('allData'));
     }
 
@@ -27,6 +28,7 @@ class AdminBookingController extends Controller
     public function EditBooking($id)
     {
         $editData = Booking::with('room')->find($id);
+
         return view('backend.booking.edit_booking', compact('editData'));
     }
 
@@ -52,10 +54,10 @@ class AdminBookingController extends Controller
         Mail::to($sendMail->email)->send(new BookConfirm($data));
 
         // Thông báo thành công
-        $notification = array(
+        $notification = [
             'message' => 'Updated Status Successfully.',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }
@@ -65,10 +67,11 @@ class AdminBookingController extends Controller
     {
         // Kiểm tra số lượng phòng vượt quá số lượng phòng có sẵn
         if ($request->available_room < $request->number_of_rooms) {
-            $notification = array(
+            $notification = [
                 'message' => 'Something want to wrong!',
-                'alert-type' => 'error'
-            );
+                'alert-type' => 'error',
+            ];
+
             return redirect()->back()->with($notification);
         }
 
@@ -80,7 +83,7 @@ class AdminBookingController extends Controller
         $data->save();
 
         // Cập nhật ngày đặt phòng mới
-        // Xóa các ngày cũ đã đặt 
+        // Xóa các ngày cũ đã đặt
         RoomBookedDate::where('booking_id', $id)->delete();
         // Xóa các phòng đã gán khi thay đổi ngày đặt phòng
         BookingRoomList::where('booking_id', $id)->delete();
@@ -96,17 +99,17 @@ class AdminBookingController extends Controller
         $day_period = CarbonPeriod::create($startDate, $endDate);
 
         foreach ($day_period as $period) {
-            $booked_dates = new RoomBookedDate();
+            $booked_dates = new RoomBookedDate;
             $booked_dates->booking_id = $id;
             $booked_dates->room_id = $data->rooms_id;
             $booked_dates->book_date = $period->format('Y-m-d');
             $booked_dates->save();
         }
 
-        $notification = array(
+        $notification = [
             'message' => 'Updated booking successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }
@@ -146,23 +149,23 @@ class AdminBookingController extends Controller
 
         // Số lượng phòng đã gán không được vượt quá số lượng phòng đã đặt
         if ($check_data < $booking->number_of_rooms) {
-            $assign_data = new BookingRoomList();
+            $assign_data = new BookingRoomList;
             $assign_data->booking_id = $booking_id;
             $assign_data->room_id = $booking->rooms_id;
             $assign_data->room_number_id = $room_number_id;
             $assign_data->save();
 
-            $notification = array(
+            $notification = [
                 'message' => 'Assign room successfully!',
-                'alert-type' => 'success'
-            );
+                'alert-type' => 'success',
+            ];
 
             return redirect()->back()->with($notification);
         } else {
-            $notification = array(
+            $notification = [
                 'message' => 'Assign room already',
-                'alert-type' => 'error'
-            );
+                'alert-type' => 'error',
+            ];
 
             return redirect()->back()->with($notification);
         }
@@ -174,10 +177,10 @@ class AdminBookingController extends Controller
         $assign_room = BookingRoomList::find($id);
         $assign_room->delete();
 
-        $notification = array(
+        $notification = [
             'message' => 'Deleted assign room successfully',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }
@@ -188,9 +191,9 @@ class AdminBookingController extends Controller
         $editData = Booking::with('room')->find($id);
         $pdf = Pdf::loadView('backend.booking.booking_invoice', compact('editData'))
             ->setPaper('a4')->setOption([
-                    'tempDir' => public_path(),
-                    'chroot' => public_path(),
-                ]);
+                'tempDir' => public_path(),
+                'chroot' => public_path(),
+            ]);
 
         return $pdf->download('Booking Invoice.pdf');
     }

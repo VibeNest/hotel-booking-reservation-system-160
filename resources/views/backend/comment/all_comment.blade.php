@@ -1,6 +1,8 @@
 @extends("admin.admin_dashboard")
 
 @section("admin")
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <div class="page-content">
         <!--breadcrumb-->
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
@@ -40,8 +42,10 @@
                                     <td>{{Str::limit($item->message, 30, '...') }}</td>
                                     <td>
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                                            <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                                            <input class="form-check-input large-checkbox status-toggle" type="checkbox"
+                                                id="flexSwitchCheckDefault-{{ $item->id }}" data-comment-id="{{ $item->id }}" {{ $item->status ? 'checked' : "" }}>
+                                            <label class="form-check-label"
+                                                for="flexSwitchCheckDefault-{{ $item->id }}"></label>
                                         </div>
                                     </td>
                                 </tr>
@@ -52,4 +56,40 @@
             </div>
         </div>
     </div>
+
+    {{-- Update comment status --}}
+    <script>
+        $(document).ready(function () {
+            $('.status-toggle').on('change', function () {
+                var commentId = $(this).data('comment-id');
+                var isChecked = $(this).is(':checked');
+
+                // Send an ajax request to update status
+                $.ajax({
+                    url: "{{ route('update.comment.status') }}",
+                    method: "POST",
+                    data: {
+                        comment_id: commentId,
+                        is_checked: isChecked ? 1 : 0,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function (response) {
+                        toastr.success(response.message, 'Comment Status', {
+                            "timeOut": "3000",
+                            "positionClass": "toast-bottom-right",
+                        });
+                    },
+                    error: function () {
+
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
+
+<style>
+    .large-checkbox {
+        transform: scale(1.2);
+    }
+</style>

@@ -19,10 +19,10 @@ class CommentController extends Controller
             'created_at' => Carbon::now(),
         ]);
 
-        $notification = array(
+        $notification = [
             'message' => 'Added comment successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }
@@ -33,5 +33,20 @@ class CommentController extends Controller
         $allComment = Comment::latest()->get();
 
         return view('backend.comment.all_comment', compact('allComment'));
+    }
+
+    // Update Comment Status Method
+    public function UpdateCommentStatus(Request $request)
+    {
+        $comment_id = $request->input('comment_id');
+        $is_checked = $request->input('is_checked', 0);
+
+        $comment = Comment::find($comment_id);
+        if ($comment) {
+            $comment->status = $is_checked;
+            $comment->save();
+        }
+
+        return response()->json(['message' => 'Updated Status Comment Successfully']);
     }
 }

@@ -166,6 +166,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     // Comment All Routes
     Route::controller(CommentController::class)->group(function () {
         Route::get('/all/comment', 'AllComment')->name('all.comment');
+        Route::post('/update/comment/status', 'UpdateCommentStatus')->name('update.comment.status');
     });
 });
 
@@ -233,4 +234,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

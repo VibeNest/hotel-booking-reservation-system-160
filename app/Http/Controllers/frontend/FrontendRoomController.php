@@ -8,13 +8,13 @@ use App\Models\Facility;
 use App\Models\MultiImage;
 use App\Models\Room;
 use App\Models\RoomBookedDate;
+use App\Specifications\AndSpecification;
+use App\Specifications\AvailableDateSpecification;
+use App\Specifications\CapacitySpecification;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use App\Specifications\AndSpecification;
-use App\Specifications\CapacitySpecification;
-use App\Specifications\AvailableDateSpecification;
 
 class FrontendRoomController extends Controller
 {
@@ -45,61 +45,61 @@ class FrontendRoomController extends Controller
     }
 
     // Booking Search Method
-  public function BookingSearch(Request $request)
-{
-    $request->flash();
+    public function BookingSearch(Request $request)
+    {
+        $request->flash();
 
-    $allRooms = Room::withCount('rooms_numbers')
-        ->where('status', 1)
-        ->get();
+        $allRooms = Room::withCount('rooms_numbers')
+            ->where('status', 1)
+            ->get();
 
-    $specification = new AndSpecification(
-        new AvailableDateSpecification(
-            $request->check_in,
-            $request->check_out
-        ),
-        new CapacitySpecification(
-            $request->person
-        )
-    );
+        $specification = new AndSpecification(
+            new AvailableDateSpecification(
+                $request->check_in,
+                $request->check_out
+            ),
+            new CapacitySpecification(
+                $request->person
+            )
+        );
 
-    $filteredRooms = [];
+        $filteredRooms = [];
 
-    foreach ($allRooms as $room) {
+        foreach ($allRooms as $room) {
 
-        if ($specification->isSatisfiedBy($room)) {
-            $filteredRooms[] = $room;
+            if ($specification->isSatisfiedBy($room)) {
+                $filteredRooms[] = $room;
+            }
+
         }
 
+        // Pagination
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+
+        $perPage = 6;
+
+        $currentItems = array_slice(
+            $filteredRooms,
+            ($currentPage - 1) * $perPage,
+            $perPage
+        );
+
+        $rooms = new LengthAwarePaginator(
+            $currentItems,
+            count($filteredRooms),
+            $perPage,
+            $currentPage,
+            [
+                'path' => LengthAwarePaginator::resolveCurrentPath(),
+                'query' => $request->query(),
+            ]
+        );
+
+        return view(
+            'frontend.room.search_room',
+            compact('rooms')
+        );
     }
-
-    // Pagination
-    $currentPage = LengthAwarePaginator::resolveCurrentPage();
-
-    $perPage = 6;
-
-    $currentItems = array_slice(
-        $filteredRooms,
-        ($currentPage - 1) * $perPage,
-        $perPage
-    );
-
-    $rooms = new LengthAwarePaginator(
-        $currentItems,
-        count($filteredRooms),
-        $perPage,
-        $currentPage,
-        [
-            'path' => LengthAwarePaginator::resolveCurrentPath(),
-            'query' => $request->query(),
-        ]   
-    );
-
-    return view(
-        'frontend.room.search_room',
-        compact('rooms')
-    );
-}
 
     // Search Room Details Method
     public function SearchRoomDetails(Request $request, $id)

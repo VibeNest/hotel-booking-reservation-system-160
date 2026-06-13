@@ -25,10 +25,10 @@ class AdminController extends Controller
         $request->session()->regenerateToken();
 
         // Hiển thị thông báo toaster
-        $notification = array(
+        $notification = [
             'message' => 'Logout successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect('/admin/login')->with($notification);
     }
@@ -36,20 +36,21 @@ class AdminController extends Controller
     // Admin Login
     public function AdminLogin()
     {
-        return view("admin.admin_login");
+        return view('admin.admin_login');
     }
 
-    // Admin Profile 
+    // Admin Profile
     public function AdminProfile()
     {
         // Lấy id người đang đăng nhập (Admin)
         $id = Auth::user()->id;
         // Lấy thông tin của người đăng nhập (Admin) thông qua id
         $profileData = User::find($id);
-        return view("admin.profile.admin_profile", compact("profileData"));
+
+        return view('admin.profile.admin_profile', compact('profileData'));
     }
 
-    // Admin Profile Store Data 
+    // Admin Profile Store Data
     public function AdminProfileStore(Request $request)
     {
         $id = Auth::user()->id;
@@ -65,12 +66,12 @@ class AdminController extends Controller
         // Kiểm tra có photo không -> nếu có thì update photo
         if ($request->file('photo')) {
             // Xóa ảnh cũ nếu tồn tại
-            if ($oldPhoto && file_exists(public_path('upload/admin_images/' . $oldPhoto))) {
-                unlink(public_path('upload/admin_images/' . $oldPhoto));
+            if ($oldPhoto && file_exists(public_path('upload/admin_images/'.$oldPhoto))) {
+                unlink(public_path('upload/admin_images/'.$oldPhoto));
             }
 
             $file = $request->file('photo');
-            $filename = date('YmdHi') . '-' . $file->getClientOriginalName();
+            $filename = date('YmdHi').'-'.$file->getClientOriginalName();
             $file->move(public_path('upload/admin_images'), $filename);
             $data->photo = $filename;
         }
@@ -78,10 +79,10 @@ class AdminController extends Controller
         $data->save();
 
         // Hiển thị thông báo toaster
-        $notification = array(
+        $notification = [
             'message' => 'Updated admin profile successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }
@@ -93,25 +94,26 @@ class AdminController extends Controller
         $id = Auth::user()->id;
         // Lấy thông tin của người đăng nhập (Admin) thông qua id
         $profileData = User::find($id);
-        return view("admin.profile.admin_change_password", compact("profileData"));
+
+        return view('admin.profile.admin_change_password', compact('profileData'));
     }
 
-    // Admin Password Update 
+    // Admin Password Update
     public function AdminPasswordUpdate(Request $request)
     {
         // Validation
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|confirmed'
+            'new_password' => 'required|confirmed',
         ]);
 
         // Nếu password không khớp nhau
-        if (!Hash::check($request->current_password, Auth::user()->password)) {
+        if (! Hash::check($request->current_password, Auth::user()->password)) {
             // Hiển thị thông báo toaster
-            $notification = array(
+            $notification = [
                 'message' => 'Current password does not match!',
-                'alert-type' => 'error'
-            );
+                'alert-type' => 'error',
+            ];
 
             return back()->with($notification);
         }
@@ -119,14 +121,14 @@ class AdminController extends Controller
         // Update new password
         $id = Auth::user()->id;
         User::whereId($id)->update([
-            'password' => Hash::make($request->new_password)
+            'password' => Hash::make($request->new_password),
         ]);
 
         // Hiển thị thông báo toaster
-        $notification = array(
+        $notification = [
             'message' => 'Updated password successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }

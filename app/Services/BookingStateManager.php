@@ -47,7 +47,7 @@ class BookingStateManager
     {
         $state = self::getState($booking);
 
-        if (!$state->canApprove()) {
+        if (! $state->canApprove()) {
             throw new \Exception("Cannot approve booking in {$state->label()} status");
         }
 
@@ -61,7 +61,7 @@ class BookingStateManager
     {
         $state = self::getState($booking);
 
-        if (!$state->canCancel()) {
+        if (! $state->canCancel()) {
             throw new \Exception("Cannot cancel booking in {$state->label()} status");
         }
 

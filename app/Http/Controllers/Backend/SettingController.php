@@ -12,6 +12,7 @@ class SettingController extends Controller
     public function SmtpSetting()
     {
         $smtp = SmtpSetting::find(1);
+
         return view('backend.setting.smtp_update', compact('smtp'));
     }
 
@@ -29,10 +30,10 @@ class SettingController extends Controller
             'from_address' => $request->from_address,
         ]);
 
-        $notification = array(
+        $notification = [
             'message' => 'Updated Smtp Setting Successfully',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }

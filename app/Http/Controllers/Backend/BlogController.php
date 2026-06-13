@@ -17,6 +17,7 @@ class BlogController extends Controller
     public function BlogCategory()
     {
         $category = BlogCategory::latest()->get();
+
         return view('backend.category.blog_category', compact('category'));
     }
 
@@ -26,13 +27,13 @@ class BlogController extends Controller
         BlogCategory::insert([
             'category_name' => $request->category_name,
             'category_slug' => strtolower(str_replace(' ', '-', $request->category_name)),
-            'created_at' => Carbon::now()
+            'created_at' => Carbon::now(),
         ]);
 
-        $notification = array(
+        $notification = [
             'message' => 'Added blog category successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }
@@ -55,10 +56,10 @@ class BlogController extends Controller
             'category_slug' => strtolower(str_replace(' ', '-', $request->category_name)),
         ]);
 
-        $notification = array(
+        $notification = [
             'message' => 'Updated blog category successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }
@@ -68,10 +69,10 @@ class BlogController extends Controller
     {
         BlogCategory::find($id)->delete();
 
-        $notification = array(
+        $notification = [
             'message' => 'Deleted blog category successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }
@@ -88,6 +89,7 @@ class BlogController extends Controller
     public function AddBlogPost()
     {
         $blog_cat = BlogCategory::latest()->get();
+
         return view('backend.post.add_post', compact('blog_cat'));
     }
 
@@ -103,11 +105,11 @@ class BlogController extends Controller
 
         // Xử lý upload ảnh
         $image = $request->file('post_image');
-        $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-        $manager = new ImageManager(new Driver());
+        $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
+        $manager = new ImageManager(new Driver);
         $img = $manager->read($image);
-        $img->resize(550, 370)->save(public_path('upload/posts/' . $name_gen));
-        $save_url = 'upload/posts/' . $name_gen;
+        $img->resize(550, 370)->save(public_path('upload/posts/'.$name_gen));
+        $save_url = 'upload/posts/'.$name_gen;
 
         // Lưu thông tin post vào database
         BlogPost::insert([
@@ -118,14 +120,14 @@ class BlogController extends Controller
             'short_desc' => $request->short_desc,
             'long_desc' => $request->long_desc,
             'post_image' => $save_url,
-            'created_at' => Carbon::now()
+            'created_at' => Carbon::now(),
         ]);
 
         // Hiển thị thông báo toaster
-        $notification = array(
+        $notification = [
             'message' => 'Added Blog Post Successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->route('all.blog.post')->with($notification);
     }
@@ -153,11 +155,11 @@ class BlogController extends Controller
 
             // Xử lý upload ảnh mới
             $image = $request->file('post_image');
-            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-            $manager = new ImageManager(new Driver());
+            $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
+            $manager = new ImageManager(new Driver);
             $img = $manager->read($image);
-            $img->resize(550, 370)->save(public_path('upload/posts/' . $name_gen));
-            $save_url = 'upload/posts/' . $name_gen;
+            $img->resize(550, 370)->save(public_path('upload/posts/'.$name_gen));
+            $save_url = 'upload/posts/'.$name_gen;
 
             // Cập nhật thông tin post vào database khi thay đổi ảnh
             BlogPost::findOrFail($post_id)->update([
@@ -171,10 +173,10 @@ class BlogController extends Controller
             ]);
 
             // Hiển thị thông báo toaster
-            $notification = array(
+            $notification = [
                 'message' => 'Updated post with image successfully!',
-                'alert-type' => 'success'
-            );
+                'alert-type' => 'success',
+            ];
 
             return redirect()->route('all.blog.post')->with($notification);
         } else {
@@ -189,10 +191,10 @@ class BlogController extends Controller
             ]);
 
             // Hiển thị thông báo toaster
-            $notification = array(
+            $notification = [
                 'message' => 'Updated post without image successfully!',
-                'alert-type' => 'success'
-            );
+                'alert-type' => 'success',
+            ];
 
             return redirect()->route('all.blog.post')->with($notification);
         }
@@ -208,10 +210,10 @@ class BlogController extends Controller
         BlogPost::findOrFail($id)->delete();
 
         // Hiển thị thông báo toaster
-        $notification = array(
+        $notification = [
             'message' => 'Deleted post successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }

@@ -18,13 +18,12 @@ class TeamFactory extends Factory
     public function definition(): array
     {
         return [
-        'name' => fake()->name(),
-        'position' => fake()->jobTitle(),
-        'facebook' => fake()->url(),
-        'tiktok' => fake()->url(),
-        'instagram' => fake()->url(),
-        'image' => 'upload/team/test.jpg',
+            'name' => fake()->name(),
+            'position' => fake()->jobTitle(),
+            'facebook' => fake()->url(),
+            'tiktok' => fake()->url(),
+            'instagram' => fake()->url(),
+            'image' => 'upload/team/test.jpg',
         ];
     }
 }
-

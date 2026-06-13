@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Team;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class TeamTest extends TestCase
 {
@@ -26,7 +26,7 @@ class TeamTest extends TestCase
 
         // 4. Check DB đã xóa
         $this->assertDatabaseMissing('teams', [
-            'id' => $team->id
+            'id' => $team->id,
         ]);
     }
 }

@@ -10,8 +10,8 @@ class PaymentFactory
     public static function make($method)
     {
         return match ($method) {
-            'COD' => new CodStrategy(),
-            'Stripe' => new StripeStrategy(),
+            'COD' => new CodStrategy,
+            'Stripe' => new StripeStrategy,
 
             default => throw new \Exception('Invalid Payment Method')
         };

@@ -30,16 +30,16 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         // Route Role Page set up
-        $url = "";
+        $url = '';
         if ($request->user()->role === 'admin') {
-            $url = "admin/dashboard";
+            $url = 'admin/dashboard';
         } elseif ($request->user()->role === 'instructor') {
-            $url = "instructor/dashboard";
+            $url = 'instructor/dashboard';
         } elseif ($request->user()->role === 'user') {
-            $url = "dashboard";
+            $url = 'dashboard';
         }
 
-        // Lấy id người đang đăng nhập 
+        // Lấy id người đang đăng nhập
         $id = Auth::user()->id;
         // Lấy thông tin của người đăng nhập thông qua id
         $profileData = User::find($id);
@@ -47,10 +47,10 @@ class AuthenticatedSessionController extends Controller
         $username = $profileData->name;
 
         // Hiển thị thông báo đăng nhập thành công
-        $notification = array(
-            'message' => '' . $username . ' login successfully!',
-            'alert-type' => 'info'
-        );
+        $notification = [
+            'message' => ''.$username.' login successfully!',
+            'alert-type' => 'info',
+        ];
 
         return redirect()->intended($url)->with($notification);
     }

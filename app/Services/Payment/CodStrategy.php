@@ -10,7 +10,7 @@ class CodStrategy implements PaymentStrategy
     {
         return [
             'payment_status' => 0,
-            'transaction_id' => ''
+            'transaction_id' => '',
         ];
     }
 }

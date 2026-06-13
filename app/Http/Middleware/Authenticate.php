@@ -17,7 +17,7 @@ class Authenticate
     public function handle(Request $request, Closure $next): Response
     {
         // Nếu chưa login
-        if (!Auth::check()) {
+        if (! Auth::check()) {
 
             // Nếu là route admin
             if ($request->is('admin') || $request->is('admin/*')) {

@@ -11,6 +11,7 @@ use Carbon\CarbonPeriod;
 class AvailableDateSpecification implements RoomSpecification
 {
     private $checkIn;
+
     private $checkOut;
 
     public function __construct($checkIn, $checkOut)
@@ -42,9 +43,9 @@ class AvailableDateSpecification implements RoomSpecification
             'book_date',
             $dateArray
         )
-        ->distinct()
-        ->pluck('booking_id')
-        ->toArray();
+            ->distinct()
+            ->pluck('booking_id')
+            ->toArray();
 
         // Lấy các booking của room hiện tại
         $bookings = Booking::withCount('assign_rooms')

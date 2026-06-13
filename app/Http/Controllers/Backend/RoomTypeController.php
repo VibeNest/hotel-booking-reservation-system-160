@@ -14,6 +14,7 @@ class RoomTypeController extends Controller
     public function RoomTypeList()
     {
         $allData = RoomType::orderBy('id', 'desc')->get();
+
         return view('backend.all_room.room_type.room_type_list', compact('allData'));
     }
 
@@ -35,10 +36,10 @@ class RoomTypeController extends Controller
             'roomtype_id' => $roomtype_id,
         ]);
 
-        $notification = array(
+        $notification = [
             'message' => 'Added room type successfully',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->route('room.type.list')->with($notification);
     }

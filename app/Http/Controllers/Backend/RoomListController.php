@@ -47,6 +47,7 @@ class RoomListController extends Controller
     public function AddRoomList()
     {
         $room_types = RoomType::all();
+
         return view('backend.all_room.room_list.add_room_list', compact('room_types'));
     }
 
@@ -55,10 +56,11 @@ class RoomListController extends Controller
     {
         // Nếu số lượng phòng chọn vượt quá số lượng phòng còn trống
         if ($request->available_room < $request->number_of_rooms) {
-            $notification = array(
+            $notification = [
                 'message' => 'You enter maximum number of rooms!',
-                'alert-type' => 'error'
-            );
+                'alert-type' => 'error',
+            ];
+
             return redirect()->back()->with($notification);
         }
 
@@ -66,10 +68,11 @@ class RoomListController extends Controller
 
         // Số lượng người chọn vượt quá số lượng người mà phòng đó chứa
         if ($room->room_capacity < $request->person) {
-            $notification = array(
+            $notification = [
                 'message' => 'You enter maximum number of guests!',
-                'alert-type' => 'error'
-            );
+                'alert-type' => 'error',
+            ];
+
             return redirect()->back()->with($notification);
         }
 
@@ -91,7 +94,7 @@ class RoomListController extends Controller
         $code = rand(100000000, 999999999);
 
         // Insert Data Booking
-        $booking = new Booking();
+        $booking = new Booking;
         $booking->rooms_id = $room->id;
         $booking->user_id = Auth::user()->id;
         $booking->check_in = date('d-m-Y', strtotime($request['check_in']));
@@ -129,7 +132,7 @@ class RoomListController extends Controller
         $day_period = CarbonPeriod::create($startDate, $endDate);
 
         foreach ($day_period as $period) {
-            $booked_dates = new RoomBookedDate();
+            $booked_dates = new RoomBookedDate;
             $booked_dates->booking_id = $booking->id;
             $booked_dates->room_id = $room->id;
             $booked_dates->book_date = $period->format('Y-m-d');

@@ -15,17 +15,17 @@ class StripeStrategy implements PaymentStrategy
             'amount' => $data['total_price'] * 100,
             'currency' => 'usd',
             'source' => $data['stripeToken'],
-            'description' => 'Booking Payment'
+            'description' => 'Booking Payment',
         ]);
 
         if ($payment['status'] == 'succeeded') {
 
             return [
                 'payment_status' => 1,
-                'transaction_id' => $payment['id']
+                'transaction_id' => $payment['id'],
             ];
         }
 
-        throw new \Exception("Stripe Payment Failed");
+        throw new \Exception('Stripe Payment Failed');
     }
 }

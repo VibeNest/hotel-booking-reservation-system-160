@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Testimonial;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 
@@ -16,6 +15,7 @@ class TestimonialController extends Controller
     public function AllTestimonial()
     {
         $testimonial = Testimonial::latest()->get();
+
         return view('backend.testimonial.all_testimonial', compact('testimonial'));
     }
 
@@ -37,11 +37,11 @@ class TestimonialController extends Controller
 
         // Xử lý upload ảnh
         $image = $request->file('image');
-        $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-        $manager = new ImageManager(new Driver());
+        $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
+        $manager = new ImageManager(new Driver);
         $img = $manager->read($image);
-        $img->resize(50, 50)->save(public_path('upload/testimonials/' . $name_gen));
-        $save_url = 'upload/testimonials/' . $name_gen;
+        $img->resize(50, 50)->save(public_path('upload/testimonials/'.$name_gen));
+        $save_url = 'upload/testimonials/'.$name_gen;
 
         // Lưu thông tin testimonial vào database
         Testimonial::insert([
@@ -49,14 +49,14 @@ class TestimonialController extends Controller
             'city' => $request->city,
             'message' => $request->message,
             'image' => $save_url,
-            'created_at' => Carbon::now()
+            'created_at' => Carbon::now(),
         ]);
 
         // Hiển thị thông báo toaster
-        $notification = array(
+        $notification = [
             'message' => 'Added testimonial successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->route('all.testimonial')->with($notification);
     }
@@ -65,6 +65,7 @@ class TestimonialController extends Controller
     public function EditTestimonial($id)
     {
         $testimonial = Testimonial::find($id);
+
         return view('backend.testimonial.edit_testimonial', compact('testimonial'));
     }
 
@@ -82,11 +83,11 @@ class TestimonialController extends Controller
 
             // Xử lý upload ảnh mới
             $image = $request->file('image');
-            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-            $manager = new ImageManager(new Driver());
+            $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
+            $manager = new ImageManager(new Driver);
             $img = $manager->read($image);
-            $img->resize(50, 50)->save(public_path('upload/testimonials/' . $name_gen));
-            $save_url = 'upload/testimonials/' . $name_gen;
+            $img->resize(50, 50)->save(public_path('upload/testimonials/'.$name_gen));
+            $save_url = 'upload/testimonials/'.$name_gen;
 
             // Cập nhật thông tin testimonial vào database khi thay đổi ảnh
             Testimonial::findOrFail($testimonial_id)->update([
@@ -94,14 +95,14 @@ class TestimonialController extends Controller
                 'city' => $request->city,
                 'message' => $request->message,
                 'image' => $save_url,
-                'created_at' => Carbon::now()
+                'created_at' => Carbon::now(),
             ]);
 
             // Hiển thị thông báo toaster
-            $notification = array(
+            $notification = [
                 'message' => 'Updated testimonial with image successfully!',
-                'alert-type' => 'success'
-            );
+                'alert-type' => 'success',
+            ];
 
             return redirect()->route('all.testimonial')->with($notification);
         } else {
@@ -110,14 +111,14 @@ class TestimonialController extends Controller
                 'name' => $request->name,
                 'city' => $request->city,
                 'message' => $request->message,
-                'created_at' => Carbon::now()
+                'created_at' => Carbon::now(),
             ]);
 
             // Hiển thị thông báo toaster
-            $notification = array(
+            $notification = [
                 'message' => 'Updated testimonial without image successfully!',
-                'alert-type' => 'success'
-            );
+                'alert-type' => 'success',
+            ];
 
             return redirect()->route('all.testimonial')->with($notification);
         }
@@ -133,10 +134,10 @@ class TestimonialController extends Controller
         Testimonial::findOrFail($id)->delete();
 
         // Hiển thị thông báo toaster
-        $notification = array(
+        $notification = [
             'message' => 'Deleted testimonial successfully!',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
 
         return redirect()->back()->with($notification);
     }

@@ -7,9 +7,7 @@ final class FacilityPriceDecoratorBuilder
     /**
      * @param  array<string, float|int>  $facilityFees
      */
-    public function __construct(private array $facilityFees)
-    {
-    }
+    public function __construct(private array $facilityFees) {}
 
     public static function fromConfig(): self
     {
@@ -24,11 +22,11 @@ final class FacilityPriceDecoratorBuilder
         $decorated = $basePrice;
 
         foreach ($selectedFacilities as $facilityName) {
-            if (!is_string($facilityName)) {
+            if (! is_string($facilityName)) {
                 continue;
             }
 
-            if (!array_key_exists($facilityName, $this->facilityFees)) {
+            if (! array_key_exists($facilityName, $this->facilityFees)) {
                 continue;
             }
 

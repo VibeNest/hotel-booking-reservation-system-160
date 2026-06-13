@@ -33,8 +33,8 @@ class AppServiceProvider extends ServiceProvider
                     'password' => $smtpSetting->password,
                     'from' => [
                         'address' => $smtpSetting->from_address,
-                        'name' => 'HotelHub'
-                    ]
+                        'name' => 'HotelHub',
+                    ],
                 ];
                 Config::set('mail', $data);
             }

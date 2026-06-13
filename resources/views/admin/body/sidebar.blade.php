@@ -117,6 +117,7 @@
                 </li>
             </ul>
         </li>
+
         <li>
             <a class="has-arrow" href="javascript:;">
                 <div class="parent-icon"><i class='bx bx-door-open'></i>
@@ -128,6 +129,19 @@
                 </li>
             </ul>
         </li>
+
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bx bx-bar-chart-alt-2"></i>
+                </div>
+                <div class="menu-title">Booking Report</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route("booking.report") }}"><i class='bx bx-radio-circle'></i>Booking Report</a>
+                </li>
+            </ul>
+        </li>
+
         <li class="menu-label">Configuration</li>
 
         <li>

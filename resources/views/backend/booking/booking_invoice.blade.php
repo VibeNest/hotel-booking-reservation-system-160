@@ -218,6 +218,10 @@
             color: #dc2626;
         }
 
+        .totals-table .row-addon td {
+            color: #16a34a;
+        }
+
         .totals-table .row-total {
             background-color: #1a56db;
         }
@@ -381,11 +385,15 @@
                 <table class="totals-table" cellpadding="0" cellspacing="0">
                     <tr>
                         <td>Subtotal</td>
-                        <td class="t-right">${{ number_format($editData->subtotal, 2) }}</td>
+                        <td class="t-right">${{ number_format($editData->subtotal, 0) }}</td>
                     </tr>
                     <tr class="row-discount">
                         <td>Discount</td>
-                        <td class="t-right">-${{ number_format($editData->discount, 2) }}</td>
+                        <td class="t-right">-${{ number_format($editData->discount, 0) }}</td>
+                    </tr>
+                    <tr class="row-addon">
+                        <td>Add-ons</td>
+                        <td class="t-right">+${{ number_format($editData->getAddonFee(), 0) }}</td>
                     </tr>
                     <tr class="row-divider">
                         <td></td>

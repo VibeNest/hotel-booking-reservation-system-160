@@ -65,6 +65,18 @@
 
         <li>
             <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bx bx-message-detail"></i>
+                </div>
+                <div class="menu-title">Comment Management</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route("all.comment") }}"><i class='bx bx-radio-circle'></i>All Comments</a>
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <a href="javascript:;" class="has-arrow">
                 <div class="parent-icon"><i class="bx bx-building-house"></i>
                 </div>
                 <div class="menu-title">Book Area Management</div>
@@ -116,7 +128,7 @@
                 </li>
             </ul>
         </li>
-        <li class="menu-label">Others</li>
+        <li class="menu-label">Configuration</li>
 
         <li>
             <a class="has-arrow" href="javascript:;">

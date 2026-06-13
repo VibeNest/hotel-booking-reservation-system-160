@@ -162,6 +162,11 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::post('/update/blog/post', 'UpdateBlogPost')->name('update.blog.post');
         Route::get('/delete/blog/post/{id}', 'DeleteBlogPost')->name('delete.blog.post');
     });
+
+    // Comment All Routes
+    Route::controller(CommentController::class)->group(function () {
+        Route::get('/all/comment', 'AllComment')->name('all.comment');
+    });
 });
 
 // Instructor Group Middleware

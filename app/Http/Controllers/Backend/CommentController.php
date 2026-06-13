@@ -26,4 +26,12 @@ class CommentController extends Controller
 
         return redirect()->back()->with($notification);
     }
+
+    // All Comment Method
+    public function AllComment()
+    {
+        $allComment = Comment::latest()->get();
+
+        return view('backend.comment.all_comment', compact('allComment'));
+    }
 }

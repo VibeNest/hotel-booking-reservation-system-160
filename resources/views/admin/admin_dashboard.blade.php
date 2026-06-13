@@ -77,7 +77,9 @@
     <!--app JS-->
     <script src="{{ asset('backend/assets/js/app.js') }}"></script>
     <script>
-        new PerfectScrollbar(".app-container")
+        if (document.querySelector(".app-container")) {
+            new PerfectScrollbar(".app-container");
+        }
     </script>
 
     {{-- Toaster --}}
@@ -136,11 +138,13 @@
         referrerpolicy="origin"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            tinymce.init({
-                selector: '#myeditorinstance',
-                plugins: 'code table lists',
-                toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | indent outdent | bullist numlist | code | table'
-            });
+            if (document.querySelector('#myeditorinstance')) {
+                tinymce.init({
+                    selector: '#myeditorinstance',
+                    plugins: 'code table lists',
+                    toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | indent outdent | bullist numlist | code | table'
+                });
+            }
         });
     </script>
     {{-- TinyMCE --}}

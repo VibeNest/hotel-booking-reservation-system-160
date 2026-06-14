@@ -16,7 +16,7 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="{{ route('add.book.area') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
+                    <a href="{{ route('add.gallery') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
                         Gallery</a>
                 </div>
             </div>
@@ -39,7 +39,8 @@
                             @foreach ($gallery as $key => $item)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $item->photo_name }}</td>
+                                    <td><img src="{{ asset($item->photo_name) }}" alt="Gallery Image"
+                                            style="width: 50px; height: 50px;"></td>
                                     <td>
                                         <a href="{{ route('edit.book_area', $item->id) }}"
                                             class="btn btn-warning px-3 radius-30">Edit</a>

@@ -98,7 +98,7 @@
             <ul>
                 <li> <a href="{{ route("all.gallery") }}"><i class='bx bx-radio-circle'></i>All Gallery</a>
                 </li>
-                <li> <a href="{{ route("add.book.area") }}"><i class='bx bx-radio-circle'></i>Add book area</a>
+                <li> <a href="{{ route("add.gallery") }}"><i class='bx bx-radio-circle'></i>Add Gallery</a>
                 </li>
             </ul>
         </li>

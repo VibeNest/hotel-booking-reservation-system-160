@@ -175,6 +175,12 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/booking/report', 'BookingReport')->name('booking.report');
         Route::post('/seach-by-date', 'SeachByDate')->name('seach-by-date');
     });
+
+    // Site Setting Routes
+    Route::controller(SettingController::class)->group(function () {
+        Route::get('/site/setting', 'SiteSetting')->name('site.setting');
+        Route::post('/site/update', 'SiteUpdate')->name('site.update');
+    });
 });
 
 // Instructor Group Middleware
@@ -241,4 +247,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -1,3 +1,7 @@
+@php
+
+@endphp
+
 <header class="top-header top-header-bg">
     <div class="container">
         <div class="row align-items-center">

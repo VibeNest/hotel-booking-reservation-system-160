@@ -91,6 +91,20 @@
 
         <li>
             <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bx bx-images"></i>
+                </div>
+                <div class="menu-title">Hotel Gallery</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route("all.gallery") }}"><i class='bx bx-radio-circle'></i>All Gallery</a>
+                </li>
+                <li> <a href="{{ route("add.book.area") }}"><i class='bx bx-radio-circle'></i>Add book area</a>
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <a href="javascript:;" class="has-arrow">
                 <div class="parent-icon"><i class="bx bx-bed"></i>
                 </div>
                 <div class="menu-title">Room Type Management</div>

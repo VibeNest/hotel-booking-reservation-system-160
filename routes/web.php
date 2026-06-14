@@ -5,6 +5,7 @@ use App\Http\Controllers\Backend\AdminBookingController;
 use App\Http\Controllers\Backend\BlogController;
 use App\Http\Controllers\Backend\BookAreaController;
 use App\Http\Controllers\Backend\CommentController;
+use App\Http\Controllers\Backend\GalleryController;
 use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\RoomController;
 use App\Http\Controllers\Backend\RoomListController;
@@ -180,6 +181,11 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     Route::controller(SettingController::class)->group(function () {
         Route::get('/site/setting', 'SiteSetting')->name('site.setting');
         Route::post('/site/update', 'SiteUpdate')->name('site.update');
+    });
+
+    // Gallery All Routes
+    Route::controller(GalleryController::class)->group(function () {
+        Route::get('/all/gallery', 'AllGallery')->name('all.gallery');
     });
 });
 

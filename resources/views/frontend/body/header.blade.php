@@ -1,5 +1,5 @@
 @php
-
+    $setting = App\Models\SiteSetting::find(1);
 @endphp
 
 <header class="top-header top-header-bg">
@@ -19,15 +19,15 @@
                     <ul>
                         <li>
                             <i class='bx bx-home-alt'></i>
-                            <a href="#">123 số 2 B1, Phù Cừ, Hưng Yên</a>
+                            <a href="#">{{ $setting->address }}</a>
                         </li>
                         <li>
                             <i class='bx bx-phone-call'></i>
-                            <a href="tel:+1-(123)-456-7890">0376734165</a>
+                            <a href="#">{{ $setting->phone }}</a>
                         </li>
                         <li>
                             <i class='bx bx-envelope'></i>
-                            <a href="mailto:hello@atoli.com">tungvuvanthanh@gmail.com</a>
+                            <a href="#">{{ $setting->email }}</a>
                         </li>
 
                         @auth

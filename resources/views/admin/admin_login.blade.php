@@ -59,11 +59,13 @@
                                     <div class="form-body">
                                         <form class="row g-3" method="POST" action="{{ route('login') }}">
                                             @csrf
+                                            <input type="hidden" name="admin_login" value="1">
 
-                                            <div class=" col-12">
+                                            <div class="col-12">
                                                 <label for="login" class="form-label">Email/Name/Phone</label>
-                                                <input type="text" class="form-control @error('login') is-invalid
-                                                @enderror" id="login" name="login" placeholder="thanhtung@example.com">
+                                                <input type="text"
+                                                    class="form-control @error('login') is-invalid @enderror" id="login"
+                                                    name="login" placeholder="thanhtung@example.com">
                                                 @error('login')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -71,9 +73,9 @@
                                             <div class="col-12">
                                                 <label for="password" class="form-label">Password</label>
                                                 <div class="input-group" id="show_hide_password">
-                                                    <input type="password" class="form-control @error('password') is-invalid
-                                                    @enderror" id="password" name="password"
-                                                        placeholder="Enter Password">
+                                                    <input type="password"
+                                                        class="form-control @error('password') is-invalid @enderror"
+                                                        id="password" name="password" placeholder="Enter Password">
                                                     <a href="javascript:;" class="input-group-text bg-transparent"><i
                                                             class="bx bx-hide"></i></a>
                                                 </div>
@@ -86,46 +88,16 @@
                                                     <input class="form-check-input" type="checkbox"
                                                         id="flexSwitchCheckChecked">
                                                     <label class="form-check-label"
-                                                        for="flexSwitchCheckChecked">Remember
-                                                        Me</label>
+                                                        for="flexSwitchCheckChecked">Remember Me</label>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6 text-end"> <a
-                                                    href="authentication-forgot-password.html">Forgot
-                                                    Password ?</a>
                                             </div>
                                             <div class="col-12">
                                                 <div class="d-grid">
                                                     <button type="submit" class="btn btn-primary">Sign in</button>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
-                                                <div class="text-center ">
-                                                    <p class="mb-0">Don't have an account yet? <a
-                                                            href="authentication-signup.html">Sign up here</a>
-                                                    </p>
-                                                </div>
-                                            </div>
                                         </form>
                                     </div>
-                                    <div class="login-separater text-center mb-5"> <span>OR SIGN IN WITH</span>
-                                        <hr>
-                                    </div>
-                                    <div class="list-inline contacts-social text-center">
-                                        <a href="javascript:;"
-                                            class="list-inline-item bg-facebook text-white border-0 rounded-3"><i
-                                                class="bx bxl-facebook"></i></a>
-                                        <a href="javascript:;"
-                                            class="list-inline-item bg-twitter text-white border-0 rounded-3"><i
-                                                class="bx bxl-twitter"></i></a>
-                                        <a href="javascript:;"
-                                            class="list-inline-item bg-google text-white border-0 rounded-3"><i
-                                                class="bx bxl-google"></i></a>
-                                        <a href="javascript:;"
-                                            class="list-inline-item bg-linkedin text-white border-0 rounded-3"><i
-                                                class="bx bxl-linkedin"></i></a>
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
@@ -142,7 +114,7 @@
     <!--plugins-->
     <script src="{{ asset("backend/assets/js/jquery.min.js") }}"></script>
     <script src="{{ asset("backend/assets/plugins/simplebar/js/simplebar.min.js") }}"></script>
-    <script src="{{ asset("backend/assets/plugins/metismenu/js/metisMenu.min.j") }}s"></script>
+    <script src="{{ asset("backend/assets/plugins/metismenu/js/metisMenu.min.js") }}"></script>
     <script src="{{ asset("backend/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js") }}"></script>
     <!--Password show & hide js -->
     <script>
@@ -192,7 +164,7 @@
                     toastr.error(" {{ Session::get('message') }} ");
                     break;
             }
-        @endif 
+        @endif
     </script>
 </body>
 

@@ -27,6 +27,38 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        $isAdminLogin = $request->has('admin_login');
+
+        // Block admin login from user /login page
+        if (!$isAdminLogin && $request->user()->role === 'admin') {
+            Auth::guard('web')->logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            $notification = [
+                'message' => 'Access denied. Please login with user account!',
+                'alert-type' => 'error',
+            ];
+
+            return redirect('/login')->with($notification);
+        }
+
+        // Block user/instructor from admin /admin/login page
+        if ($isAdminLogin && $request->user()->role !== 'admin') {
+            Auth::guard('web')->logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            $notification = [
+                'message' => 'Access denied. Please login with admin account!',
+                'alert-type' => 'error',
+            ];
+
+            return redirect('/admin/login')->with($notification);
+        }
+
         $request->session()->regenerate();
 
         // Route Role Page set up
@@ -48,7 +80,7 @@ class AuthenticatedSessionController extends Controller
 
         // Hiển thị thông báo đăng nhập thành công
         $notification = [
-            'message' => ''.$username.' login successfully!',
+            'message' => '' . $username . ' login successfully!',
             'alert-type' => 'info',
         ];
 

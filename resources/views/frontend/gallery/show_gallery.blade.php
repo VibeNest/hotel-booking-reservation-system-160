@@ -45,6 +45,12 @@
                     </div>
                 </div>
             </div>
+
+            <div class="col-lg-12 col-md-12">
+                <div class="pagination-area">
+                    {{ $gallery->links('vendor.pagination.custome') }}
+                </div>
+            </div>
         </div>
     </div>
     <!-- Gallery Area End -->

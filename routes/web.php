@@ -201,7 +201,7 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
 });
 
 // User not need login to access this routes
-// Room All Routes
+// Frontend Room All Routes
 Route::controller(FrontendRoomController::class)->group(function () {
     Route::get('/rooms', 'AllFrontendRoomList')->name('room.all');
     Route::get('/room/details/{id}', 'RoomDetailsPage')->name('room.details');
@@ -210,7 +210,7 @@ Route::controller(FrontendRoomController::class)->group(function () {
     Route::get('/check_room_availability', 'CheckRoomAvailability')->name('check_room_availability');
 });
 
-// Blog All Routes
+// Frontend Blog All Routes
 Route::controller(PostController::class)->group(function () {
     Route::get('/blog/details/{slug}', 'BlogDetails');
     Route::get('/blog/category/list/{id}', 'BlogCategoryList');
@@ -219,9 +219,14 @@ Route::controller(PostController::class)->group(function () {
     Route::get('/blog/category/list/{id}/search', 'BlogCategorySearch')->name('blog.category.search');
 });
 
-// Comment All Routes
+// Frontend Comment All Routes
 Route::controller(CommentController::class)->group(function () {
     Route::post('/store/comment', 'StoreComment')->name('store.comment');
+});
+
+// Frontend Gallery All Routes
+Route::controller(GalleryController::class)->group(function () {
+    Route::get('/gallery', 'ShowGallery')->name('show.gallery');
 });
 
 // VNPay return callback (no auth required)

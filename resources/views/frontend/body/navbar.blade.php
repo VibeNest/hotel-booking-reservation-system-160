@@ -39,8 +39,9 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" class="nav-link {{ Request::is('recreation') ? 'active' : '' }}">
-                                Recreation
+                            <a href="{{ route('show.gallery') }}"
+                                class="nav-link {{ Request::is('gallery') ? 'active' : '' }}">
+                                Gallery
                             </a>
                         </li>
 

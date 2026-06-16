@@ -27,30 +27,57 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="example" class="table table-striped table-bordered" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Sl</th>
-                                <th>Image</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($gallery as $key => $item)
+
+                    <form action="{{ route('delete.gallery.multiple') }}" method="POST">
+                        @csrf
+
+                        <table id="example" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
                                 <tr>
-                                    <td>{{ $key + 1 }}</td>
-                                    <td><img src="{{ asset($item->photo_name) }}" alt="Gallery Image"
-                                            style="width: 50px; height: 50px;"></td>
-                                    <td>
-                                        <a href="{{ route('edit.book_area', $item->id) }}"
-                                            class="btn btn-warning px-3 radius-30">Edit</a>
-                                        <a href="{{ route('delete.book_area', $item->id) }}"
-                                            class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
-                                    </td>
+                                    <th width="50px">Select</th>
+                                    <th width="50px">Sl</th>
+                                    <th>Image</th>
+                                    <th>Action</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($gallery as $key => $item)
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="selectedItem[]" value="{{ $item->id }}">
+                                        </td>
+                                        <td>{{ $key + 1 }}</td>
+                                        <td>
+                                            <img src="{{ asset($item->photo_name) }}" alt="Gallery Image"
+                                                style="width:50px;height:50px;">
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('edit.gallery', $item->id) }}"
+                                                class="btn btn-warning px-3 radius-30">Edit</a>
+
+                                            <a href="{{ route('delete.gallery', $item->id) }}"
+                                                class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+
+                        <!-- Action Footer -->
+                        <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+                            <div>
+                                <span class="text-muted">
+                                    Select one or more gallery items to delete.
+                                </span>
+                            </div>
+
+                            <button type="submit" class="btn btn-danger px-4">
+                                <i class="bx bx-trash me-1"></i>
+                                Delete Selected
+                            </button>
+                        </div>
+                    </form>
+
                 </div>
             </div>
         </div>

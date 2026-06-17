@@ -75,7 +75,8 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="contact.html" class="nav-link {{ Request::is('contact.html') ? 'active' : '' }}">
+                            <a href="{{ route('contact.us') }}"
+                                class="nav-link {{ Request::is('contact') ? 'active' : '' }}">
                                 Contact
                             </a>
                         </li>

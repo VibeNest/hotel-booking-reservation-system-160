@@ -14,6 +14,7 @@ use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\TeamController;
 use App\Http\Controllers\Backend\TestimonialController;
 use App\Http\Controllers\Frontend\BookingController;
+use App\Http\Controllers\frontend\ContactController;
 use App\Http\Controllers\Frontend\FrontendRoomController;
 use App\Http\Controllers\frontend\PostController;
 use App\Http\Controllers\InstructorController;
@@ -227,6 +228,11 @@ Route::controller(CommentController::class)->group(function () {
 // Frontend Gallery All Routes
 Route::controller(GalleryController::class)->group(function () {
     Route::get('/gallery', 'ShowGallery')->name('show.gallery');
+});
+
+// Frontend Contact All Routes
+Route::controller(ContactController::class)->group(function () {
+    Route::get('/contact', 'ContactUs')->name('contact.us');
 });
 
 // VNPay return callback (no auth required)

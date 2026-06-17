@@ -156,7 +156,20 @@
             </ul>
         </li>
 
-        <li class="menu-label">Configuration</li>
+        <li class="menu-label">Other</li>
+
+        <li>
+            <a class="has-arrow" href="javascript:;">
+                <div class="parent-icon"><i class='bx bx-phone'></i>
+                </div>
+                <div class="menu-title">Contact</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route('contact.message') }}"><i class='bx bx-radio-circle'></i>Contact Message</a>
+                </li>
+            </ul>
+        </li>
+
 
         <li>
             <a class="has-arrow" href="javascript:;">

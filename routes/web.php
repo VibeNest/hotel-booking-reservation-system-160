@@ -194,6 +194,11 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/delete/gallery/{id}', 'DeleteGallery')->name('delete.gallery');
         Route::post('/delete/gallery/multiple', 'DeleteGalleryMultiple')->name('delete.gallery.multiple');
     });
+
+    // Contact All Routes
+    Route::controller(ContactController::class)->group(function () {
+        Route::get('/contact/message', 'ContactMessage')->name('contact.message');
+    });
 });
 
 // Instructor Group Middleware

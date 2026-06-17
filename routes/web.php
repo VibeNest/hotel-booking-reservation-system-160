@@ -233,6 +233,7 @@ Route::controller(GalleryController::class)->group(function () {
 // Frontend Contact All Routes
 Route::controller(ContactController::class)->group(function () {
     Route::get('/contact', 'ContactUs')->name('contact.us');
+    Route::post('/store/contact', 'StoreContact')->name('store.contact');
 });
 
 // VNPay return callback (no auth required)

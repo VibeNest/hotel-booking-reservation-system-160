@@ -7,6 +7,7 @@ use App\Http\Controllers\Backend\BookAreaController;
 use App\Http\Controllers\Backend\CommentController;
 use App\Http\Controllers\Backend\GalleryController;
 use App\Http\Controllers\Backend\ReportController;
+use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\RoomController;
 use App\Http\Controllers\Backend\RoomListController;
 use App\Http\Controllers\Backend\RoomTypeController;
@@ -203,6 +204,11 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     // Notification All Routes
     Route::controller(AdminBookingController::class)->group(function () {
         Route::post('/mark-notification-as-read/{id}', 'MarkAsRead');
+    });
+
+    // Role and Permission All Routes
+    Route::controller(RoleController::class)->group(function () {
+        Route::get('/all/permission', 'AllPermission')->name('all.permission');
     });
 });
 

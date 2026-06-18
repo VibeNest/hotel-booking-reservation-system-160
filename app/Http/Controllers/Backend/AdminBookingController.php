@@ -12,6 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class AdminBookingController extends Controller
@@ -196,5 +197,18 @@ class AdminBookingController extends Controller
             ]);
 
         return $pdf->download('Booking Invoice.pdf');
+    }
+
+    // Mark As Read Method
+    public function MarkAsRead($id)
+    {
+        $user = Auth::user();
+        $notification = $user->notifications()->where('id', $id)->first();
+
+        if ($notification) {
+            $notification->MarkAsRead();
+        }
+
+        return response()->json(['count' => $user->unreadNotifications()->count()]);
     }
 }

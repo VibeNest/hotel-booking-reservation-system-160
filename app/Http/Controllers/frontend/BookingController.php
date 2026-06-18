@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Room;
 use App\Models\RoomBookedDate;
+use App\Models\User;
+use App\Notifications\BookingComplete;
 use App\Services\Payment\CodStrategy;
 use App\Services\Payment\StripeStrategy;
 use App\Services\Pricing\BaseRoomPrice;
@@ -15,6 +17,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Session;
 use Omnipay\Common\Message\RedirectResponseInterface;
 use Omnipay\Omnipay;
@@ -90,7 +93,7 @@ class BookingController extends Controller
         $booking = Booking::where('user_id', Auth::id())->latest()->first();
 
         // Không tìm thấy booking khi thanh toán
-        if (! $booking) {
+        if (!$booking) {
             $notification = [
                 'message' => 'No Booking Found!',
                 'alert-type' => 'error',
@@ -105,8 +108,11 @@ class BookingController extends Controller
     // Checkout Store Method
     public function CheckoutStore(Request $request)
     {
+        // Role là admin => gửi thông báo 
+        $admin = User::where('role', 'admin')->get();
+
         // Check session tồn tại
-        if (! Session::has('book_date')) {
+        if (!Session::has('book_date')) {
             return redirect()->route('checkout')->with('error', 'Session expired');
         }
 
@@ -250,6 +256,14 @@ class BookingController extends Controller
             'alert-type' => 'success',
         ];
 
+        // Gửi thông báo đến admin sau khi user đặt phòng thành công
+        $bookingUser = Auth::user();
+        Notification::send($admin, new BookingComplete(
+            name: $request->name,
+            userImage: $bookingUser->photo,
+            userId: $bookingUser->id,
+        ));
+
         return redirect()->route('place.order')->with($notification);
     }
 
@@ -279,7 +293,7 @@ class BookingController extends Controller
         }
 
         $room = Room::find($book_data['room_id']);
-        if (! $room) {
+        if (!$room) {
             $notification = [
                 'message' => 'Room not found.',
                 'alert-type' => 'error',
@@ -337,7 +351,7 @@ class BookingController extends Controller
 
         $response = $gateway->purchase([
             'txnRef' => (string) $code,
-            'orderInfo' => 'Thanh toan don hang '.$code,
+            'orderInfo' => 'Thanh toan don hang ' . $code,
             'amount' => (int) round($total_price),
             'currency' => config('omnipay.gateways.VNPay.currency', 'VND'),
             'returnUrl' => route('vnpay.return'),
@@ -359,18 +373,18 @@ class BookingController extends Controller
         }
 
         $bookingCode = $data['vnp_TxnRef'] ?? null;
-        if (! $bookingCode) {
+        if (!$bookingCode) {
             return redirect()->route('place.order')->with('error', 'Missing VNPay transaction reference.');
         }
 
         $booking = Booking::where('code', $bookingCode)->first();
-        if (! $booking) {
+        if (!$booking) {
             return redirect()->route('place.order')->with('error', 'Booking not found for VNPay response.');
         }
 
         $hashSecret = config('omnipay.gateways.VNPay.hash_secret');
         $secureHash = $data['vnp_SecureHash'] ?? '';
-        if (! $hashSecret || ! $secureHash) {
+        if (!$hashSecret || !$secureHash) {
             return redirect()->route('place.order')->with('error', 'Missing VNPay signature data.');
         }
 
@@ -382,8 +396,8 @@ class BookingController extends Controller
         $hashStringEncoded = '';
         foreach ($hashData as $key => $value) {
             if (strpos($key, 'vnp_') === 0 && $value !== '' && $value !== null) {
-                $hashString .= $key.'='.$value.'&';
-                $hashStringEncoded .= urlencode($key).'='.urlencode((string) $value).'&';
+                $hashString .= $key . '=' . $value . '&';
+                $hashStringEncoded .= urlencode($key) . '=' . urlencode((string) $value) . '&';
             }
         }
 
@@ -397,7 +411,7 @@ class BookingController extends Controller
             hash_equals(strtolower($secureHash), strtolower($calculatedHash)) ||
             hash_equals(strtolower($secureHash), strtolower($calculatedHashEncoded));
 
-        if (! $isValidSignature) {
+        if (!$isValidSignature) {
             return redirect()->route('place.order')->with('error', 'Invalid VNPay signature.');
         }
 
@@ -428,7 +442,7 @@ class BookingController extends Controller
         $booking->save();
 
         $alreadyBooked = RoomBookedDate::where('booking_id', $booking->id)->exists();
-        if (! $alreadyBooked) {
+        if (!$alreadyBooked) {
             $startDate = Carbon::createFromFormat('d-m-Y', $booking->check_in);
             $endDate = Carbon::createFromFormat('d-m-Y', $booking->check_out);
             $endDate = $endDate->subDay();
@@ -445,6 +459,15 @@ class BookingController extends Controller
 
         Session::forget('book_date');
 
+        // Gửi thông báo đến admin sau khi user đặt phòng thành công qua VNPay
+        $admin = User::where('role', 'admin')->get();
+        $bookingUser = User::find($booking->user_id);
+        Notification::send($admin, new BookingComplete(
+            name: $booking->name,
+            userImage: $bookingUser?->photo,
+            userId: $booking->user_id,
+        ));
+
         $notification = [
             'message' => 'Add Booking Successfully',
             'alert-type' => 'success',
@@ -458,14 +481,14 @@ class BookingController extends Controller
     {
         $checkout = Session::get('checkout_data');
 
-        if (! $checkout) {
+        if (!$checkout) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Session expired');
         }
 
         if (
-            ! isset($checkout['total_price']) ||
+            !isset($checkout['total_price']) ||
             $checkout['total_price'] <= 0
         ) {
             return redirect()
@@ -502,7 +525,7 @@ class BookingController extends Controller
             ],
         ]);
 
-        if (! empty($response['id']) && isset($response['links'])) {
+        if (!empty($response['id']) && isset($response['links'])) {
             foreach ($response['links'] as $link) {
                 if ($link['rel'] == 'approve') {
                     return redirect()
@@ -519,13 +542,13 @@ class BookingController extends Controller
 
     public function PaypalSuccess(Request $request)
     {
-        if (! Session::has('checkout_data') || ! Session::has('book_date')) {
+        if (!Session::has('checkout_data') || !Session::has('book_date')) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Session expired');
         }
 
-        if (! $request->token || empty($request->token)) {
+        if (!$request->token || empty($request->token)) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Invalid PayPal token');
@@ -553,7 +576,7 @@ class BookingController extends Controller
             $book_data = Session::get('book_date');
             $checkout = Session::get('checkout_data');
             $room = Room::find($book_data['room_id']);
-            if (! $room) {
+            if (!$room) {
                 Session::forget('book_date');
                 Session::forget('checkout_data');
 
@@ -634,6 +657,15 @@ class BookingController extends Controller
 
             Session::forget('checkout_data');
 
+            // Gửi thông báo đến admin sau khi user đặt phòng thành công qua PayPal
+            $admin = User::where('role', 'admin')->get();
+            $bookingUser = Auth::user();
+            Notification::send($admin, new BookingComplete(
+                name: $checkout['name'],
+                userImage: $bookingUser->photo,
+                userId: $bookingUser->id,
+            ));
+
             // Notification
             $notification = [
                 'message' => 'Paypal Payment Successfully',
@@ -652,7 +684,7 @@ class BookingController extends Controller
     {
         $selectedFacilities = $request->input('facility_addons', []);
 
-        if (! is_array($selectedFacilities)) {
+        if (!is_array($selectedFacilities)) {
             $selectedFacilities = [];
         }
 

@@ -199,6 +199,11 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     Route::controller(ContactController::class)->group(function () {
         Route::get('/contact/message', 'ContactMessage')->name('contact.message');
     });
+
+    // Notification All Routes
+    Route::controller(AdminBookingController::class)->group(function () {
+        Route::post('/mark-notification-as-read/{id}', 'MarkAsRead');
+    });
 });
 
 // Instructor Group Middleware

@@ -27,7 +27,13 @@
 
                     <li class="nav-item dropdown dropdown-large">
                         <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#"
-                            data-bs-toggle="dropdown"><span class="alert-count">7</span>
+                            data-bs-toggle="dropdown">
+
+                            @php
+                                $unreadCount = Auth::user()->unreadNotifications()->count();
+                            @endphp
+
+                            <span class="alert-count" id="notification-count">{{ $unreadCount }}</span>
                             <i class='bx bx-bell'></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
@@ -38,118 +44,37 @@
                                 </div>
                             </a>
                             <div class="header-notifications-list">
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="user-online">
-                                            <img src="assets/images/avatars/avatar-1.png" class="msg-avatar"
-                                                alt="user avatar">
+
+                                @php
+                                    $user = Auth::user();
+                                @endphp
+
+                                @forelse ($user->notifications as $notification)
+                                    @php
+                                        $userImage = $notification->data['user_image'] ?? null;
+                                        $userAvatarUrl = $userImage
+                                            ? url("upload/user_images/{$userImage}")
+                                            : url(asset('upload/no_image.jpeg'));
+                                    @endphp
+
+                                    <a class="dropdown-item" href="javascript:;" onclick="markNotificationAsRead('{{$notification->id}}')">
+                                        <div class="d-flex align-items-center">
+                                            <div class="user">
+                                                <img src="{{ $userAvatarUrl }}" class="msg-avatar rounded-circle bg-primary"
+                                                    alt="User Avatar">
+                                            </div>
+                                            <div class="grow">
+                                                <h6 class="msg-name">{{ $notification->data['message'] }} <span
+                                                        class="msg-time float-end">{{ Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</span>
+                                                </h6>
+                                                <p class="msg-info">New Booking</p>
+                                            </div>
                                         </div>
-                                        <div class="grow">
-                                            <h6 class="msg-name">Daisy Anderson<span class="msg-time float-end">5 sec
-                                                    ago</span></h6>
-                                            <p class="msg-info">The standard chunk of lorem</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="notify bg-light-danger text-danger">dc
-                                        </div>
-                                        <div class="grow">
-                                            <h6 class="msg-name">New Orders <span class="msg-time float-end">2
-                                                    min
-                                                    ago</span></h6>
-                                            <p class="msg-info">You have recived new orders</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="user-online">
-                                            <img src="assets/images/avatars/avatar-2.png" class="msg-avatar"
-                                                alt="user avatar">
-                                        </div>
-                                        <div class="grow">
-                                            <h6 class="msg-name">Althea Cabardo <span class="msg-time float-end">14
-                                                    sec ago</span></h6>
-                                            <p class="msg-info">Many desktop publishing packages</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="notify bg-light-success text-success">
-                                            <img src="assets/images/app/outlook.png" width="25" alt="user avatar">
-                                        </div>
-                                        <div class="grow">
-                                            <h6 class="msg-name">Account Created<span class="msg-time float-end">28 min
-                                                    ago</span></h6>
-                                            <p class="msg-info">Successfully created new email</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="notify bg-light-info text-info">Ss
-                                        </div>
-                                        <div class="grow">
-                                            <h6 class="msg-name">New Product Approved <span class="msg-time float-end">2
-                                                    hrs ago</span></h6>
-                                            <p class="msg-info">Your new product has approved</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="user-online">
-                                            <img src="assets/images/avatars/avatar-4.png" class="msg-avatar"
-                                                alt="user avatar">
-                                        </div>
-                                        <div class="grow">
-                                            <h6 class="msg-name">Katherine Pechon <span class="msg-time float-end">15
-                                                    min ago</span></h6>
-                                            <p class="msg-info">Making this the first true generator</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="notify bg-light-success text-success"><i
-                                                class='bx bx-check-square'></i>
-                                        </div>
-                                        <div class="grow">
-                                            <h6 class="msg-name">Your item is shipped <span class="msg-time float-end">5
-                                                    hrs
-                                                    ago</span></h6>
-                                            <p class="msg-info">Successfully shipped your item</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="notify bg-light-primary">
-                                            <img src="assets/images/app/github.png" width="25" alt="user avatar">
-                                        </div>
-                                        <div class="grow">
-                                            <h6 class="msg-name">New 24 authors<span class="msg-time float-end">1 day
-                                                    ago</span></h6>
-                                            <p class="msg-info">24 new authors joined last week</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="user-online">
-                                            <img src="assets/images/avatars/avatar-8.png" class="msg-avatar"
-                                                alt="user avatar">
-                                        </div>
-                                        <div class="grow">
-                                            <h6 class="msg-name">Peter Costanzo <span class="msg-time float-end">6 hrs
-                                                    ago</span></h6>
-                                            <p class="msg-info">It was popularised in the 1960s</p>
-                                        </div>
-                                    </div>
-                                </a>
+                                    </a>
+                                @empty
+
+                                @endforelse
+
                             </div>
                             <a href="javascript:;">
                                 <div class="text-center msg-footer">
@@ -396,4 +321,25 @@
             </div>
         </nav>
     </div>
+
+    {{-- Xử lý đánh dấu thông báo đã đọc --}}
+    <script>
+        function markNotificationAsRead(notificationId) {
+            fetch('/mark-notification-as-read/' + notificationId, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('notification-count').textContent = data.count;
+            })
+            .catch(error => {
+                console.log('Error:: ', error); 
+            });
+        }
+    </script>
 </header>

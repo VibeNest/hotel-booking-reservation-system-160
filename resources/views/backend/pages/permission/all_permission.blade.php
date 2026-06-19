@@ -16,7 +16,7 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="{{ route('add.team') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
+                    <a href="{{ route('add.permission') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
                         Permission</a>
                 </div>
             </div>

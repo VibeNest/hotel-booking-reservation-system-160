@@ -5,14 +5,17 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
+use App\Services\ImageUploadProxy;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManager;
 
 class BlogController extends Controller
 {
+    public function __construct(
+        protected ImageUploadProxy $imageProxy
+    ) {}
+
     // Blog Category Method
     public function BlogCategory()
     {
@@ -103,13 +106,8 @@ class BlogController extends Controller
             'post_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        // Xử lý upload ảnh
         $image = $request->file('post_image');
-        $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-        $manager = new ImageManager(new Driver);
-        $img = $manager->read($image);
-        $img->resize(550, 370)->save(public_path('upload/posts/'.$name_gen));
-        $save_url = 'upload/posts/'.$name_gen;
+        $save_url = 'upload/posts/' . $this->imageProxy->upload($image, 'upload/posts', 550, 370);
 
         // Lưu thông tin post vào database
         BlogPost::insert([
@@ -148,18 +146,10 @@ class BlogController extends Controller
         $post = BlogPost::findOrFail($post_id);
 
         if ($request->file('post_image')) {
-            // Xóa ảnh cũ nếu tồn tại
-            if ($post->post_image && file_exists(public_path($post->post_image))) {
-                unlink(public_path($post->post_image));
-            }
+            $this->imageProxy->delete($post->post_image);
 
-            // Xử lý upload ảnh mới
             $image = $request->file('post_image');
-            $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-            $manager = new ImageManager(new Driver);
-            $img = $manager->read($image);
-            $img->resize(550, 370)->save(public_path('upload/posts/'.$name_gen));
-            $save_url = 'upload/posts/'.$name_gen;
+            $save_url = 'upload/posts/' . $this->imageProxy->upload($image, 'upload/posts', 550, 370);
 
             // Cập nhật thông tin post vào database khi thay đổi ảnh
             BlogPost::findOrFail($post_id)->update([
@@ -204,8 +194,7 @@ class BlogController extends Controller
     public function DeleteBlogPost($id)
     {
         $item = BlogPost::findOrFail($id);
-        $img = $item->post_image;
-        unlink($img);
+        $this->imageProxy->delete($item->post_image);
 
         BlogPost::findOrFail($id)->delete();
 

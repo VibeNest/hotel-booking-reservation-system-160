@@ -2,143 +2,62 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
 use App\Models\Testimonial;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManager;
 
-class TestimonialController extends Controller
+class TestimonialController extends CrudController
 {
-    // All Testimonial Method
-    public function AllTestimonial()
+    protected function getModelClass(): string
     {
-        $testimonial = Testimonial::latest()->get();
-
-        return view('backend.testimonial.all_testimonial', compact('testimonial'));
+        return Testimonial::class;
     }
 
-    // Add Testimonial Method
-    public function AddTestimonial()
+    protected function getViewPrefix(): string
     {
-        return view('backend.testimonial.add_testimonial');
+        return 'backend.testimonial';
     }
 
-    // Testimonial Store Method
-    public function TestimonialStore(Request $request)
+    protected function getVariableName(): string
     {
-        $request->validate([
+        return 'testimonial';
+    }
+
+    protected function getRedirectRoute(): string
+    {
+        return 'all.testimonial';
+    }
+
+    protected function getStoreRules(): array
+    {
+        return [
             'name' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'message' => 'required|string',
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
-        ]);
-
-        // Xử lý upload ảnh
-        $image = $request->file('image');
-        $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-        $manager = new ImageManager(new Driver);
-        $img = $manager->read($image);
-        $img->resize(50, 50)->save(public_path('upload/testimonials/'.$name_gen));
-        $save_url = 'upload/testimonials/'.$name_gen;
-
-        // Lưu thông tin testimonial vào database
-        Testimonial::insert([
-            'name' => $request->name,
-            'city' => $request->city,
-            'message' => $request->message,
-            'image' => $save_url,
-            'created_at' => Carbon::now(),
-        ]);
-
-        // Hiển thị thông báo toaster
-        $notification = [
-            'message' => 'Added testimonial successfully!',
-            'alert-type' => 'success',
         ];
-
-        return redirect()->route('all.testimonial')->with($notification);
     }
 
-    // Edit Testimonial Method
-    public function EditTestimonial($id)
+    protected function beforeStore(Request $request, array &$data): void
     {
-        $testimonial = Testimonial::find($id);
-
-        return view('backend.testimonial.edit_testimonial', compact('testimonial'));
-    }
-
-    // Testimonial Update Method
-    public function TestimonialUpdate(Request $request)
-    {
-        $testimonial_id = $request->id;
-        $testimonial = Testimonial::findOrFail($testimonial_id);
-
         if ($request->file('image')) {
-            // Xóa ảnh cũ nếu tồn tại
-            if ($testimonial->image && file_exists(public_path($testimonial->image))) {
-                unlink(public_path($testimonial->image));
-            }
-
-            // Xử lý upload ảnh mới
-            $image = $request->file('image');
-            $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-            $manager = new ImageManager(new Driver);
-            $img = $manager->read($image);
-            $img->resize(50, 50)->save(public_path('upload/testimonials/'.$name_gen));
-            $save_url = 'upload/testimonials/'.$name_gen;
-
-            // Cập nhật thông tin testimonial vào database khi thay đổi ảnh
-            Testimonial::findOrFail($testimonial_id)->update([
-                'name' => $request->name,
-                'city' => $request->city,
-                'message' => $request->message,
-                'image' => $save_url,
-                'created_at' => Carbon::now(),
-            ]);
-
-            // Hiển thị thông báo toaster
-            $notification = [
-                'message' => 'Updated testimonial with image successfully!',
-                'alert-type' => 'success',
-            ];
-
-            return redirect()->route('all.testimonial')->with($notification);
-        } else {
-            // Cập nhật thông tin testimonial vào database mà không thay đổi ảnh
-            Testimonial::findOrFail($testimonial_id)->update([
-                'name' => $request->name,
-                'city' => $request->city,
-                'message' => $request->message,
-                'created_at' => Carbon::now(),
-            ]);
-
-            // Hiển thị thông báo toaster
-            $notification = [
-                'message' => 'Updated testimonial without image successfully!',
-                'alert-type' => 'success',
-            ];
-
-            return redirect()->route('all.testimonial')->with($notification);
+            $data['image'] = $this->uploadImage($request->file('image'), 'upload/testimonials', 50, 50);
         }
     }
 
-    // Delete Testimonial Method
-    public function DeleteTestimonial($id)
+    protected function beforeUpdate(Request $request, $model, array &$data): void
     {
-        $item = Testimonial::findOrFail($id);
-        $img = $item->image;
-        unlink($img);
+        if ($request->file('image')) {
+            if ($model->image) {
+                $this->deleteImageFile($model->image);
+            }
+            $data['image'] = $this->uploadImage($request->file('image'), 'upload/testimonials', 50, 50);
+        }
+    }
 
-        Testimonial::findOrFail($id)->delete();
-
-        // Hiển thị thông báo toaster
-        $notification = [
-            'message' => 'Deleted testimonial successfully!',
-            'alert-type' => 'success',
-        ];
-
-        return redirect()->back()->with($notification);
+    protected function beforeDestroy($model): void
+    {
+        if ($model->image) {
+            $this->deleteImageFile($model->image);
+        }
     }
 }

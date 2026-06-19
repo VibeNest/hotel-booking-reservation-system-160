@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\ImageUploadProxy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
+    public function __construct(
+        protected ImageUploadProxy $imageProxy
+    ) {}
+
     // Admin Dashboard
     public function AdminDashboard()
     {
@@ -65,14 +70,13 @@ class AdminController extends Controller
 
         // Kiểm tra có photo không -> nếu có thì update photo
         if ($request->file('photo')) {
-            // Xóa ảnh cũ nếu tồn tại
-            if ($oldPhoto && file_exists(public_path('upload/admin_images/'.$oldPhoto))) {
-                unlink(public_path('upload/admin_images/'.$oldPhoto));
+            if ($oldPhoto) {
+                $this->imageProxy->delete('upload/admin_images/' . $oldPhoto);
             }
 
             $file = $request->file('photo');
-            $filename = date('YmdHi').'-'.$file->getClientOriginalName();
-            $file->move(public_path('upload/admin_images'), $filename);
+            $filename = date('YmdHi') . '-' . $file->getClientOriginalName();
+            $this->imageProxy->move($file, 'upload/admin_images', $filename);
             $data->photo = $filename;
         }
 

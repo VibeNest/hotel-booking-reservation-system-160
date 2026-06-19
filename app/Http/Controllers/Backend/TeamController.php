@@ -2,146 +2,64 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
 use App\Models\Team;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManager;
 
-class TeamController extends Controller
+class TeamController extends CrudController
 {
-    // All Team Method
-    public function AllTeam()
+    protected function getModelClass(): string
     {
-        $team = Team::latest()->get();
-
-        return view('backend.team.all_team', compact('team'));
+        return Team::class;
     }
 
-    // Add Team Method
-    public function AddTeam()
+    protected function getViewPrefix(): string
     {
-        return view('backend.team.add_team');
+        return 'backend.team';
     }
 
-    // Store Team Method
-    public function StoreTeam(Request $request)
+    protected function getVariableName(): string
     {
-        $request->validate([
+        return 'team';
+    }
+
+    protected function getRedirectRoute(): string
+    {
+        return 'all.team';
+    }
+
+    protected function getStoreRules(): array
+    {
+        return [
             'name' => 'required|string|max:255',
             'position' => 'required|string|max:255',
             'facebook' => 'required|url',
             'tiktok' => 'required|url',
             'instagram' => 'required|url',
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
-        ]);
-
-        $image = $request->file('image');
-        $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-
-        $folder = public_path('upload/team');
-        File::ensureDirectoryExists($folder);
-
-        $manager = new ImageManager(new Driver);
-        $img = $manager->read($image);
-        $img->cover(550, 670)->save($folder.'/'.$name_gen);
-
-        $imagePath = 'upload/team/'.$name_gen;
-
-        Team::create([
-            'name' => $request->name,
-            'position' => $request->position,
-            'facebook' => $request->facebook,
-            'tiktok' => $request->tiktok,
-            'instagram' => $request->instagram,
-            'image' => $imagePath,
-        ]);
-
-        $notification = [
-            'message' => 'Team added successfully!',
-            'alert-type' => 'success',
         ];
-
-        return redirect()->route('all.team')->with($notification);
     }
 
-    // Edit Team
-    public function EditTeam($id)
+    protected function beforeStore(Request $request, array &$data): void
     {
-        $team = Team::findOrFail($id);
-
-        return view('backend.team.edit_team', compact('team'));
-    }
-
-    // Update Team
-    public function UpdateTeam(Request $request)
-    {
-        $team = Team::findOrFail($request->id);
-
         if ($request->file('image')) {
-
-            // Xóa ảnh cũ
-            if (! empty($team->image) && File::exists(public_path($team->image))) {
-                File::delete(public_path($team->image));
-            }
-
-            // Upload + resize ảnh mới
-            $image = $request->file('image');
-            $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-
-            $folder = public_path('upload/team');
-            File::ensureDirectoryExists($folder);
-
-            $manager = new ImageManager(new Driver);
-            $img = $manager->read($image);
-            $img->cover(550, 670)->save($folder.'/'.$name_gen);
-
-            $save_url = 'upload/team/'.$name_gen;
-
-            $team->update([
-                'name' => $request->name,
-                'position' => $request->position,
-                'facebook' => $request->facebook,
-                'tiktok' => $request->tiktok,
-                'instagram' => $request->instagram,
-                'image' => $save_url,
-            ]);
-        } else {
-
-            $team->update([
-                'name' => $request->name,
-                'position' => $request->position,
-                'facebook' => $request->facebook,
-                'tiktok' => $request->tiktok,
-                'instagram' => $request->instagram,
-            ]);
+            $data['image'] = $this->uploadImage($request->file('image'), 'upload/team', 550, 670, 'cover');
         }
-
-        return redirect()->route('all.team')->with([
-            'message' => 'Update Team Successfully',
-            'alert-type' => 'success',
-        ]);
     }
 
-    // Delete Team
-    public function DeleteTeam($id)
+    protected function beforeUpdate(Request $request, $model, array &$data): void
     {
-        $team = Team::findOrFail($id);
-
-        // Xóa ảnh nếu tồn tại
-        if (! empty($team->image) && File::exists(public_path($team->image))) {
-            File::delete(public_path($team->image));
+        if ($request->file('image')) {
+            if (! empty($model->image)) {
+                $this->deleteImageFile($model->image);
+            }
+            $data['image'] = $this->uploadImage($request->file('image'), 'upload/team', 550, 670, 'cover');
         }
+    }
 
-        // Xóa db
-        $team->delete();
-
-        $notification = [
-            'message' => 'Deleted team successfully!',
-            'alert-type' => 'success',
-        ];
-
-        return redirect()->back()->with($notification);
+    protected function beforeDestroy($model): void
+    {
+        if (! empty($model->image)) {
+            $this->deleteImageFile($model->image);
+        }
     }
 }

@@ -8,14 +8,16 @@ use App\Models\MultiImage;
 use App\Models\Room;
 use App\Models\RoomNumber;
 use App\Models\RoomType;
+use App\Services\ImageUploadProxy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManager;
 
 class RoomController extends Controller
 {
+    public function __construct(
+        protected ImageUploadProxy $imageProxy
+    ) {}
+
     // Edit Room Method
     public function EditRoom($id)
     {
@@ -70,25 +72,18 @@ class RoomController extends Controller
             // =============================
             if ($request->hasFile('image')) {
 
-                $path = public_path('upload/room_images/');
-
-                if (! File::exists($path)) {
-                    File::makeDirectory($path, 0777, true);
-                }
-
                 // xóa ảnh cũ
-                if (! empty($room->image) && File::exists($path.$room->image)) {
-                    File::delete($path.$room->image);
+                if (! empty($room->image)) {
+                    $this->imageProxy->delete('upload/room_images/' . $room->image);
                 }
 
                 $image = $request->file('image');
-                $name = uniqid().'.'.$image->getClientOriginalExtension();
+                $name = uniqid() . '.' . $image->getClientOriginalExtension();
 
                 if (app()->environment('testing')) {
-                    $image->move($path, $name);
+                    $this->imageProxy->move($image, 'upload/room_images', $name);
                 } else {
-                    $manager = new ImageManager(new Driver);
-                    $manager->read($image)->cover(550, 850)->save($path.$name);
+                    $this->imageProxy->upload($image, 'upload/room_images', 550, 850, 'cover', $name);
                 }
 
                 $data['image'] = $name;
@@ -113,19 +108,11 @@ class RoomController extends Controller
             // =============================
             if ($request->hasFile('multi_img')) {
 
-                $path = public_path('upload/room_images/multi_img/');
-
-                if (! File::exists($path)) {
-                    File::makeDirectory($path, 0777, true);
-                }
-
                 // Xóa ảnh cũ (file + DB)
                 $oldImgs = MultiImage::where('rooms_id', $room->id)->get();
 
                 foreach ($oldImgs as $img) {
-                    if (File::exists(public_path($img->multi_img))) {
-                        File::delete(public_path($img->multi_img));
-                    }
+                    $this->imageProxy->delete($img->multi_img);
                 }
 
                 MultiImage::where('rooms_id', $room->id)->delete();
@@ -133,18 +120,12 @@ class RoomController extends Controller
                 // Lưu ảnh mới
                 foreach ($request->file('multi_img') as $img) {
 
-                    $name = uniqid().'.'.$img->getClientOriginalExtension();
-
-                    if (app()->environment('testing')) {
-                        $img->move($path, $name);
-                    } else {
-                        $manager = new ImageManager(new Driver);
-                        $manager->read($img)->save($path.$name);
-                    }
+                    $name = uniqid() . '.' . $img->getClientOriginalExtension();
+                    $this->imageProxy->move($img, 'upload/room_images/multi_img', $name);
 
                     MultiImage::create([
                         'rooms_id' => $room->id,
-                        'multi_img' => 'upload/room_images/multi_img/'.$name,
+                        'multi_img' => 'upload/room_images/multi_img/' . $name,
                     ]);
                 }
             }
@@ -162,8 +143,8 @@ class RoomController extends Controller
         $room = Room::find($id);
 
         // Xóa ảnh chính của phòng nếu tồn tại
-        if (! empty($room->image) && File::exists(public_path('upload/room_images/'.$room->image))) {
-            @unlink('upload/room_images/'.$room->image);
+        if (! empty($room->image)) {
+            $this->imageProxy->delete('upload/room_images/' . $room->image);
         }
 
         // Xóa ảnh phụ của phòng nếu tồn tại
@@ -172,7 +153,7 @@ class RoomController extends Controller
         if (! empty($multiImages)) {
             foreach ($multiImages as $img) {
                 if (! empty($img)) {
-                    @unlink($img['multi_img']);
+                    $this->imageProxy->delete($img['multi_img']);
                 }
             }
         }
@@ -207,15 +188,7 @@ class RoomController extends Controller
         $deleteData = MultiImage::where('id', $id)->first();
 
         if ($deleteData) {
-            $imagePath = $deleteData->multi_img;
-
-            // Xóa file ảnh nếu tồn tại
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
-                echo 'Image Unlinked Successfully';
-            } else {
-                echo 'Image does not exist';
-            }
+            $this->imageProxy->delete($deleteData->multi_img);
 
             // Xóa bản ghi trong database
             $deleteData->delete();

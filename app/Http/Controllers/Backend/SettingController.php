@@ -5,13 +5,16 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
 use App\Models\SmtpSetting;
+use App\Services\ImageUploadProxy;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManager;
 
 class SettingController extends Controller
 {
+    public function __construct(
+        protected ImageUploadProxy $imageProxy
+    ) {}
+
     // Smtp Setting Method
     public function SmtpSetting()
     {
@@ -57,18 +60,10 @@ class SettingController extends Controller
         $site = SiteSetting::findOrFail($site_id);
 
         if ($request->file('logo')) {
-            // Xóa ảnh cũ nếu tồn tại
-            if ($site->logo && file_exists(public_path($site->logo))) {
-                unlink(public_path($site->logo));
-            }
+            $this->imageProxy->delete($site->logo);
 
-            // Xử lý upload ảnh mới
             $image = $request->file('logo');
-            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-            $manager = new ImageManager(new Driver());
-            $img = $manager->read($image);
-            $img->resize(110, 44)->save(public_path('upload/site/' . $name_gen));
-            $save_url = 'upload/site/' . $name_gen;
+            $save_url = 'upload/site/' . $this->imageProxy->upload($image, 'upload/site', 110, 44);
 
             // Cập nhật thông tin site vào database khi thay đổi ảnh
             SiteSetting::findOrFail($site_id)->update([

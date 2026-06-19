@@ -61,22 +61,22 @@ Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->middleware('
 Route::middleware(['auth', 'roles:admin'])->group(function () {
     // Teams Management Routes
     Route::controller(TeamController::class)->group(function () {
-        Route::get('/all/team', 'AllTeam')->name('all.team');
-        Route::get('/add/team', 'AddTeam')->name('add.team');
-        Route::post('/store/team', 'StoreTeam')->name('store.team');
-        Route::get('/delete/team/{id}', 'DeleteTeam')->name('delete.team');
-        Route::get('/edit/team/{id}', 'EditTeam')->name('edit.team');
-        Route::post('/team/update', 'UpdateTeam')->name('team.update');
+        Route::get('/all/team', 'index')->name('all.team');
+        Route::get('/add/team', 'create')->name('add.team');
+        Route::post('/store/team', 'store')->name('store.team');
+        Route::get('/delete/team/{id}', 'destroy')->name('delete.team');
+        Route::get('/edit/team/{id}', 'edit')->name('edit.team');
+        Route::post('/team/update', 'update')->name('team.update');
     });
 
     // Book Area Management Routes
     Route::controller(BookAreaController::class)->group(function () {
-        Route::get('/all/book_area', 'AllBookArea')->name('all.book.area');
-        Route::get('/add/book_area', 'AddBookArea')->name('add.book.area');
-        Route::post('/book_area/store', 'StoreBookArea')->name('book_area.store');
-        Route::get('/edit/book_area/{id}', 'EditBookArea')->name('edit.book_area');
-        Route::post('/book_area/update', 'UpdateBookArea')->name('book_area.update');
-        Route::get('/delete/book_area/{id}', 'DeleteBookArea')->name('delete.book_area');
+        Route::get('/all/book_area', 'index')->name('all.book.area');
+        Route::get('/add/book_area', 'create')->name('add.book.area');
+        Route::post('/book_area/store', 'store')->name('book_area.store');
+        Route::get('/edit/book_area/{id}', 'edit')->name('edit.book_area');
+        Route::post('/book_area/update', 'update')->name('book_area.update');
+        Route::get('/delete/book_area/{id}', 'destroy')->name('delete.book_area');
     });
 
     // Room Type Management Routes
@@ -140,12 +140,12 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 
     // Testimonials All Routes
     Route::controller(TestimonialController::class)->group(function () {
-        Route::get('/all/testimonial', 'AllTestimonial')->name('all.testimonial');
-        Route::get('/add/testimonial', 'AddTestimonial')->name('add.testimonial');
-        Route::post('/testimonial/store', 'TestimonialStore')->name('testimonial.store');
-        Route::get('/edit/testimonial/{id}', 'EditTestimonial')->name('edit.testimonial');
-        Route::post('/testimonial/update', 'TestimonialUpdate')->name('testimonial.update');
-        Route::get('/delete/testimonial/{id}', 'DeleteTestimonial')->name('delete.testimonial');
+        Route::get('/all/testimonial', 'index')->name('all.testimonial');
+        Route::get('/add/testimonial', 'create')->name('add.testimonial');
+        Route::post('/testimonial/store', 'store')->name('testimonial.store');
+        Route::get('/edit/testimonial/{id}', 'edit')->name('edit.testimonial');
+        Route::post('/testimonial/update', 'update')->name('testimonial.update');
+        Route::get('/delete/testimonial/{id}', 'destroy')->name('delete.testimonial');
     });
 
     // Blog Category Routes
@@ -187,12 +187,12 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 
     // Gallery All Routes
     Route::controller(GalleryController::class)->group(function () {
-        Route::get('/all/gallery', 'AllGallery')->name('all.gallery');
-        Route::get('/add/gallery', 'AddGallery')->name('add.gallery');
-        Route::post('/store/gallery', 'StoreGallery')->name('store.gallery');
-        Route::get('/edit/gallery/{id}', 'EditGallery')->name('edit.gallery');
-        Route::post('/update/gallery', 'UpdateGallery')->name('update.gallery');
-        Route::get('/delete/gallery/{id}', 'DeleteGallery')->name('delete.gallery');
+        Route::get('/all/gallery', 'index')->name('all.gallery');
+        Route::get('/add/gallery', 'create')->name('add.gallery');
+        Route::post('/store/gallery', 'store')->name('store.gallery');
+        Route::get('/edit/gallery/{id}', 'edit')->name('edit.gallery');
+        Route::post('/update/gallery', 'update')->name('update.gallery');
+        Route::get('/delete/gallery/{id}', 'destroy')->name('delete.gallery');
         Route::post('/delete/gallery/multiple', 'DeleteGalleryMultiple')->name('delete.gallery.multiple');
     });
 
@@ -295,4 +295,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

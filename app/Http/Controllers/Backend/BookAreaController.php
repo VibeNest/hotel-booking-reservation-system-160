@@ -2,140 +2,52 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
 use App\Models\BookArea;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManager;
 
-class BookAreaController extends Controller
+class BookAreaController extends CrudController
 {
-    // All Book Area Method
-    public function AllBookArea()
+    protected function getModelClass(): string
     {
-        $bookArea = BookArea::latest()->get();
-
-        return view('backend.book_area.all_book_area', compact('bookArea'));
+        return BookArea::class;
     }
 
-    // Add Book Area Method
-    public function AddBookArea()
+    protected function getViewPrefix(): string
     {
-        return view('backend.book_area.add_book_area');
+        return 'backend.book_area';
     }
 
-    // Store Book Area Method
-    public function StoreBookArea(Request $request)
+    protected function getVariableName(): string
     {
-        // Xử lý upload ảnh
-        $image = $request->file('image');
-        $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-        $manager = new ImageManager(new Driver);
-        $img = $manager->read($image);
-        $img->resize(1000, 1000)->save(public_path('upload/book_area/'.$name_gen));
-        $save_url = 'upload/book_area/'.$name_gen;
-
-        // Lưu thông tin book area vào database
-        BookArea::insert([
-            'sub_title' => $request->sub_title,
-            'title' => $request->title,
-            'description' => $request->description,
-            'link_url' => $request->link_url,
-            'image' => $save_url,
-            'created_at' => Carbon::now(),
-        ]);
-
-        // Hiển thị thông báo toaster
-        $notification = [
-            'message' => 'Added book area successfully!',
-            'alert-type' => 'success',
-        ];
-
-        return redirect()->route('all.book.area')->with($notification);
+        return 'bookArea';
     }
 
-    // Edit Book Area Method
-    public function EditBookArea($id)
+    protected function getRedirectRoute(): string
     {
-        $bookArea = BookArea::findOrFail($id);
-
-        return view('backend.book_area.edit_book_area', compact('bookArea'));
+        return 'all.book.area';
     }
 
-    // Update Book Area Method
-    public function UpdateBookArea(Request $request)
+    protected function beforeStore(Request $request, array &$data): void
     {
-        $bookArea_id = $request->id;
-        $bookArea = BookArea::findOrFail($bookArea_id);
-
         if ($request->file('image')) {
-            // Xóa ảnh cũ nếu tồn tại
-            if ($bookArea->image && file_exists(public_path($bookArea->image))) {
-                unlink(public_path($bookArea->image));
-            }
-
-            // Xử lý upload ảnh mới
-            $image = $request->file('image');
-            $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-            $manager = new ImageManager(new Driver);
-            $img = $manager->read($image);
-            $img->resize(1000, 1000)->save(public_path('upload/book_area/'.$name_gen));
-            $save_url = 'upload/book_area/'.$name_gen;
-
-            // Cập nhật thông tin book area vào database khi thay đổi ảnh
-            BookArea::findOrFail($bookArea_id)->update([
-                'sub_title' => $request->sub_title,
-                'title' => $request->title,
-                'description' => $request->description,
-                'link_url' => $request->link_url,
-                'image' => $save_url,
-                'created_at' => Carbon::now(),
-            ]);
-
-            // Hiển thị thông báo toaster
-            $notification = [
-                'message' => 'Updated book area with image successfully!',
-                'alert-type' => 'success',
-            ];
-
-            return redirect()->route('all.book.area')->with($notification);
-        } else {
-            // Cập nhật thông tin book area vào database mà không thay đổi ảnh
-            BookArea::findOrFail($bookArea_id)->update([
-                'sub_title' => $request->sub_title,
-                'title' => $request->title,
-                'description' => $request->description,
-                'link_url' => $request->link_url,
-                'created_at' => Carbon::now(),
-            ]);
-
-            // Hiển thị thông báo toaster
-            $notification = [
-                'message' => 'Updated book area without image successfully!',
-                'alert-type' => 'success',
-            ];
-
-            return redirect()->route('all.book.area')->with($notification);
+            $data['image'] = $this->uploadImage($request->file('image'), 'upload/book_area', 1000, 1000);
         }
     }
 
-    // Delete Book Area Method
-    public function DeleteBookArea($id)
+    protected function beforeUpdate(Request $request, $model, array &$data): void
     {
-        $item = BookArea::findOrFail($id);
-        $img = $item->image;
-        unlink($img);
+        if ($request->file('image')) {
+            if ($model->image) {
+                $this->deleteImageFile($model->image);
+            }
+            $data['image'] = $this->uploadImage($request->file('image'), 'upload/book_area', 1000, 1000);
+        }
+    }
 
-        BookArea::findOrFail($id)->delete();
-
-        // Hiển thị thông báo toaster
-        $notification = [
-            'message' => 'Deleted book area successfully!',
-            'alert-type' => 'success',
-        ];
-
-        return redirect()->back()->with($notification);
-
+    protected function beforeDestroy($model): void
+    {
+        if ($model->image) {
+            $this->deleteImageFile($model->image);
+        }
     }
 }

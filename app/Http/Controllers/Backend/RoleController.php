@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Exports\PermissionExport;
 use App\Http\Controllers\Controller;
+use App\Imports\PermissionImport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
@@ -25,7 +27,7 @@ class RoleController extends Controller
     }
 
     // Store Permission Method
-    public function StorePermission(Request $request) 
+    public function StorePermission(Request $request)
     {
         Permission::create([
             'name' => $request->name,
@@ -43,7 +45,7 @@ class RoleController extends Controller
     }
 
     // Edit Permission Method
-    public function EditPermission($id) 
+    public function EditPermission($id)
     {
         $permission = Permission::find($id);
 
@@ -51,7 +53,7 @@ class RoleController extends Controller
     }
 
     // Update Permission Method
-    public function UpdatePermission(Request $request) 
+    public function UpdatePermission(Request $request)
     {
         $per_id = $request->id;
 
@@ -70,7 +72,7 @@ class RoleController extends Controller
     }
 
     // Delete Permission Method
-    public function DeletePermission($id) 
+    public function DeletePermission($id)
     {
         Permission::find($id)->delete();
 
@@ -81,5 +83,34 @@ class RoleController extends Controller
         ];
 
         return redirect()->back()->with($notification);
+    }
+
+    // Import Permission Method
+    public function ImportPermission()
+    {
+        return view('backend.pages.permission.import_permission');
+    }
+
+    // Export Permission Method
+    public function ExportPermission()
+    {
+        return Excel::download(new PermissionExport(), 'permission.xlsx');
+    }
+
+    // Import Method
+    public function Import(Request $request)
+    {
+        $request->validate([
+            'import_file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        Excel::import(new PermissionImport(), $request->file('import_file'));
+
+        $notification = [
+            'message' => 'Imported permission successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->route('all.permission')->with($notification);
     }
 }

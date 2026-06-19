@@ -19,6 +19,16 @@
                     <a href="{{ route('add.permission') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
                         Permission</a>
                 </div>
+                <div class="btn-group">
+                    <a href="{{ route('import.permission') }}" class="btn btn-warning px-3"><i
+                            class="bx bx-import me-1"></i>
+                        Import</a>
+                </div>
+                <div class="btn-group">
+                    <a href="{{ route('export.permission') }}" class="btn btn-success px-3"><i
+                            class="bx bx-export me-1"></i>
+                        Export</a>
+                </div>
             </div>
         </div>
         <!--end breadcrumb-->

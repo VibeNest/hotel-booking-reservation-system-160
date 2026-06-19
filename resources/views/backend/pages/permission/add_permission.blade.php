@@ -31,7 +31,7 @@
                         <label for="group_name" class="form-label">Permission Group</label>
                         <select class="form-select mb-3" name="group_name" id="group_name"
                             aria-label="Default select example">
-                            <option selected="">Select Permisson</option>
+                            <option selected="">Select Group</option>
                             <option value="Teams Management">Teams Management</option>
                             <option value="Book Area Management">Book Area Management</option>
                             <option value="Testimonial Management">Testimonial Management</option>
@@ -50,6 +50,7 @@
 
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary px-4">Save change</button>
+                        <a href="{{ route('all.permission') }}" class="btn btn-secondary">Back</a>
                     </div>
                 </form>
             </div>

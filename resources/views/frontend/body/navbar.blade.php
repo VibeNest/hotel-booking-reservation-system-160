@@ -27,14 +27,11 @@
                                 Home
                             </a>
                         </li>
+
                         <li class="nav-item">
-                            <a href="about.html" class="nav-link {{ Request::is('about.html') ? 'active' : '' }}">
+                            <a href="{{ route('about.us') }}"
+                                class="nav-link {{ Request::routeIs('about.us') ? 'active' : '' }}">
                                 About
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link {{ Request::is('restaurant') ? 'active' : '' }}">
-                                Restaurant
                             </a>
                         </li>
 

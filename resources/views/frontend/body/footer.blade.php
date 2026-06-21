@@ -6,7 +6,7 @@
     <div class="container">
         <div class="footer-top pt-100 pb-70">
             <div class="row align-items-center">
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="footer-widget">
                         <div class="footer-logo">
                             <a href="/">
@@ -14,8 +14,9 @@
                             </a>
                         </div>
                         <p>
-                            Aenean finibus convallis nisl sit amet hendrerit. Etiam blandit velit non lorem mattis,
-                            non ultrices eros bibendum .
+                            Developed a hotel booking website that allows users to search hotels, view room details,
+                            make reservations, manage bookings, and process online payments. Built with a responsive
+                            interface and an admin dashboard for managing hotels, rooms, bookings, and users.
                         </p>
                         <ul class="footer-list-contact">
                             <li>
@@ -34,86 +35,42 @@
                     </div>
                 </div>
 
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="footer-widget pl-5">
                         <h3>Links</h3>
                         <ul class="footer-list">
                             <li>
-                                <a href="about.html" target="_blank">
-                                    <i class='bx bx-caret-right'></i>
-                                    About Us
-                                </a>
-                            </li>
-                            <li>
-                                <a href="services-1.html" target="_blank">
-                                    <i class='bx bx-caret-right'></i>
-                                    Services
-                                </a>
-                            </li>
-                            <li>
-                                <a href="team.html" target="_blank">
-                                    <i class='bx bx-caret-right'></i>
-                                    Team
-                                </a>
-                            </li>
-                            <li>
-                                <a href="gallery.html" target="_blank">
-                                    <i class='bx bx-caret-right'></i>
-                                    Gallery
-                                </a>
-                            </li>
-                            <li>
-                                <a href="terms-condition.html" target="_blank">
-                                    <i class='bx bx-caret-right'></i>
-                                    Terms
-                                </a>
-                            </li>
-                            <li>
-                                <a href="privacy-policy.html" target="_blank">
-                                    <i class='bx bx-caret-right'></i>
-                                    Privacy Policy
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer-widget">
-                        <h3>Useful Links</h3>
-                        <ul class="footer-list">
-                            <li>
-                                <a href="/" target="_blank">
+                                <a href="/">
                                     <i class='bx bx-caret-right'></i>
                                     Home
                                 </a>
                             </li>
                             <li>
-                                <a href="blog-1.html" target="_blank">
+                                <a href="{{ route('about.us') }}">
                                     <i class='bx bx-caret-right'></i>
-                                    Blog
+                                    About Us
                                 </a>
                             </li>
                             <li>
-                                <a href="faq.html" target="_blank">
-                                    <i class='bx bx-caret-right'></i>
-                                    FAQ
-                                </a>
-                            </li>
-                            <li>
-                                <a href="testimonials.html" target="_blank">
-                                    <i class='bx bx-caret-right'></i>
-                                    Testimonials
-                                </a>
-                            </li>
-                            <li>
-                                <a href="gallery.html" target="_blank">
+                                <a href="{{ route('show.gallery') }}">
                                     <i class='bx bx-caret-right'></i>
                                     Gallery
                                 </a>
                             </li>
                             <li>
-                                <a href="contact.html" target="_blank">
+                                <a href="{{ route('blog.list') }}">
+                                    <i class='bx bx-caret-right'></i>
+                                    Blog
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('room.all') }}">
+                                    <i class='bx bx-caret-right'></i>
+                                    Rooms
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('contact.us') }}">
                                     <i class='bx bx-caret-right'></i>
                                     Contact Us
                                 </a>
@@ -122,12 +79,12 @@
                     </div>
                 </div>
 
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="footer-widget">
                         <h3>Newsletter</h3>
                         <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            Nullam tempor eget ante fringilla rutrum aenean sed venenatis .
+                            A web application for hotel search, room booking, online payments, booking management,
+                            newsletter subscriptions, and administrative management of hotels, rooms, and users.
                         </p>
                         <div class="footer-form">
                             <form class="newsletter-form" data-toggle="validator" method="POST">

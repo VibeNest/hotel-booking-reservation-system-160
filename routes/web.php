@@ -29,6 +29,11 @@ use Illuminate\Support\Facades\Route;
 // HomePage
 Route::get('/', [UserController::class, 'Index']);
 
+// About Page
+Route::get('/about', function () {
+    return view('frontend.about.about_us');
+})->name('about.us');
+
 // User Dashboard Routes
 Route::get('/dashboard', function () {
     return view('frontend.dashboard.user_dashboard');
@@ -295,4 +300,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

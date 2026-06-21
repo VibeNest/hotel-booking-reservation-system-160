@@ -2,128 +2,84 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
 use App\Models\Gallery;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManager;
 
-class GalleryController extends Controller
+class GalleryController extends CrudController
 {
-    // All Gallery Method
-    public function AllGallery()
+    protected function getModelClass(): string
     {
-        $gallery = Gallery::latest()->get();
-
-        return view('backend.gallery.all_gallery', compact('gallery'));
+        return Gallery::class;
     }
 
-    // Add Gallery Method
-    public function AddGallery()
+    protected function getViewPrefix(): string
     {
-        return view('backend.gallery.add_gallery');
+        return 'backend.gallery';
     }
 
-    // Store Gallery Method
-    public function StoreGallery(Request $request)
+    protected function getVariableName(): string
+    {
+        return 'gallery';
+    }
+
+    protected function getRedirectRoute(): string
+    {
+        return 'all.gallery';
+    }
+
+    // ---- Override store for multi-image upload ----
+
+    public function store(Request $request)
     {
         $images = $request->file('photo_name');
 
         foreach ($images as $image) {
-            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-            $manager = new ImageManager(new Driver());
-            $img = $manager->read($image);
-            $img->resize(550, 550)->save(public_path('upload/gallery/' . $name_gen));
-            $save_url = 'upload/gallery/' . $name_gen;
-
-            Gallery::insert([
-                'photo_name' => $save_url,
-                'created_at' => Carbon::now()
-            ]);
+            $path = $this->uploadImage($image, 'upload/gallery', 550, 550);
+            Gallery::create(['photo_name' => $path]);
         }
 
-        // Hiển thị thông báo toaster
         $notification = [
             'message' => 'Added gallery successfully!',
             'alert-type' => 'success',
         ];
 
-        return redirect()->route('all.gallery')->with($notification);
+        return redirect()->route($this->getRedirectRoute())->with($notification);
     }
 
-    // Edit Gallery Method
-    public function EditGallery($id)
+    // ----
+
+    protected function beforeUpdate(Request $request, $model, array &$data): void
     {
-        $gallery = Gallery::find($id);
-
-        return view('backend.gallery.edit_gallery', compact('gallery'));
-    }
-
-    // Update Gallery Method
-    public function UpdateGallery(Request $request)
-    {
-        $gallery_id = $request->id;
-        $gallery = Gallery::findOrFail($gallery_id);
-
         if ($request->file('photo_name')) {
-            // Xóa ảnh cũ nếu tồn tại
-            if ($gallery->photo_name && file_exists(public_path($gallery->photo_name))) {
-                unlink(public_path($gallery->photo_name));
+            if ($model->photo_name) {
+                $this->deleteImageFile($model->photo_name);
             }
-
-            $image = $request->file('photo_name');
-            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-            $manager = new ImageManager(new Driver());
-            $img = $manager->read($image);
-            $img->resize(550, 550)->save(public_path('upload/gallery/' . $name_gen));
-            $save_url = 'upload/gallery/' . $name_gen;
-
-            Gallery::find($gallery_id)->update([
-                'photo_name' => $save_url,
-            ]);
-
-            // Hiển thị thông báo toaster
-            $notification = [
-                'message' => 'Updated gallery successfully!',
-                'alert-type' => 'success',
-            ];
-
-            return redirect()->route('all.gallery')->with($notification);
+            $data['photo_name'] = $this->uploadImage($request->file('photo_name'), 'upload/gallery', 550, 550);
         }
     }
 
-    // Delete Gallery Method
-    public function DeleteGallery($id)
+    protected function beforeDestroy($model): void
     {
-        $item = Gallery::findOrFail($id);
-        $img = $item->photo_name;
-        unlink($img);
-
-        Gallery::findOrFail($id)->delete();
-
-        // Hiển thị thông báo toaster
-        $notification = [
-            'message' => 'Deleted gallery successfully!',
-            'alert-type' => 'success',
-        ];
-
-        return redirect()->back()->with($notification);
+        if ($model->photo_name) {
+            $this->deleteImageFile($model->photo_name);
+        }
     }
 
-    // Delete Gallery Multiple Method
+    // ---- Custom methods (non-CRUD) ----
+
     public function DeleteGalleryMultiple(Request $request)
     {
         $selectedItems = $request->input('selectedItem', []);
 
         foreach ($selectedItems as $itemId) {
             $item = Gallery::find($itemId);
-            $img = $item->photo_name;
-            unlink($img);
-            $item->delete();
+
+            if ($item) {
+                $this->deleteImageFile($item->photo_name);
+                $item->delete();
+            }
         }
 
-        // Hiển thị thông báo toaster
         $notification = [
             'message' => 'Deleted image selected successfully!',
             'alert-type' => 'success',
@@ -132,7 +88,6 @@ class GalleryController extends Controller
         return redirect()->back()->with($notification);
     }
 
-    // Show Gallery Method
     public function ShowGallery()
     {
         $gallery = Gallery::latest()->paginate(6);

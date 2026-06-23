@@ -41,7 +41,7 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>
-                                        <a href="{{ route('edit.permission', $item->id) }}"
+                                        <a href="{{ route('edit.roles', $item->id) }}"
                                             class="btn btn-warning px-3 radius-30">Edit</a>
                                         {{-- form Xóa --}}
                                         <a href="{{ route('delete.permission', $item->id) }}"

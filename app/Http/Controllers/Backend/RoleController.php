@@ -145,4 +145,30 @@ class RoleController extends Controller
 
         return redirect()->route('all.roles')->with($notification);
     }
+
+    // Edit Roles Method
+    public function EditRoles($id)
+    {
+        $roles = Role::find($id);
+
+        return view('backend.pages.roles.edit_roles', compact('roles'));
+    }
+
+    // Update Roles Method
+    public function UpdateRoles(Request $request)
+    {
+        $roles_id = $request->id;
+
+        Role::find($roles_id)->update([
+            'name' => $request->name,
+        ]);
+
+        // Hiển thị thông báo toaster
+        $notification = [
+            'message' => 'Updated roles successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->route('all.roles')->with($notification);
+    }
 }

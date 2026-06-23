@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Exports\PermissionExport;
 use App\Http\Controllers\Controller;
 use App\Imports\PermissionImport;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -184,5 +185,15 @@ class RoleController extends Controller
         ];
 
         return redirect()->back()->with($notification);
+    }
+
+    // All Roles Permission Method
+    public function AllRolesPermission()
+    {
+        $roles = Role::all();
+        $permissions = Permission::all();
+        $permission_groups = User::getPermissionGroup();
+
+        return view('backend.pages.roles_setup.add_roles_permission', compact('roles', 'permissions', 'permission_groups'));
     }
 }

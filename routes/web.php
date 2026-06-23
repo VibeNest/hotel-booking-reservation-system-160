@@ -213,6 +213,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 
     // Role and Permission All Routes
     Route::controller(RoleController::class)->group(function () {
+        // Permission
         Route::get('/all/permission', 'AllPermission')->name('all.permission');
         Route::get('/add/permission', 'AddPermission')->name('add.permission');
         Route::post('/store/permission', 'StorePermission')->name('store.permission');
@@ -222,6 +223,11 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/import/permission', 'ImportPermission')->name('import.permission');
         Route::get('/export/permission', 'ExportPermission')->name('export.permission');
         Route::post('/import', 'Import')->name('import');
+
+        // Roles
+        Route::get('/all/roles', 'AllRoles')->name('all.roles');
+        Route::get('/add/roles', 'AddRoles')->name('add.roles');
+        Route::post('/store/roles', 'StoreRoles')->name('store.roles');
     });
 });
 

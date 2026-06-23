@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
@@ -112,5 +113,36 @@ class RoleController extends Controller
         ];
 
         return redirect()->route('all.permission')->with($notification);
+    }
+
+    // All Roles Method
+    public function AllRoles()
+    {
+        $roles = Role::latest()->get();
+
+        return view('backend.pages.roles.all_roles', compact('roles'));
+    }
+
+    // Add Roles Method
+    public function AddRoles()
+    {
+        return view('backend.pages.roles.add_roles');
+    }
+
+    // Store Roles Method
+    public function StoreRoles(Request $request)
+    {
+        Role::create([
+            'name' => $request->name,
+            'created_at' => Carbon::now(),
+        ]);
+
+        // Hiển thị thông báo toaster
+        $notification = [
+            'message' => 'Added roles successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->route('all.roles')->with($notification);
     }
 }

@@ -50,7 +50,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <a href="{{ route('edit.roles', $item->id) }}"
+                                        <a href="{{ route('edit.roles.permission', $item->id) }}"
                                             class="btn btn-warning px-3 radius-30">Edit</a>
                                         {{-- form Xóa --}}
                                         <a href="{{ route('delete.roles', $item->id) }}" class="btn btn-danger px-3 radius-30"

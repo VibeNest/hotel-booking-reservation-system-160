@@ -239,4 +239,30 @@ class RoleController extends Controller
 
         return redirect()->route('all.roles.permission')->with($notification);
     }
+
+    // Edit Roles Permission Method
+    public function EditRolesPermission($id)
+    {
+        $role = Role::find($id);
+        $permissions = Permission::all();
+        $permission_groups = User::getPermissionGroup();
+
+        return view('backend.pages.roles_setup.edit_roles_permission', compact('role', 'permissions', 'permission_groups'));
+    }
+
+    // Roles Permission Update Method
+    public function RolesPermissionUpdate(Request $request, $id)
+    {
+        $role = Role::findOrFail($id);
+
+        $role->syncPermissions($request->permission ?? []);
+
+        // Hiển thị thông báo toaster
+        $notification = [
+            'message' => 'Updated role permission successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->route('all.roles.permission')->with($notification);
+    }
 }

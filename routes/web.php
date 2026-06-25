@@ -234,6 +234,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 
         // Roles In Permission
         Route::get('/all/roles/permission', 'AllRolesPermission')->name('all.roles.permission');
+        Route::get('/add/roles/permission', 'AddRolesPermission')->name('add.roles.permission');
         Route::post('/roles/permission/store', 'RolesPermissionStore')->name('roles.permission.store');
     });
 });

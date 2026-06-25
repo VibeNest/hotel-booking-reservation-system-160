@@ -235,6 +235,7 @@
                             <i class="bx bx-save"></i>
                             Save Changes
                         </button>
+                        <a href="{{ route('all.roles.permission') }}" class="btn btn-secondary">Back</a>
                     </div>
                 </form>
 

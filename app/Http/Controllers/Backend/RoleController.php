@@ -192,6 +192,14 @@ class RoleController extends Controller
     public function AllRolesPermission()
     {
         $roles = Role::all();
+
+        return view('backend.pages.roles_setup.all_roles_permission', compact('roles'));
+    }
+
+    // Add Roles Permission Method
+    public function AddRolesPermission()
+    {
+        $roles = Role::all();
         $permissions = Permission::all();
         $permission_groups = User::getPermissionGroup();
 
@@ -229,6 +237,6 @@ class RoleController extends Controller
             'alert-type' => 'success',
         ];
 
-        return redirect()->back()->with($notification);
+        return redirect()->route('all.roles.permission')->with($notification);
     }
 }

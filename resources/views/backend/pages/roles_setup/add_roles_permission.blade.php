@@ -123,7 +123,7 @@
 
             <div class="card-body p-4">
 
-                <form method="POST" action="{{ route('role.permission.store') }}">
+                <form method="POST" action="{{ route('roles.permission.store') }}">
                     @csrf
 
                     <!-- Role Select -->
@@ -135,7 +135,7 @@
                                 Select Role
                             </label>
 
-                            <select name="role_id" id="role_id" class="form-select">
+                            <select name="role_id" id="role_id" class="form-select @error('role_id') is-invalid @enderror">
 
                                 <option selected disabled>
                                     Choose a Role
@@ -148,6 +148,12 @@
                                 @endforeach
 
                             </select>
+
+                            @error('role_id')
+                                <div class="invalid-feedback d-block">
+                                    <i class="bx bx-error-circle me-1"></i>{{ $message }}
+                                </div>
+                            @enderror
 
                         </div>
                     </div>
@@ -167,6 +173,15 @@
                         </div>
 
                     </div>
+
+                    @error('permission')
+                        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center py-2 mb-4"
+                            role="alert">
+                            <i class="bx bx-error-circle me-2"></i>
+                            <strong>{{ $message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @enderror
 
                     <!-- Permission Groups -->
                     @foreach ($permission_groups as $group)
@@ -234,6 +249,12 @@
             } else {
                 $('input[type=checkbox]').prop('checked', false);
             }
+        })
+        // Check/uncheck all permissions in a group when group header checkbox is clicked
+        $('.group-header input[type=checkbox]').click(function () {
+            var $groupCard = $(this).closest('.group-card');
+            var isChecked = $(this).is(':checked');
+            $groupCard.find('.permission-item input[type=checkbox]').prop('checked', isChecked);
         })
     </script>
 @endsection

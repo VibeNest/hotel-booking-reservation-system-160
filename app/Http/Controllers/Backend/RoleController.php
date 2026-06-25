@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\PermissionImport;
 use App\Models\User;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Permission;
@@ -195,5 +196,39 @@ class RoleController extends Controller
         $permission_groups = User::getPermissionGroup();
 
         return view('backend.pages.roles_setup.add_roles_permission', compact('roles', 'permissions', 'permission_groups'));
+    }
+
+    // Roles Permission Store Method
+    public function RolesPermissionStore(Request $request)
+    {
+        // Validate role and permissions
+        $request->validate([
+            'role_id' => 'required|exists:roles,id',
+            'permission' => 'required|array',
+            'permission.*' => 'exists:permissions,id',
+        ], [
+            'role_id.required' => 'Please select a role!',
+            'role_id.exists' => 'The selected role does not exist!',
+            'permission.required' => 'Please select at least one permission!',
+            'permission.*.exists' => 'One or more selected permissions are invalid!',
+        ]);
+
+        $data = array();
+        $permissions = $request->permission;
+
+        foreach ($permissions as $item) {
+            $data['role_id'] = $request->role_id;
+            $data['permission_id'] = $item;
+
+            DB::table('role_has_permissions')->insert($data);
+        }
+
+        // Hiển thị thông báo toaster
+        $notification = [
+            'message' => 'Added role permission successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->back()->with($notification);
     }
 }

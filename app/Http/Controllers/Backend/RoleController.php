@@ -265,4 +265,22 @@ class RoleController extends Controller
 
         return redirect()->route('all.roles.permission')->with($notification);
     }
+
+    // Delete Roles Permission Method
+    public function DeleteRolesPermission($id)
+    {
+        $role = Role::findOrFail($id);
+
+        if (!is_null($role)) {
+            $role->delete();
+        }
+
+        // Hiển thị thông báo toaster
+        $notification = [
+            'message' => 'Deleted role permission successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->back()->with($notification);
+    }
 }

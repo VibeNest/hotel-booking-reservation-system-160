@@ -13,6 +13,7 @@ use App\Http\Controllers\Backend\RoomListController;
 use App\Http\Controllers\Backend\RoomTypeController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\TeamController;
+use App\Http\Controllers\Admin\AddOnController;
 use App\Http\Controllers\Backend\TestimonialController;
 use App\Http\Controllers\Frontend\BookingController;
 use App\Http\Controllers\frontend\ContactController;
@@ -72,6 +73,15 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/delete/team/{id}', 'destroy')->name('delete.team');
         Route::get('/edit/team/{id}', 'edit')->name('edit.team');
         Route::post('/team/update', 'update')->name('team.update');
+    });
+    //add-ons controller
+    Route::controller(AddOnController::class)->group(function () {
+        Route::get('/all/addons', 'index')->name('all.addons');
+        Route::get('/add/addon', 'create')->name('add.addon');
+        Route::post('/store/addon', 'store')->name('store.addon');
+        Route::get('/edit/addon/{id}', 'edit')->name('edit.addon');
+        Route::post('/update/addon/{id}', 'update')->name('update.addon');
+        Route::get('/delete/addon/{id}', 'destroy')->name('delete.addon');
     });
 
     // Book Area Management Routes
@@ -239,6 +249,8 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/edit/roles/permission/{id}', 'EditRolesPermission')->name('edit.roles.permission');
         Route::post('/roles/permission/update/{id}', 'RolesPermissionUpdate')->name('roles.permission.update');
         Route::get('/delete/roles/permission/{id}', 'DeleteRolesPermission')->name('delete.roles.permission');
+
+
     });
 });
 

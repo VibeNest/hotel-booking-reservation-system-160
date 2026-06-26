@@ -116,6 +116,17 @@
                 </li>
             </ul>
         </li>
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bx bx-plus-circle"></i></div>
+                <div class="menu-title">Add-ons Facility Management</div>
+            </a>
+            <ul>
+                <li><a href="{{ route('all.addons') }}"><i class='bx bx-radio-circle'></i>All Add-ons</a></li>
+                <li><a href="{{ route('add.addon') }}"><i class='bx bx-radio-circle'></i>Add Add-on</a></li>
+            </ul>
+        </li>
+
 
         <li class="menu-label">Booking Management</li>
         <li>

@@ -10,8 +10,6 @@ use App\Models\User;
 use App\Notifications\BookingComplete;
 use App\Services\Payment\CodStrategy;
 use App\Services\Payment\StripeStrategy;
-use App\Services\Pricing\BaseRoomPrice;
-use App\Services\Pricing\FacilityPriceDecoratorBuilder;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -23,33 +21,33 @@ use Omnipay\Common\Message\RedirectResponseInterface;
 use Omnipay\Omnipay;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
+use App\Models\AddOn;
+
 class BookingController extends Controller
 {
     // Checkout Method
     public function Checkout()
     {
-        // Kiểm tra session có data không
         if (Session::has('book_date')) {
-            // Nếu có data thì lấy data từ session
             $book_data = Session::get('book_date');
-            $room = Room::find($book_data['room_id']);
+            $room = Room::find($book_data['room_id'], ['*']);
 
-            // Tính số nights giữa check_in và check_out
             $toDate = Carbon::parse($book_data['check_in']);
             $fromDate = Carbon::parse($book_data['check_out']);
             $nights = $toDate->diffInDays($fromDate);
 
-            return view('frontend.checkout.checkout', compact('book_data', 'room', 'nights'));
-        } else {
-            // Nếu không có data thì redirect về trang chủ
-            $notification = [
-                'message' => 'Something went to wrong!',
-                'alert-type' => 'error',
-            ];
+            // Lấy add-ons từ DB
+            $addons = AddOn::all();
 
-            return redirect('/')->with($notification);
+            return view('frontend.checkout.checkout', compact('book_data', 'room', 'nights', 'addons'));
+        } else {
+            return redirect('/')->with([
+                'message' => 'Something went wrong!',
+                'alert-type' => 'error',
+            ]);
         }
     }
+
 
     // Booking Store Method
     public function BookingStore(Request $request, $id)
@@ -688,10 +686,14 @@ class BookingController extends Controller
             $selectedFacilities = [];
         }
 
-        $decorated = FacilityPriceDecoratorBuilder::fromConfig()
-            ->build(new BaseRoomPrice($baseTotal), $selectedFacilities);
+        $selectedIds = array_filter($selectedFacilities, fn($id) => is_numeric($id));
+        $addonTotal = 0;
 
-        return $decorated->total();
+        if (!empty($selectedIds)) {
+            $addonTotal = (float) AddOn::whereIn('id', $selectedIds)->sum('price');
+        }
+
+        return $baseTotal + $addonTotal;
     }
 
     // Paypal Cancel
@@ -719,9 +721,9 @@ class BookingController extends Controller
         $editData = Booking::with('room')->find($id);
         $pdf = Pdf::loadView('backend.booking.booking_invoice', compact('editData'))
             ->setPaper('a4')->setOption([
-                'tempDir' => public_path(),
-                'chroot' => public_path(),
-            ]);
+                    'tempDir' => public_path(),
+                    'chroot' => public_path(),
+                ]);
 
         return $pdf->download('Booking Invoice.pdf');
     }

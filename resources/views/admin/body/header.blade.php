@@ -57,7 +57,8 @@
                                             : url(asset('upload/no_image.jpeg'));
                                     @endphp
 
-                                    <a class="dropdown-item" href="javascript:;" onclick="markNotificationAsRead('{{$notification->id}}')">
+                                    <a class="dropdown-item" href="javascript:;"
+                                        onclick="markNotificationAsRead('{{$notification->id}}')">
                                         <div class="d-flex align-items-center">
                                             <div class="user">
                                                 <img src="{{ $userAvatarUrl }}" class="msg-avatar rounded-circle bg-primary"
@@ -299,18 +300,6 @@
                             href="{{ route("admin.change.password") }}"><i class="bx bx-lock fs-5"></i><span>Change
                                 password</span></a>
                     </li>
-                    <li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
-                                class="bx bx-cog fs-5"></i><span>Settings</span></a>
-                    </li>
-                    <li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
-                                class="bx bx-home-circle fs-5"></i><span>Dashboard</span></a>
-                    </li>
-                    <li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
-                                class="bx bx-dollar-circle fs-5"></i><span>Earnings</span></a>
-                    </li>
-                    <li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
-                                class="bx bx-download fs-5"></i><span>Downloads</span></a>
-                    </li>
                     <li>
                         <div class="dropdown-divider mb-0"></div>
                     </li>
@@ -333,13 +322,13 @@
                 },
                 body: JSON.stringify({})
             })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('notification-count').textContent = data.count;
-            })
-            .catch(error => {
-                console.log('Error:: ', error); 
-            });
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('notification-count').textContent = data.count;
+                })
+                .catch(error => {
+                    console.log('Error:: ', error);
+                });
         }
     </script>
 </header>

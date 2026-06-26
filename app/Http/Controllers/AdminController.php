@@ -7,12 +7,14 @@ use App\Services\ImageUploadProxy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
 {
     public function __construct(
         protected ImageUploadProxy $imageProxy
-    ) {}
+    ) {
+    }
 
     // Admin Dashboard
     public function AdminDashboard()
@@ -112,7 +114,7 @@ class AdminController extends Controller
         ]);
 
         // Nếu password không khớp nhau
-        if (! Hash::check($request->current_password, Auth::user()->password)) {
+        if (!Hash::check($request->current_password, Auth::user()->password)) {
             // Hiển thị thông báo toaster
             $notification = [
                 'message' => 'Current password does not match!',
@@ -135,5 +137,48 @@ class AdminController extends Controller
         ];
 
         return redirect()->back()->with($notification);
+    }
+
+    // All Admin Method
+    public function AllAdmin()
+    {
+        $all_admin = User::where('role', 'admin')->get();
+
+        return view('backend.pages.admin.all_admin', compact('all_admin'));
+    }
+
+    // Add Admin Method
+    public function AddAdmin()
+    {
+        $roles = Role::all();
+
+        return view('backend.pages.admin.add_admin', compact('roles'));
+    }
+
+    // Store Admin Method
+    public function StoreAdmin(Request $request)
+    {
+        $user = new User();
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
+        $user->password = Hash::make($request->password);
+        $user->role = 'admin';
+        $user->status = 1;
+        $user->save();
+
+        if ($request->roles) {
+            $user->assignRole($request->roles);
+        }
+
+        // Hiển thị thông báo toaster
+        $notification = [
+            'message' => 'Created admin successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->route('all.admin')->with($notification);
     }
 }

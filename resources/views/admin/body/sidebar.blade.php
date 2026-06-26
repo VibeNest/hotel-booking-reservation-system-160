@@ -190,6 +190,22 @@
             </ul>
         </li>
 
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bx bx-group"></i>
+                </div>
+                <div class="menu-title">Manage Admin</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route("all.admin") }}"><i class='bx bx-radio-circle'></i>All Admin</a>
+                </li>
+            </ul>
+            <ul>
+                <li> <a href="{{ route("add.admin") }}"><i class='bx bx-radio-circle'></i>Add Admin</a>
+                </li>
+            </ul>
+        </li>
+
         <li class="menu-label">Other</li>
 
         <li>

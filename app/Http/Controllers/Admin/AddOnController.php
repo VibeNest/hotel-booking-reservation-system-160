@@ -12,6 +12,7 @@ class AddOnController extends Controller
     public function index()
     {
         $addons = AddOn::all();
+
         return view('backend.addons.index', compact('addons'));
     }
 
@@ -32,13 +33,20 @@ class AddOnController extends Controller
 
         AddOn::create($request->only(['name', 'price', 'description']));
 
-        return redirect()->route('all.addons')->with('success', 'Add-on created successfully.');
+        // Hiển thị thông báo toaster
+        $notification = [
+            'message' => 'Added add-on successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->route('all.addons')->with($notification);
     }
 
     // Form chỉnh sửa
     public function edit($id)
     {
         $addon = AddOn::findOrFail($id);
+
         return view('backend.addons.edit', compact('addon'));
     }
 
@@ -54,7 +62,13 @@ class AddOnController extends Controller
         $addon = AddOn::findOrFail($id);
         $addon->update($request->only(['name', 'price', 'description']));
 
-        return redirect()->route('all.addons')->with('success', 'Add-on updated successfully.');
+        // Hiển thị thông báo toaster
+        $notification = [
+            'message' => 'Updated add-on successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->route('all.addons')->with($notification);
     }
 
     // Xoá Add-on
@@ -63,6 +77,12 @@ class AddOnController extends Controller
         $addon = AddOn::findOrFail($id);
         $addon->delete();
 
-        return redirect()->route('all.addons')->with('success', 'Add-on deleted successfully.');
+        // Hiển thị thông báo toaster
+        $notification = [
+            'message' => 'Deleted add-on successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->route('all.addons')->with($notification);
     }
 }

@@ -10,8 +10,6 @@ use App\Models\User;
 use App\Notifications\BookingComplete;
 use App\Services\Payment\CodStrategy;
 use App\Services\Payment\StripeStrategy;
-use App\Services\Pricing\BaseRoomPrice;
-use App\Services\Pricing\FacilityPriceDecoratorBuilder;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -688,10 +686,14 @@ class BookingController extends Controller
             $selectedFacilities = [];
         }
 
-        $decorated = FacilityPriceDecoratorBuilder::fromConfig()
-            ->build(new BaseRoomPrice($baseTotal), $selectedFacilities);
+        $selectedIds = array_filter($selectedFacilities, fn($id) => is_numeric($id));
+        $addonTotal = 0;
 
-        return $decorated->total();
+        if (!empty($selectedIds)) {
+            $addonTotal = (float) AddOn::whereIn('id', $selectedIds)->sum('price');
+        }
+
+        return $baseTotal + $addonTotal;
     }
 
     // Paypal Cancel

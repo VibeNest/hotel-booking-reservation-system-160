@@ -7,7 +7,8 @@
             <div class="ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"><i class="bx bx-home"></i></a>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"><i
+                                    class="bx bx-plus-circle"></i></a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">Edit Add-on</li>
                     </ol>
@@ -26,8 +27,8 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Price</label>
-                            <input type="number" step="0.01" name="price" class="form-control" value="{{ $addon->price }}"
-                                required>
+                            <input type="number" step="0.01" name="price" class="form-control"
+                                value="{{ number_format($addon->price, 0) }}" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>

@@ -68,7 +68,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     // Teams Management Routes
     Route::controller(TeamController::class)->group(function () {
         Route::get('/all/team', 'index')->name('all.team');
-        Route::get('/add/team', 'create')->name('add.team');
+        Route::get('/add/team', 'create')->name('add.team')->middleware('permission:team.create');
         Route::post('/store/team', 'store')->name('store.team');
         Route::get('/delete/team/{id}', 'destroy')->name('delete.team');
         Route::get('/edit/team/{id}', 'edit')->name('edit.team');

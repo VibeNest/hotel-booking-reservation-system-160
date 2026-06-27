@@ -21,19 +21,25 @@
             </a>
         </li>
 
-        <li>
-            <a href="javascript:;" class="has-arrow">
-                <div class="parent-icon"><i class="bx bx-group"></i>
-                </div>
-                <div class="menu-title">Teams Management</div>
-            </a>
-            <ul>
-                <li> <a href="{{ route("all.team") }}"><i class='bx bx-radio-circle'></i>All Teams</a>
-                </li>
-                <li> <a href="{{ route("add.team") }}"><i class='bx bx-radio-circle'></i>Add Team</a>
-                </li>
-            </ul>
-        </li>
+        @if(Auth::user()->can('team.menu'))
+            <li>
+                <a href="javascript:;" class="has-arrow">
+                    <div class="parent-icon"><i class="bx bx-group"></i>
+                    </div>
+                    <div class="menu-title">Teams Management</div>
+                </a>
+                <ul>
+                    @if(Auth::user()->can('team.view'))
+                        <li> <a href="{{ route("all.team") }}"><i class='bx bx-radio-circle'></i>All Teams</a>
+                        </li>
+                    @endif
+                    @if(Auth::user()->can('team.create'))
+                        <li> <a href="{{ route("add.team") }}"><i class='bx bx-radio-circle'></i>Add Team</a>
+                        </li>
+                    @endif
+                </ul>
+            </li>
+        @endif
 
         <li>
             <a href="javascript:;" class="has-arrow">

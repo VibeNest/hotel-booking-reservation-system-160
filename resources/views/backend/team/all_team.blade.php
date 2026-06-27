@@ -16,8 +16,10 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="{{ route('add.team') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
-                        Team</a>
+                    @if(Auth::user()->can('team.create'))
+                        <a href="{{ route('add.team') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
+                            Team</a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -58,11 +60,16 @@
                                     <td>{{ Str::limit($item->tiktok, 20, '...') }}</td>
                                     <td>{{ Str::limit($item->instagram, 20, '...') }}</td>
                                     <td>
-                                        <a href="{{ route('edit.team', $item->id) }}"
-                                            class="btn btn-warning px-3 radius-30">Edit</a>
-                                        {{-- form Xóa --}}
-                                        <a href="{{ route('delete.team', $item->id) }}" class="btn btn-danger px-3 radius-30"
-                                            id="delete">Delete</a>
+                                        @if(Auth::user()->can('team.edit'))
+                                            <a href="{{ route('edit.team', $item->id) }}"
+                                                class="btn btn-warning px-3 radius-30">Edit</a>
+                                        @endif
+
+                                        @if(Auth::user()->can('team.delete'))
+                                            {{-- form Xóa --}}
+                                            <a href="{{ route('delete.team', $item->id) }}" class="btn btn-danger px-3 radius-30"
+                                                id="delete">Delete</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

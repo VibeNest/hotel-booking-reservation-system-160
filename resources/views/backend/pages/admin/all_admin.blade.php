@@ -59,7 +59,7 @@
                                         <a href="{{ route('edit.admin', $item->id) }}"
                                             class="btn btn-warning px-3 radius-30">Edit</a>
                                         {{-- form Xóa --}}
-                                        <a href="{{ route('delete.roles', $item->id) }}" class="btn btn-danger px-3 radius-30"
+                                        <a href="{{ route('delete.admin', $item->id) }}" class="btn btn-danger px-3 radius-30"
                                             id="delete">Delete</a>
                                     </td>
                                 </tr>

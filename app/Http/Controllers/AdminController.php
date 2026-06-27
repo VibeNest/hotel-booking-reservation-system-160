@@ -218,4 +218,22 @@ class AdminController extends Controller
 
         return redirect()->route('all.admin')->with($notification);
     }
+
+    // Delete Admin Method
+    public function DeleteAdmin($id)
+    {
+        $user = User::find($id);
+
+        if (!is_null($user)) {
+            $user->delete();
+        }
+
+        // Hiển thị thông báo toaster
+        $notification = [
+            'message' => 'Deleted admin successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->back()->with($notification);
+    }
 }

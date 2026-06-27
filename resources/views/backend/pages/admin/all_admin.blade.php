@@ -35,6 +35,7 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
+                                <th>Address</th>
                                 <th>Role</th>
                                 <th>Action</th>
                             </tr>
@@ -48,13 +49,14 @@
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->email }}</td>
                                     <td>{{ $item->phone }}</td>
+                                    <td>{{ $item->address }}</td>
                                     <td>
                                         @foreach ($item->roles as $role)
                                             <span class="badge badge-pill bg-danger">{{ $role->name }}</span>
                                         @endforeach
                                     </td>
                                     <td>
-                                        <a href="{{ route('edit.roles', $item->id) }}"
+                                        <a href="{{ route('edit.admin', $item->id) }}"
                                             class="btn btn-warning px-3 radius-30">Edit</a>
                                         {{-- form Xóa --}}
                                         <a href="{{ route('delete.roles', $item->id) }}" class="btn btn-danger px-3 radius-30"

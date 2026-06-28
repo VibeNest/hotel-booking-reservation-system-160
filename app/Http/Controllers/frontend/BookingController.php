@@ -3,25 +3,20 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\AddOn;
 use App\Models\Booking;
 use App\Models\Room;
-use App\Models\RoomBookedDate;
-use App\Models\User;
-use App\Notifications\BookingComplete;
+use App\Services\BookingEventManager;
 use App\Services\Payment\CodStrategy;
 use App\Services\Payment\StripeStrategy;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Session;
 use Omnipay\Common\Message\RedirectResponseInterface;
 use Omnipay\Omnipay;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
-
-use App\Models\AddOn;
 
 class BookingController extends Controller
 {
@@ -106,9 +101,6 @@ class BookingController extends Controller
     // Checkout Store Method
     public function CheckoutStore(Request $request)
     {
-        // Role là admin => gửi thông báo 
-        $admin = User::where('role', 'admin')->get();
-
         // Check session tồn tại
         if (!Session::has('book_date')) {
             return redirect()->route('checkout')->with('error', 'Session expired');
@@ -227,23 +219,8 @@ class BookingController extends Controller
 
         $booking->save();
 
-        // Room Booked Dates
-        $startDate = Carbon::createFromFormat('d-m-Y', $book_data['check_in']);
-        $endDate = Carbon::createFromFormat('d-m-Y', $book_data['check_out']);
-
-        // Không lấy ngày checkout - trừ 1 ngày
-        $endDate = $endDate->subDay();
-
-        // Tạo danh sách các ngày booking
-        $day_period = CarbonPeriod::create($startDate, $endDate);
-
-        foreach ($day_period as $period) {
-            $booked_dates = new RoomBookedDate;
-            $booked_dates->booking_id = $booking->id;
-            $booked_dates->room_id = $room->id;
-            $booked_dates->book_date = $period->format('Y-m-d');
-            $booked_dates->save();
-        }
+        // Fire the created event to notify all observers
+        BookingEventManager::getInstance()->created($booking);
 
         // Clear Session
         Session::forget('book_date');
@@ -253,14 +230,6 @@ class BookingController extends Controller
             'message' => 'Add Booking Successfully',
             'alert-type' => 'success',
         ];
-
-        // Gửi thông báo đến admin sau khi user đặt phòng thành công
-        $bookingUser = Auth::user();
-        Notification::send($admin, new BookingComplete(
-            name: $request->name,
-            userImage: $bookingUser->photo,
-            userId: $bookingUser->id,
-        ));
 
         return redirect()->route('place.order')->with($notification);
     }
@@ -338,6 +307,9 @@ class BookingController extends Controller
         $booking->address = $validated['address'];
         $booking->created_at = Carbon::now();
         $booking->save();
+
+        // Fire the created event to notify all observers
+        BookingEventManager::getInstance()->created($booking);
 
         $gateway = Omnipay::create('VnPay');
         $gateway->initialize([
@@ -439,32 +411,10 @@ class BookingController extends Controller
         $booking->payment_method = $booking->payment_method ?: 'VN Pay';
         $booking->save();
 
-        $alreadyBooked = RoomBookedDate::where('booking_id', $booking->id)->exists();
-        if (!$alreadyBooked) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $booking->check_in);
-            $endDate = Carbon::createFromFormat('d-m-Y', $booking->check_out);
-            $endDate = $endDate->subDay();
-
-            $day_period = CarbonPeriod::create($startDate, $endDate);
-            foreach ($day_period as $period) {
-                $booked_dates = new RoomBookedDate;
-                $booked_dates->booking_id = $booking->id;
-                $booked_dates->room_id = $booking->rooms_id;
-                $booked_dates->book_date = $period->format('Y-m-d');
-                $booked_dates->save();
-            }
-        }
+        // Fire the approved event to notify all observers
+        BookingEventManager::getInstance()->approved($booking);
 
         Session::forget('book_date');
-
-        // Gửi thông báo đến admin sau khi user đặt phòng thành công qua VNPay
-        $admin = User::where('role', 'admin')->get();
-        $bookingUser = User::find($booking->user_id);
-        Notification::send($admin, new BookingComplete(
-            name: $booking->name,
-            userImage: $bookingUser?->photo,
-            userId: $booking->user_id,
-        ));
 
         $notification = [
             'message' => 'Add Booking Successfully',
@@ -616,53 +566,12 @@ class BookingController extends Controller
 
             $booking->save();
 
-            // Room booked dates
-
-            $startDate =
-                Carbon::createFromFormat(
-                    'd-m-Y',
-                    $book_data['check_in']
-                );
-
-            $endDate =
-                Carbon::createFromFormat(
-                    'd-m-Y',
-                    $book_data['check_out']
-                );
-
-            $endDate = $endDate->subDay();
-
-            $day_period =
-                CarbonPeriod::create(
-                    $startDate,
-                    $endDate
-                );
-
-            foreach ($day_period as $period) {
-
-                $booked_dates = new RoomBookedDate;
-
-                $booked_dates->booking_id = $booking->id;
-
-                $booked_dates->room_id = $room->id;
-
-                $booked_dates->book_date = $period->format('Y-m-d');
-
-                $booked_dates->save();
-            }
+            // Fire the created event to notify all observers
+            BookingEventManager::getInstance()->created($booking);
 
             Session::forget('book_date');
 
             Session::forget('checkout_data');
-
-            // Gửi thông báo đến admin sau khi user đặt phòng thành công qua PayPal
-            $admin = User::where('role', 'admin')->get();
-            $bookingUser = Auth::user();
-            Notification::send($admin, new BookingComplete(
-                name: $checkout['name'],
-                userImage: $bookingUser->photo,
-                userId: $bookingUser->id,
-            ));
 
             // Notification
             $notification = [

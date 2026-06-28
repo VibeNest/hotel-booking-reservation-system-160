@@ -3,17 +3,16 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Mail\BookConfirm;
 use App\Models\Booking;
 use App\Models\BookingRoomList;
 use App\Models\RoomBookedDate;
 use App\Models\RoomNumber;
+use App\Services\BookingEventManager;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 
 class AdminBookingController extends Controller
 {
@@ -41,18 +40,10 @@ class AdminBookingController extends Controller
         $booking->status = $request->status;
         $booking->save();
 
-        // Start Send Email
-        $sendMail = Booking::find($id);
-
-        $data = [
-            'check_in' => $sendMail->check_in,
-            'check_out' => $sendMail->check_out,
-            'name' => $sendMail->name,
-            'email' => $sendMail->email,
-            'phone' => $sendMail->phone,
-        ];
-
-        Mail::to($sendMail->email)->send(new BookConfirm($data));
+        // Fire the appropriate event based on status
+        if ((int) $request->status === 1) {
+            BookingEventManager::getInstance()->approved($booking);
+        }
 
         // Thông báo thành công
         $notification = [

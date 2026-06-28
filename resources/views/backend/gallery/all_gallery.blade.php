@@ -16,8 +16,10 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="{{ route('add.gallery') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
-                        Gallery</a>
+                    @if(Auth::user()->can('gallery.create'))
+                        <a href="{{ route('add.gallery') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
+                            Gallery</a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -52,11 +54,14 @@
                                                 style="width:50px;height:50px;">
                                         </td>
                                         <td>
-                                            <a href="{{ route('edit.gallery', $item->id) }}"
-                                                class="btn btn-warning px-3 radius-30">Edit</a>
-
-                                            <a href="{{ route('delete.gallery', $item->id) }}"
-                                                class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                            @if(Auth::user()->can('gallery.edit'))
+                                                <a href="{{ route('edit.gallery', $item->id) }}"
+                                                    class="btn btn-warning px-3 radius-30">Edit</a>
+                                            @endif
+                                            @if(Auth::user()->can('gallery.delete'))
+                                                <a href="{{ route('delete.gallery', $item->id) }}"
+                                                    class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

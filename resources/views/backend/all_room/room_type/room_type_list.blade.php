@@ -16,8 +16,10 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="{{ route('add.room.type') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
-                        Room Type</a>
+                    @if(Auth::user()->can('room.type.create'))
+                        <a href="{{ route('add.room.type') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
+                            Room Type</a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -52,10 +54,14 @@
 
                                     @foreach ($rooms as $room)
                                         <td>
-                                            <a href="{{ route('edit.room', $room->id) }}"
-                                                class="btn btn-warning px-3 radius-30">Edit</a>
-                                            <a href="{{ route('delete.room', $room->id) }}" class="btn btn-danger px-3 radius-30"
-                                                id="delete">Delete</a>
+                                            @if(Auth::user()->can('room.type.edit'))
+                                                <a href="{{ route('edit.room', $room->id) }}"
+                                                    class="btn btn-warning px-3 radius-30">Edit</a>
+                                            @endif
+                                            @if(Auth::user()->can('room.type.delete'))
+                                                <a href="{{ route('delete.room', $room->id) }}" class="btn btn-danger px-3 radius-30"
+                                                    id="delete">Delete</a>
+                                            @endif
                                         </td>
                                     @endforeach
 

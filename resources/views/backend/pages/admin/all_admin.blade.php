@@ -16,8 +16,10 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="{{ route('add.admin') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
-                        Admin</a>
+                    @if(Auth::user()->can('admin.create'))
+                        <a href="{{ route('add.admin') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
+                            Admin</a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -56,11 +58,15 @@
                                         @endforeach
                                     </td>
                                     <td>
-                                        <a href="{{ route('edit.admin', $item->id) }}"
-                                            class="btn btn-warning px-3 radius-30">Edit</a>
-                                        {{-- form Xóa --}}
-                                        <a href="{{ route('delete.admin', $item->id) }}" class="btn btn-danger px-3 radius-30"
-                                            id="delete">Delete</a>
+                                        @if(Auth::user()->can('admin.edit'))
+                                            <a href="{{ route('edit.admin', $item->id) }}"
+                                                class="btn btn-warning px-3 radius-30">Edit</a>
+                                        @endif
+                                        @if(Auth::user()->can('admin.delete'))
+                                            {{-- form Xóa --}}
+                                            <a href="{{ route('delete.admin', $item->id) }}" class="btn btn-danger px-3 radius-30"
+                                                id="delete">Delete</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

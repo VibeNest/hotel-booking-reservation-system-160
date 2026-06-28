@@ -16,9 +16,11 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"><i
-                            class="bx bx-plus me-1"></i>Add
-                        Blog Category</button>
+                    @if(Auth::user()->can('blog.category.create'))
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"><i
+                                class="bx bx-plus me-1"></i>Add
+                            Blog Category</button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -44,12 +46,16 @@
                                     <td>{{ $item->category_name }}</td>
                                     <td>{{ $item->category_slug }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-warning px-3 radius-30" data-bs-toggle="modal"
-                                            data-bs-target="#category" id="{{ $item->id }}"
-                                            onclick="categoryEdit(this.id)">Edit</button>
-                                        {{-- form Xóa --}}
-                                        <a href="{{ route('delete.blog.category', $item->id) }}"
-                                            class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                        @if(Auth::user()->can('blog.category.edit'))
+                                            <button type="button" class="btn btn-warning px-3 radius-30" data-bs-toggle="modal"
+                                                data-bs-target="#category" id="{{ $item->id }}"
+                                                onclick="categoryEdit(this.id)">Edit</button>
+                                        @endif
+                                        @if(Auth::user()->can('blog.category.delete'))
+                                            {{-- form Xóa --}}
+                                            <a href="{{ route('delete.blog.category', $item->id) }}"
+                                                class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

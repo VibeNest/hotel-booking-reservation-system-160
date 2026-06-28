@@ -18,7 +18,9 @@
         <div class="container">
             <div class="card">
                 <div class="card-header">
-                    <a href="{{ route('add.addon') }}" class="btn btn-primary">+ Add New Add-on</a>
+                    @if(Auth::user()->can('addon.create'))
+                        <a href="{{ route('add.addon') }}" class="btn btn-primary">+ Add New Add-on</a>
+                    @endif
                 </div>
                 <div class="card-body">
                     <table class="table table-bordered">
@@ -37,9 +39,13 @@
                                     <td>${{ number_format($addon->price, 0) }}</td>
                                     <td>{{ $addon->description }}</td>
                                     <td>
-                                        <a href="{{ route('edit.addon', $addon->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                        <a href="{{ route('delete.addon', $addon->id) }}" class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Delete this add-on?')">Delete</a>
+                                        @if(Auth::user()->can('addon.edit'))
+                                            <a href="{{ route('edit.addon', $addon->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        @endif
+                                        @if(Auth::user()->can('addon.delete'))
+                                            <a href="{{ route('delete.addon', $addon->id) }}" class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Delete this add-on?')">Delete</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

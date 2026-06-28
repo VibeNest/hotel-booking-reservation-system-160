@@ -16,8 +16,10 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="{{ route('add.blog.post') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
-                        Post</a>
+                    @if(Auth::user()->can('blog.post.create'))
+                        <a href="{{ route('add.blog.post') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
+                            Post</a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -46,11 +48,15 @@
                                     <td><img src="{{ asset($item->post_image) }}" alt="{{ $item->post_title }}"
                                             style="width: 50px; height: 50px;"></td>
                                     <td>
-                                        <a href="{{ route('edit.blog.post', $item->id) }}"
-                                            class="btn btn-warning px-3 radius-30">Edit</a>
-                                        {{-- form Xóa --}}
-                                        <a href="{{ route('delete.blog.post', $item->id) }}"
-                                            class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                        @if(Auth::user()->can('blog.post.edit'))
+                                            <a href="{{ route('edit.blog.post', $item->id) }}"
+                                                class="btn btn-warning px-3 radius-30">Edit</a>
+                                        @endif
+                                        @if(Auth::user()->can('blog.post.delete'))
+                                            {{-- form Xóa --}}
+                                            <a href="{{ route('delete.blog.post', $item->id) }}"
+                                                class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

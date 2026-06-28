@@ -31,7 +31,8 @@
                         <label for="group_name" class="form-label">Permission Group</label>
                         <select class="form-select mb-3" name="group_name" id="group_name"
                             aria-label="Default select example">
-                            <option selected="">Select Group</option>
+                            <option selected="" disabled>Select Group</option>
+                            <option value="Dashboard">Dashboard</option>
                             <option value="Teams Management">Teams Management</option>
                             <option value="Book Area Management">Book Area Management</option>
                             <option value="Testimonial Management">Testimonial Management</option>
@@ -39,10 +40,12 @@
                             <option value="Comment Management">Comment Management</option>
                             <option value="Hotel Gallery">Hotel Gallery</option>
                             <option value="Room Type Management">Room Type Management</option>
+                            <option value="Add-ons Facility Management">Add-ons Facility Management</option>
                             <option value="Booking">Booking</option>
                             <option value="Room List Management">Room List Management</option>
                             <option value="Booking Report">Booking Report</option>
                             <option value="Role and Permission">Role and Permission</option>
+                            <option value="Manage Admin">Manage Admin</option>
                             <option value="Contact">Contact</option>
                             <option value="Setting">Setting</option>
                         </select>

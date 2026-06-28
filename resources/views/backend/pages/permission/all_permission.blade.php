@@ -16,18 +16,24 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="{{ route('add.permission') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
-                        Permission</a>
+                    @if(Auth::user()->can('permission.create'))
+                        <a href="{{ route('add.permission') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
+                            Permission</a>
+                    @endif
                 </div>
                 <div class="btn-group">
-                    <a href="{{ route('import.permission') }}" class="btn btn-warning px-3"><i
-                            class="bx bx-import me-1"></i>
-                        Import</a>
+                    @if(Auth::user()->can('permission.import'))
+                        <a href="{{ route('import.permission') }}" class="btn btn-warning px-3"><i
+                                class="bx bx-import me-1"></i>
+                            Import</a>
+                    @endif
                 </div>
                 <div class="btn-group">
-                    <a href="{{ route('export.permission') }}" class="btn btn-success px-3"><i
-                            class="bx bx-export me-1"></i>
-                        Export</a>
+                    @if(Auth::user()->can('permission.export'))
+                        <a href="{{ route('export.permission') }}" class="btn btn-success px-3"><i
+                                class="bx bx-export me-1"></i>
+                            Export</a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -53,11 +59,15 @@
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->group_name }}</td>
                                     <td>
-                                        <a href="{{ route('edit.permission', $item->id) }}"
-                                            class="btn btn-warning px-3 radius-30">Edit</a>
-                                        {{-- form Xóa --}}
-                                        <a href="{{ route('delete.permission', $item->id) }}"
-                                            class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                        @if(Auth::user()->can('permission.edit'))
+                                            <a href="{{ route('edit.permission', $item->id) }}"
+                                                class="btn btn-warning px-3 radius-30">Edit</a>
+                                        @endif
+                                        @if(Auth::user()->can('permission.delete'))
+                                            {{-- form Xóa --}}
+                                            <a href="{{ route('delete.permission', $item->id) }}"
+                                                class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

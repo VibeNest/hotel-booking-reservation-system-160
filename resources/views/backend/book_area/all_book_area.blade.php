@@ -16,8 +16,10 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="{{ route('add.book.area') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
-                        Book Area</a>
+                    @if(Auth::user()->can('book.area.create'))
+                        <a href="{{ route('add.book.area') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
+                            Book Area</a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -50,10 +52,14 @@
                                     <td><img src="{{ asset($item->image) }}" alt="{{ $item->sub_title }}"
                                             style="width: 50px; height: 50px;"></td>
                                     <td>
-                                        <a href="{{ route('edit.book_area', $item->id) }}"
-                                            class="btn btn-warning px-3 radius-30">Edit</a>
-                                        <a href="{{ route('delete.book_area', $item->id) }}"
-                                            class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                        @if(Auth::user()->can('book.area.edit'))
+                                            <a href="{{ route('edit.book_area', $item->id) }}"
+                                                class="btn btn-warning px-3 radius-30">Edit</a>
+                                        @endif
+                                        @if(Auth::user()->can('book.area.delete'))
+                                            <a href="{{ route('delete.book_area', $item->id) }}"
+                                                class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

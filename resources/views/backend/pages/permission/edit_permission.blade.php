@@ -34,7 +34,11 @@
                         <select class="form-select mb-3" name="group_name" id="group_name"
                             aria-label="Default select example">
 
-                            <option selected="">Select Group</option>
+                            <option selected="" disabled>Select Group</option>
+
+                            <option value="Dashboard" {{ $permission->group_name == 'Dashboard' ? 'selected' : '' }}>
+                                Dashboard
+                            </option>
 
                             <option value="Teams Management" {{ $permission->group_name == 'Teams Management' ? 'selected' : '' }}>
                                 Teams Management
@@ -64,6 +68,10 @@
                                 Room Type Management
                             </option>
 
+                            <option value="Add-ons Facility Management" {{ $permission->group_name == 'Add-ons Facility Management' ? 'selected' : '' }}>
+                                Add-ons Facility Management
+                            </option>
+
                             <option value="Booking" {{ $permission->group_name == 'Booking' ? 'selected' : '' }}>
                                 Booking
                             </option>
@@ -78,6 +86,10 @@
 
                             <option value="Role and Permission" {{ $permission->group_name == 'Role and Permission' ? 'selected' : '' }}>
                                 Role and Permission
+                            </option>
+
+                            <option value="Manage Admin" {{ $permission->group_name == 'Manage Admin' ? 'selected' : '' }}>
+                                Manage Admin
                             </option>
 
                             <option value="Contact" {{ $permission->group_name == 'Contact' ? 'selected' : '' }}>

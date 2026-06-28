@@ -16,8 +16,10 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="{{ route('add.room.list') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
-                        Booking</a>
+                    @if(Auth::user()->can('booking.create'))
+                        <a href="{{ route('add.room.list') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
+                            Booking</a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -62,7 +64,9 @@
                                     <span class="badge bg-danger">Pending</span> @endif
                                     </td>
                                     <td>
-                                        <a href="" class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                        @if(Auth::user()->can('booking.delete'))
+                                            <a href="" class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

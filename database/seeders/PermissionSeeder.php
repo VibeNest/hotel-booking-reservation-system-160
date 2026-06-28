@@ -86,6 +86,37 @@ class PermissionSeeder extends Seeder
             ['name' => 'booking.report.export', 'group_name' => 'Booking Report'],
             ['name' => 'booking.report.filter', 'group_name' => 'Booking Report'],
 
+            // === Menu-level permissions (for sidebar visibility) ===
+            ['name' => 'team.menu', 'group_name' => 'Teams Management'],
+            ['name' => 'testimonial.menu', 'group_name' => 'Testimonial Management'],
+            ['name' => 'blog.menu', 'group_name' => 'Blog'],
+            ['name' => 'comment.menu', 'group_name' => 'Comment Management'],
+            ['name' => 'book.area.menu', 'group_name' => 'Book Area Management'],
+            ['name' => 'gallery.menu', 'group_name' => 'Hotel Gallery'],
+            ['name' => 'room.type.menu', 'group_name' => 'Room Type Management'],
+            ['name' => 'booking.menu', 'group_name' => 'Booking'],
+            ['name' => 'room.list.menu', 'group_name' => 'Room List Management'],
+            ['name' => 'booking.report.menu', 'group_name' => 'Booking Report'],
+            ['name' => 'permission.menu', 'group_name' => 'Role and Permission'],
+            ['name' => 'contact.message.menu', 'group_name' => 'Contact'],
+            ['name' => 'setting.menu', 'group_name' => 'Setting'],
+
+            // === Add-ons Facility Management ===
+            ['name' => 'addon.menu', 'group_name' => 'Add-ons Facility Management'],
+            ['name' => 'addon.view', 'group_name' => 'Add-ons Facility Management'],
+            ['name' => 'addon.create', 'group_name' => 'Add-ons Facility Management'],
+            ['name' => 'addon.edit', 'group_name' => 'Add-ons Facility Management'],
+            ['name' => 'addon.update', 'group_name' => 'Add-ons Facility Management'],
+            ['name' => 'addon.delete', 'group_name' => 'Add-ons Facility Management'],
+
+            // === Admin Management ===
+            ['name' => 'admin.menu', 'group_name' => 'Admin Management'],
+            ['name' => 'admin.view', 'group_name' => 'Admin Management'],
+            ['name' => 'admin.create', 'group_name' => 'Admin Management'],
+            ['name' => 'admin.edit', 'group_name' => 'Admin Management'],
+            ['name' => 'admin.update', 'group_name' => 'Admin Management'],
+            ['name' => 'admin.delete', 'group_name' => 'Admin Management'],
+
             // === Role and Permission ===
             ['name' => 'permission.view', 'group_name' => 'Role and Permission'],
             ['name' => 'permission.create', 'group_name' => 'Role and Permission'],

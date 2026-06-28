@@ -16,8 +16,10 @@
             </div>
             <div class="ms-auto">
                 <div class="btn-group">
-                    <a href="{{ route('add.roles') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
-                        Roles</a>
+                    @if(Auth::user()->can('role.create'))
+                        <a href="{{ route('add.roles') }}" class="btn btn-primary px-3"><i class="bx bx-plus me-1"></i>Add
+                            Roles</a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -41,11 +43,15 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>
-                                        <a href="{{ route('edit.roles', $item->id) }}"
-                                            class="btn btn-warning px-3 radius-30">Edit</a>
-                                        {{-- form Xóa --}}
-                                        <a href="{{ route('delete.roles', $item->id) }}" class="btn btn-danger px-3 radius-30"
-                                            id="delete">Delete</a>
+                                        @if(Auth::user()->can('role.edit'))
+                                            <a href="{{ route('edit.roles', $item->id) }}"
+                                                class="btn btn-warning px-3 radius-30">Edit</a>
+                                        @endif
+                                        @if(Auth::user()->can('role.delete'))
+                                            {{-- form Xóa --}}
+                                            <a href="{{ route('delete.roles', $item->id) }}" class="btn btn-danger px-3 radius-30"
+                                                id="delete">Delete</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

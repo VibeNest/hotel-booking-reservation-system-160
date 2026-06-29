@@ -1,6 +1,6 @@
 @php
     $setting = App\Models\SiteSetting::find(1);
-    $logo2 = $setting->logo ?? 'frontend/assets/img/logo.png';
+    $logo = $setting->logo ?? 'frontend/assets/img/logo.png';
     $address2 = $setting->address ?? '';
     $phone2 = $setting->phone ?? '';
     $email2 = $setting->email ?? '';
@@ -18,7 +18,7 @@
                     <div class="footer-widget">
                         <div class="footer-logo">
                             <a href="/">
-                                <img src="{{ asset($logo2) }}" alt="Logo Image">
+                                <img src="{{ asset($logo) }}" alt="Logo Image">
                             </a>
                         </div>
                         <p>

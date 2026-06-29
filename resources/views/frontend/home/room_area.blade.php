@@ -61,8 +61,8 @@
                                         <li><i class='bx bxs-hotel'></i> {{ $room->bed_style ?? '' }}</li>
                                     </ul>
 
-                                    <a href="#" class="book-more-btn">
-                                        Book Now
+                                    <a href="{{ route('room.details', $room->id) }}" class="book-more-btn">
+                                        View Details
                                     </a>
 
                                 </div>

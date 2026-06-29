@@ -55,6 +55,14 @@ jobs:
 
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: hotel_booking_reservation_system_test
+          DB_USERNAME: root
+          DB_PASSWORD: root
 
       - name: Install Node dependencies
         run: npm ci

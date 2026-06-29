@@ -35,23 +35,28 @@ class AppServiceProvider extends ServiceProvider
      */
     private function configureMailSettings(): void
     {
-        if (\Schema::hasTable('smtp_settings')) {
-            $smtpSetting = SmtpSetting::first();
+        try {
+            if (\Schema::hasTable('smtp_settings')) {
+                $smtpSetting = SmtpSetting::first();
 
-            if ($smtpSetting) {
-                $data = [
-                    'driver' => $smtpSetting->mailer,
-                    'host' => $smtpSetting->host,
-                    'port' => $smtpSetting->port,
-                    'username' => $smtpSetting->username,
-                    'password' => $smtpSetting->password,
-                    'from' => [
-                        'address' => $smtpSetting->from_address,
-                        'name' => 'HotelHub',
-                    ],
-                ];
-                Config::set('mail', $data);
+                if ($smtpSetting) {
+                    $data = [
+                        'driver' => $smtpSetting->mailer,
+                        'host' => $smtpSetting->host,
+                        'port' => $smtpSetting->port,
+                        'username' => $smtpSetting->username,
+                        'password' => $smtpSetting->password,
+                        'from' => [
+                            'address' => $smtpSetting->from_address,
+                            'name' => 'HotelHub',
+                        ],
+                    ];
+                    Config::set('mail', $data);
+                }
             }
+        } catch (\Throwable $e) {
+            // Database not yet available (e.g., during composer install, CI without .env).
+            // Mail settings will be configured later when the app is fully booted.
         }
     }
 

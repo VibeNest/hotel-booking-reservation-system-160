@@ -1,5 +1,8 @@
 @php
     $setting = App\Models\SiteSetting::find(1);
+    $address = $setting->address ?? '';
+    $phone = $setting->phone ?? '';
+    $email = $setting->email ?? '';
 @endphp
 
 <header class="top-header top-header-bg">
@@ -19,15 +22,15 @@
                     <ul>
                         <li>
                             <i class='bx bx-home-alt'></i>
-                            <a href="#">{{ $setting->address }}</a>
+                            <a href="#">{{ $address }}</a>
                         </li>
                         <li>
                             <i class='bx bx-phone-call'></i>
-                            <a href="#">{{ $setting->phone }}</a>
+                            <a href="#">{{ $phone }}</a>
                         </li>
                         <li>
                             <i class='bx bx-envelope'></i>
-                            <a href="#">{{ $setting->email }}</a>
+                            <a href="#">{{ $email }}</a>
                         </li>
 
                         @auth

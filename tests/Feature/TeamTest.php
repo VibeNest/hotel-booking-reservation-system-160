@@ -18,8 +18,8 @@ class TeamTest extends TestCase
         // 1. Tạo dữ liệu giả
         $team = Team::factory()->create();
 
-        // 2. Gửi request delete
-        $response = $this->delete(route('delete.team', $team->id));
+        // 2. Gửi request delete (route is GET)
+        $response = $this->get(route('delete.team', $team->id));
 
         // 3. Check không lỗi
         $response->assertStatus(302);

@@ -1,5 +1,8 @@
 @php
     $setting = App\Models\SiteSetting::find(1);
+    $address3 = $setting->address ?? '';
+    $phone3 = $setting->phone ?? '';
+    $email3 = $setting->email ?? '';
 @endphp
 
 @extends('frontend.home_page')
@@ -119,21 +122,21 @@
                                 <li>
                                     <i class='bx bx-home-alt'></i>
                                     <div class="content">
-                                        <span>{{ $setting->address }}</span>
+                                        <span>{{ $address3 }}</span>
                                         <span>55 Giải Phóng, Quận Hai Bà Trưng, Hà Nội</span>
                                     </div>
                                 </li>
                                 <li>
                                     <i class='bx bx-phone-call'></i>
                                     <div class="content">
-                                        <span><a href="#">{{ $setting->phone }}</a></span>
+                                        <span><a href="#">{{ $phone3 }}</a></span>
                                         <span><a href="#">0123456789</a></span>
                                     </div>
                                 </li>
                                 <li>
                                     <i class='bx bx-envelope'></i>
                                     <div class="content">
-                                        <span><a href="#">{{ $setting->email }}</a></span>
+                                        <span><a href="#">{{ $email3 }}</a></span>
                                         <span><a href="#">tungvuvan155gmail.com</a></span>
                                     </div>
                                 </li>

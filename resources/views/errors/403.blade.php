@@ -28,6 +28,10 @@
 
 @php
     $setting = App\Models\SiteSetting::find(1);
+    $fb = $setting->facebook ?? '#';
+    $tt = $setting->tiktok ?? '#';
+    $ig = $setting->instagram ?? '#';
+    $copy = $setting->copyright ?? '';
 @endphp
 
 <body>
@@ -84,17 +88,14 @@
             <div class="d-flex align-items-center justify-content-between flex-wrap">
                 <ul class="list-inline mb-0">
                     <li class="list-inline-item">Follow Us :</li>
-                    <li class="list-inline-item"><a href="{{ $setting->facebook }}"><i
-                                class='bx bxl-facebook me-1'></i>Facebook</a>
+                    <li class="list-inline-item"><a href="{{ $fb }}"><i class='bx bxl-facebook me-1'></i>Facebook</a>
                     </li>
-                    <li class="list-inline-item"><a href="{{ $setting->tiktok }}"><i
-                                class='bx bxl-tiktok me-1'></i>Tiktok</a>
+                    <li class="list-inline-item"><a href="{{ $tt }}"><i class='bx bxl-tiktok me-1'></i>Tiktok</a>
                     </li>
-                    <li class="list-inline-item"><a href="{{ $setting->instagram }}"><i
-                                class='bx bxl-instagram me-1'></i>Instagram</a>
+                    <li class="list-inline-item"><a href="{{ $ig }}"><i class='bx bxl-instagram me-1'></i>Instagram</a>
                     </li>
                 </ul>
-                <p class="mb-0">{{ $setting->copyright }}</p>
+                <p class="mb-0">{{ $copy }}</p>
             </div>
         </div>
     </div>

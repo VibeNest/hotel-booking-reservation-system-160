@@ -1,13 +1,14 @@
 @php
     $setting = App\Models\SiteSetting::find(1);
+    $logo = $setting->logo ?? 'frontend/assets/img/logo.png';
 @endphp
 
 <div class="navbar-area">
     <!-- Menu For Mobile Device -->
     <div class="mobile-nav">
         <a href="/" class="logo">
-            <img src="{{ asset($setting->logo) }}" class="logo-one" alt="Logo Image">
-            <img src="{{ asset($setting->logo) }}" class="logo-two" alt="Logo Image">
+            <img src="{{ asset($logo) }}" class="logo-one" alt="Logo Image">
+            <img src="{{ asset($logo) }}" class="logo-two" alt="Logo Image">
         </a>
     </div>
 
@@ -16,8 +17,8 @@
         <div class="container">
             <nav class="navbar navbar-expand-md navbar-light ">
                 <a class="navbar-brand" href="/">
-                    <img src="{{ asset($setting->logo) }}" class="logo-one" alt="Logo Image">
-                    <img src="{{ asset($setting->logo) }}" class="logo-two" alt="Logo Image">
+                    <img src="{{ asset($logo) }}" class="logo-one" alt="Logo Image">
+                    <img src="{{ asset($logo) }}" class="logo-two" alt="Logo Image">
                 </a>
 
                 <div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">

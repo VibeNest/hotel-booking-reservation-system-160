@@ -1,5 +1,13 @@
 @php
     $setting = App\Models\SiteSetting::find(1);
+    $logo2 = $setting->logo ?? 'frontend/assets/img/logo.png';
+    $address2 = $setting->address ?? '';
+    $phone2 = $setting->phone ?? '';
+    $email2 = $setting->email ?? '';
+    $copyright = $setting->copyright ?? '';
+    $facebook = $setting->facebook ?? '#';
+    $tiktok = $setting->tiktok ?? '#';
+    $instagram = $setting->instagram ?? '#';
 @endphp
 
 <footer class="footer-area footer-bg">
@@ -10,7 +18,7 @@
                     <div class="footer-widget">
                         <div class="footer-logo">
                             <a href="/">
-                                <img src="{{ asset($setting->logo) }}" alt="Logo Image">
+                                <img src="{{ asset($logo2) }}" alt="Logo Image">
                             </a>
                         </div>
                         <p>
@@ -21,15 +29,15 @@
                         <ul class="footer-list-contact">
                             <li>
                                 <i class='bx bx-home-alt'></i>
-                                <a href="#">{{ $setting->address }}</a>
+                                <a href="#">{{ $address2 }}</a>
                             </li>
                             <li>
                                 <i class='bx bx-phone-call'></i>
-                                <a href="#">{{ $setting->phone }}</a>
+                                <a href="#">{{ $phone2 }}</a>
                             </li>
                             <li>
                                 <i class='bx bx-envelope'></i>
-                                <a href="#">{{ $setting->email }}</a>
+                                <a href="#">{{ $email2 }}</a>
                             </li>
                         </ul>
                     </div>
@@ -115,7 +123,7 @@
                 <div class="col-lg-8 col-md-8">
                     <div class="copy-right-text text-align1">
                         <p>
-                            {{ $setting->copyright }}
+                            {{ $copyright }}
                         </p>
                     </div>
                 </div>
@@ -124,13 +132,13 @@
                     <div class="social-icon text-align2">
                         <ul class="social-link">
                             <li>
-                                <a href="{{ $setting->facebook }}" target="_blank"><i class='bx bxl-facebook'></i></a>
+                                <a href="{{ $facebook }}" target="_blank"><i class='bx bxl-facebook'></i></a>
                             </li>
                             <li>
-                                <a href="{{ $setting->tiktok }}" target="_blank"><i class='bx bxl-tiktok'></i></a>
+                                <a href="{{ $tiktok }}" target="_blank"><i class='bx bxl-tiktok'></i></a>
                             </li>
                             <li>
-                                <a href="{{ $setting->instagram }}" target="_blank"><i class='bx bxl-instagram'></i></a>
+                                <a href="{{ $instagram }}" target="_blank"><i class='bx bxl-instagram'></i></a>
                             </li>
                         </ul>
                     </div>

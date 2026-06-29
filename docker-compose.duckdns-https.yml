@@ -1,0 +1,12 @@
+services:
+  nginx:
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DUCKDNS_DOMAIN: ${DUCKDNS_DOMAIN}
+    volumes:
+      - app_public_upload:/var/www/html/public/upload:ro
+      - certbot_www:/var/www/certbot:ro
+      - letsencrypt:/etc/letsencrypt:ro
+      - ./nginx-https.conf.template:/etc/nginx/templates/default.conf.template:ro

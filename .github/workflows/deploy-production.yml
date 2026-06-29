@@ -1,0 +1,217 @@
+name: CI/CD Production
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+      - production
+  workflow_dispatch:
+
+concurrency:
+  group: production-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+  APP_IMAGE_NAME: ${{ github.repository }}-app
+  NGINX_IMAGE_NAME: ${{ github.repository }}-nginx
+
+jobs:
+  test:
+    name: Test Laravel
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: hotel_booking_reservation_system_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: bcmath, exif, gd, pdo_mysql, zip
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan config:clear
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: hotel_booking_reservation_system_test
+          DB_USERNAME: root
+          DB_PASSWORD: root
+
+      - name: Run migrations
+        run: php artisan migrate --force
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: hotel_booking_reservation_system_test
+          DB_USERNAME: root
+          DB_PASSWORD: root
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Run tests
+        run: php artisan test
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: hotel_booking_reservation_system_test
+          DB_USERNAME: root
+          DB_PASSWORD: root
+
+  build:
+    name: Build and Push Images
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      app_image: ${{ steps.images.outputs.app_image }}
+      nginx_image: ${{ steps.images.outputs.nginx_image }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set image tags
+        id: images
+        run: |
+          APP_IMAGE="${REGISTRY}/${APP_IMAGE_NAME}:${GITHUB_SHA}"
+          NGINX_IMAGE="${REGISTRY}/${NGINX_IMAGE_NAME}:${GITHUB_SHA}"
+          echo "app_image=${APP_IMAGE,,}" >> "$GITHUB_OUTPUT"
+          echo "nginx_image=${NGINX_IMAGE,,}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push Laravel app image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: app
+          push: true
+          tags: ${{ steps.images.outputs.app_image }}
+
+      - name: Build and push Nginx image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: nginx
+          push: true
+          tags: ${{ steps.images.outputs.nginx_image }}
+
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${EC2_HOST}" >> ~/.ssh/known_hosts
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+
+      - name: Prepare deployment files
+        run: |
+          cp docker-compose.prod.yml docker-compose.remote.yml
+          cp docker-compose.duckdns-https.yml docker-compose.duckdns-https.remote.yml
+          cp docker/nginx/https.conf.template nginx-https.conf.template
+          printf '%s\n' "${PROD_ENV_FILE}" > .env.production
+        env:
+          PROD_ENV_FILE: ${{ secrets.PROD_ENV_FILE }}
+
+      - name: Upload compose and env
+        run: |
+          ssh "${EC2_USER}@${EC2_HOST}" "mkdir -p /opt/hotel-booking"
+          scp docker-compose.remote.yml "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/docker-compose.prod.yml"
+          scp docker-compose.duckdns-https.remote.yml "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/docker-compose.duckdns-https.yml"
+          scp nginx-https.conf.template "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/nginx-https.conf.template"
+          scp .env.production "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/.env.production"
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+
+      - name: Pull and restart services
+        run: |
+          ssh "${EC2_USER}@${EC2_HOST}" "
+            set -e
+            cd /opt/hotel-booking
+            cp .env.production .env.compose
+            printf '\nAPP_IMAGE=%s\nNGINX_IMAGE=%s\n' '${APP_IMAGE}' '${NGINX_IMAGE}' >> .env.compose
+            COMPOSE_FILES='-f docker-compose.prod.yml'
+            if grep -q '^ENABLE_DUCKDNS_HTTPS=true' .env.production; then
+              COMPOSE_FILES=\"\${COMPOSE_FILES} -f docker-compose.duckdns-https.yml\"
+            fi
+            printf '%s\n' '${GHCR_TOKEN}' | docker login ghcr.io -u '${GHCR_USERNAME}' --password-stdin
+            docker compose --env-file .env.compose \${COMPOSE_FILES} pull
+            docker compose --env-file .env.compose \${COMPOSE_FILES} up -d --remove-orphans
+            docker compose --env-file .env.compose \${COMPOSE_FILES} exec -T app php artisan config:clear
+            docker compose --env-file .env.compose \${COMPOSE_FILES} exec -T app php artisan migrate --force
+            docker compose --env-file .env.compose \${COMPOSE_FILES} exec -T app php artisan storage:link || true
+            docker compose --env-file .env.compose \${COMPOSE_FILES} exec -T app php artisan config:cache
+            docker compose --env-file .env.compose \${COMPOSE_FILES} exec -T app php artisan view:cache
+            docker image prune -f
+          "
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          APP_IMAGE: ${{ needs.build.outputs.app_image }}
+          NGINX_IMAGE: ${{ needs.build.outputs.nginx_image }}

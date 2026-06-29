@@ -1,7 +1,7 @@
 @php
     $setting = App\Models\SiteSetting::find(1);
     $logo = $setting->logo ?? 'frontend/assets/img/logo.png';
-    $address2 = $setting->address ?? '';
+    $address = $setting->address ?? '';
     $phone2 = $setting->phone ?? '';
     $email2 = $setting->email ?? '';
     $copyright = $setting->copyright ?? '';
@@ -29,7 +29,7 @@
                         <ul class="footer-list-contact">
                             <li>
                                 <i class='bx bx-home-alt'></i>
-                                <a href="#">{{ $address2 }}</a>
+                                <a href="#">{{ $address }}</a>
                             </li>
                             <li>
                                 <i class='bx bx-phone-call'></i>

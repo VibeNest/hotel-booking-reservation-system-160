@@ -65,7 +65,8 @@
                                     </td>
                                     <td>
                                         @if(Auth::user()->can('booking.delete'))
-                                            <a href="" class="btn btn-danger px-3 radius-30" id="delete">Delete</a>
+                                            <a href="{{ route('delete.booking', $item->id) }}" class="btn btn-danger px-3 radius-30"
+                                                id="delete">Delete</a>
                                         @endif
                                     </td>
                                 </tr>

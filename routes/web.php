@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AddOnController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Backend\AdminBookingController;
 use App\Http\Controllers\Backend\BlogController;
@@ -13,7 +14,6 @@ use App\Http\Controllers\Backend\RoomListController;
 use App\Http\Controllers\Backend\RoomTypeController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\TeamController;
-use App\Http\Controllers\Admin\AddOnController;
 use App\Http\Controllers\Backend\TestimonialController;
 use App\Http\Controllers\Frontend\BookingController;
 use App\Http\Controllers\frontend\ContactController;
@@ -131,6 +131,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     Route::controller(AdminBookingController::class)->group(function () {
         Route::get('/booking/list', 'BookingList')->name('booking.list')->middleware('permission:booking.view');
         Route::get('/edit/booking/{id}', 'EditBooking')->name('edit_booking')->middleware('permission:booking.edit');
+        Route::get('/delete/booking/{id}', 'DeleteBooking')->name('delete.booking')->middleware('permission:booking.delete');
         Route::get('/download/invoice/{id}', 'DownloadInvoice')->name('download.invoice')->middleware('permission:booking.detail');
         Route::post('/update/booking/status/{id}', 'UpdateBookingStatus')->name('update.booking.status')->middleware('permission:booking.update');
         Route::post('/update/booking/{id}', 'UpdateBooking')->name('update.booking')->middleware('permission:booking.update');
@@ -338,4 +339,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

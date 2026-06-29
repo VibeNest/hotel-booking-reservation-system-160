@@ -177,15 +177,37 @@ class AdminBookingController extends Controller
         return redirect()->back()->with($notification);
     }
 
+    // Delete Booking Method
+    public function DeleteBooking($id)
+    {
+        $booking = Booking::find($id);
+
+        // Delete related room booked dates
+        RoomBookedDate::where('booking_id', $id)->delete();
+
+        // Delete related booking room list
+        BookingRoomList::where('booking_id', $id)->delete();
+
+        // Delete the booking itself
+        $booking->delete();
+
+        $notification = [
+            'message' => 'Deleted Booking Successfully.',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->back()->with($notification);
+    }
+
     // Download Invoice Method
     public function DownloadInvoice($id)
     {
         $editData = Booking::with('room')->find($id);
         $pdf = Pdf::loadView('backend.booking.booking_invoice', compact('editData'))
             ->setPaper('a4')->setOption([
-                'tempDir' => public_path(),
-                'chroot' => public_path(),
-            ]);
+                    'tempDir' => public_path(),
+                    'chroot' => public_path(),
+                ]);
 
         return $pdf->download('Booking Invoice.pdf');
     }

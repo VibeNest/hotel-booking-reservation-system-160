@@ -53,12 +53,6 @@ jobs:
           node-version: "22"
           cache: npm
 
-      - name: Prepare environment
-        run: |
-          cp .env.example .env
-          php artisan key:generate
-          php artisan config:clear
-
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
@@ -73,6 +67,12 @@ jobs:
           DB_DATABASE: hotel_booking_reservation_system_test
           DB_USERNAME: root
           DB_PASSWORD: root
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan config:clear
 
       - name: Run migrations
         run: php artisan migrate --force

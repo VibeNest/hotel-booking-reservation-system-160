@@ -53,17 +53,18 @@ jobs:
           node-version: "22"
           cache: npm
 
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan config:clear
+
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
       - name: Install Node dependencies
         run: npm ci
 
-      - name: Prepare environment
-        run: |
-          cp .env.example .env
-          php artisan key:generate
-          php artisan config:clear
         env:
           APP_ENV: testing
           DB_CONNECTION: mysql

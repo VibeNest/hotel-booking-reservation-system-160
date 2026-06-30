@@ -53,7 +53,7 @@
                                     @php
                                         $userImage = $notification->data['user_image'] ?? null;
                                         $userAvatarUrl = $userImage
-                                            ? url("upload/user_images/{$userImage}")
+                                            ? url("{$userImage}")
                                             : url(asset('upload/no_image.jpeg'));
                                     @endphp
 

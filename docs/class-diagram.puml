@@ -1,0 +1,349 @@
+@startuml Hotel Booking Reservation System - Class Diagram
+
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam classBackgroundColor #FEFEFF
+skinparam classBorderColor #2C3E50
+skinparam arrowColor #3498DB
+skinparam arrowFontSize 10
+
+title Hotel Booking Reservation System - Class Diagram
+
+' ==================== MODELS ====================
+
+class User {
+  - name: string
+  - email: string
+  - password: string
+  - email_verified_at: datetime
+  - remember_token: string
+  --
+  + getPermissionGroup()
+  + getPermissonByGroupName(group_name)
+  + roleHasPermissions(role, permissions)
+}
+
+class Booking {
+  - rooms_id: int
+  - user_id: int
+  - check_in: date
+  - check_out: date
+  - person: int
+  - total_price: decimal
+  - subtotal: decimal
+  - discount: decimal
+  - payment_method: string
+  - transaction_id: string
+  - status: int
+  - created_at: datetime
+  - updated_at: datetime
+  --
+  + assign_rooms()
+  + user()
+  + room()
+  + getState(): BookingState
+  + getStatusLabel(): string
+  + getStatusColor(): string
+  + approve(): void
+  + cancel(): void
+  + canBeApproved(): bool
+  + canBeCancelled(): bool
+  + isPending(): bool
+  + isComplete(): bool
+  + getAddonFee(): float
+}
+
+class Room {
+  - roomtype_id: int
+  - room_capacity: int
+  - price: decimal
+  - discount_price: decimal
+  - description: text
+  - image: string
+  - status: string
+  - created_at: datetime
+  - updated_at: datetime
+  --
+  + type()
+  + rooms_numbers()
+}
+
+class RoomType {
+  - room_type: string
+  - price: decimal
+  - description: text
+  - image: string
+  - created_at: datetime
+  - updated_at: datetime
+  --
+  + room()
+}
+
+class RoomNumber {
+  - room_type_id: int
+  - rooms_id: int
+  - room_no: string
+  - status: string
+  - created_at: datetime
+  - updated_at: datetime
+  --
+  + room_type()
+  + last_booking()
+}
+
+class BookingRoomList {
+  - booking_id: int
+  - room_number_id: int
+  - created_at: datetime
+  - updated_at: datetime
+  --
+  + room_numbers()
+  + booking()
+}
+
+class RoomBookedDate {
+  - booking_id: int
+  - room_number_id: int
+  - booked_date: date
+  - created_at: datetime
+  - updated_at: datetime
+}
+
+class AddOn {
+  - name: string
+  - price: decimal
+  - description: text
+  - created_at: datetime
+  - updated_at: datetime
+}
+
+class Facility {
+  - name: string
+  - icon: string
+  - description: text
+  - created_at: datetime
+  - updated_at: datetime
+}
+
+class Gallery {
+  - image: string
+  - created_at: datetime
+  - updated_at: datetime
+}
+
+class MultiImage {
+  - rooms_id: int
+  - multi_img: string
+  - created_at: datetime
+  - updated_at: datetime
+  --
+  + room()
+}
+
+class BookArea {
+  - area_name: string
+  - description: text
+  - image: string
+  - created_at: datetime
+  - updated_at: datetime
+}
+
+class BlogPost {
+  - blog_cat_id: int
+  - user_id: int
+  - post_title: string
+  - post_details: text
+  - post_image: string
+  - status: string
+  - created_at: datetime
+  - updated_at: datetime
+  --
+  + blog()
+  + user()
+}
+
+class BlogCategory {
+  - blog_category: string
+  - created_at: datetime
+  - updated_at: datetime
+}
+
+class Comment {
+  - user_id: int
+  - post_id: int
+  - comment: text
+  - created_at: datetime
+  - updated_at: datetime
+  --
+  + user()
+  + post()
+}
+
+class Contact {
+  - name: string
+  - email: string
+  - subject: string
+  - message: text
+  - created_at: datetime
+  - updated_at: datetime
+}
+
+class SiteSetting {
+  - site_name: string
+  - site_logo: string
+  - site_favicon: string
+  - site_email: string
+  - site_phone: string
+  - site_address: text
+  - created_at: datetime
+  - updated_at: datetime
+}
+
+class SmtpSetting {
+  - mailer: string
+  - host: string
+  - port: int
+  - username: string
+  - password: string
+  - encryption: string
+  - from_address: string
+  - from_name: string
+  - created_at: datetime
+  - updated_at: datetime
+}
+
+class Team {
+  - name: string
+  - position: string
+  - facebook: string
+  - tiktok: string
+  - instagram: string
+  - image: string
+  - created_at: datetime
+  - updated_at: datetime
+}
+
+class Testimonial {
+  - name: string
+  - position: string
+  - message: text
+  - image: string
+  - created_at: datetime
+  - updated_at: datetime
+}
+
+' ==================== STATE PATTERN ====================
+
+interface BookingState {
+  + name(): string
+  + label(): string
+  + color(): string
+  + value(): int
+  + approve(Booking): void
+  + cancel(Booking): void
+  + canApprove(): bool
+  + canCancel(): bool
+}
+
+class PendingBookingState {
+  + name(): string
+  + label(): string
+  + color(): string
+  + value(): int
+  + approve(Booking): void
+  + cancel(Booking): void
+  + canApprove(): bool
+  + canCancel(): bool
+}
+
+class CompleteBookingState {
+  + name(): string
+  + label(): string
+  + color(): string
+  + value(): int
+  + approve(Booking): void
+  + cancel(Booking): void
+  + canApprove(): bool
+  + canCancel(): bool
+}
+
+class BookingStateManager {
+  + getState(Booking): BookingState
+  + getStateFromValue(int): BookingState
+  + getAvailableStates(): array
+  + approve(Booking): void
+  + cancel(Booking): void
+  + getLabel(Booking): string
+  + getColor(Booking): string
+}
+
+' ==================== SERVICES ====================
+
+class BookingEventManager {
+  + handleBookingCreated(Booking)
+  + handleBookingApproved(Booking)
+  + handleBookingCancelled(Booking)
+}
+
+class ImageUploadProxy {
+  + upload($file, $path)
+  + delete($path)
+  + getUrl($path)
+}
+
+' ==================== RELATIONSHIPS ====================
+
+' User relationships
+User "1" --> "*" Booking : places
+User "1" --> "*" BlogPost : writes
+User "1" --> "*" Comment : writes
+
+' Booking relationships
+Booking "*" --> "1" User : belongs to
+Booking "*" --> "1" Room : for
+Booking "1" --> "*" BookingRoomList : has
+BookingStateManager ..> BookingState : manages
+BookingStateManager ..> Booking : operates on
+Booking --> BookingState : uses
+PendingBookingState ..|> BookingState : implements
+CompleteBookingState ..|> BookingState : implements
+BookingStateManager ..> PendingBookingState : creates
+BookingStateManager ..> CompleteBookingState : creates
+
+' Room relationships
+Room "*" --> "1" RoomType : has type
+Room "1" --> "*" RoomNumber : has numbers
+Room "1" --> "*" MultiImage : has images
+Room "1" --> "*" Booking : booked as
+
+' RoomType relationships
+RoomType "1" --> "*" Room : contains
+RoomType "1" --> "*" RoomNumber : has
+
+' RoomNumber relationships
+RoomNumber "*" --> "1" RoomType : belongs to
+RoomNumber "*" --> "1" Room : belongs to
+RoomNumber "1" --> "0..1" BookingRoomList : last booking
+
+' BookingRoomList relationships
+BookingRoomList "*" --> "1" Booking : belongs to
+BookingRoomList "*" --> "1" RoomNumber : for
+
+' Blog relationships
+BlogPost "*" --> "1" BlogCategory : belongs to
+BlogPost "*" --> "1" User : written by
+BlogPost "1" --> "*" Comment : has
+BlogCategory "1" --> "*" BlogPost : contains
+
+' Comment relationships
+Comment "*" --> "1" User : by
+Comment "*" --> "1" BlogPost : on
+
+' MultiImage relationships
+MultiImage "*" --> "1" Room : belongs to
+
+' Services
+BookingEventManager ..> Booking : observes
+
+@enduml

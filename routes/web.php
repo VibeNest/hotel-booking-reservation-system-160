@@ -16,9 +16,9 @@ use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\TeamController;
 use App\Http\Controllers\Backend\TestimonialController;
 use App\Http\Controllers\Frontend\BookingController;
-use App\Http\Controllers\frontend\ContactController;
+use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\FrontendRoomController;
-use App\Http\Controllers\frontend\PostController;
+use App\Http\Controllers\Frontend\PostController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -339,4 +339,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

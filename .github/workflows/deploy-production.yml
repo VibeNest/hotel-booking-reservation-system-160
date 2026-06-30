@@ -172,13 +172,30 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configure SSH
+        shell: bash
         run: |
           mkdir -p ~/.ssh
-          printf '%s\n' "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H "${EC2_HOST}" >> ~/.ssh/known_hosts
+
+          cat > ~/.ssh/id_rsa <<EOF
+          ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          EOF
+
+          chmod 600 ~/.ssh/id_rsa
+
+          echo "==== HEX ===="
+          xxd -l 32 ~/.ssh/id_rsa
+
+          echo "==== FIRST ===="
+          sed -n '1p' ~/.ssh/id_rsa
+
+          echo "==== SECOND ===="
+          sed -n '2p' ~/.ssh/id_rsa
+
+          echo "==== LAST ===="
+          tail -1 ~/.ssh/id_rsa
+
+          ssh-keygen -l -f ~/.ssh/id_rsa
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
 
       - name: Prepare deployment files
@@ -192,11 +209,15 @@ jobs:
 
       - name: Upload compose and env
         run: |
-          ssh "${EC2_USER}@${EC2_HOST}" "mkdir -p /opt/hotel-booking"
-          scp docker-compose.remote.yml "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/docker-compose.prod.yml"
-          scp docker-compose.duckdns-https.remote.yml "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/docker-compose.duckdns-https.yml"
-          scp nginx-https.conf.template "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/nginx-https.conf.template"
-          scp .env.production "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/.env.production"
+          ssh -o StrictHostKeyChecking=no "${EC2_USER}@${EC2_HOST}" "mkdir -p /opt/hotel-booking"
+
+          scp -o StrictHostKeyChecking=no docker-compose.remote.yml "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/docker-compose.prod.yml"
+
+          scp -o StrictHostKeyChecking=no docker-compose.duckdns-https.remote.yml "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/docker-compose.duckdns-https.yml"
+
+          scp -o StrictHostKeyChecking=no nginx-https.conf.template "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/nginx-https.conf.template"
+
+          scp -o StrictHostKeyChecking=no .env.production "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/.env.production"
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
@@ -215,6 +236,24 @@ jobs:
             printf '%s\n' '${GHCR_TOKEN}' | docker login ghcr.io -u '${GHCR_USERNAME}' --password-stdin
             docker compose --env-file .env.compose \${COMPOSE_FILES} pull
             docker compose --env-file .env.compose \${COMPOSE_FILES} up -d --remove-orphans
+
+            echo "Waiting for MySQL..."
+
+            until docker compose \
+                --env-file .env.compose \
+                \${COMPOSE_FILES} \
+                exec -T db \
+                mysqladmin ping \
+                -h localhost \
+                -u"${DB_USERNAME}" \
+                -p"${DB_PASSWORD}" \
+                --silent
+            do
+                sleep 5
+            done
+
+            echo "MySQL is ready."
+
             docker compose --env-file .env.compose \${COMPOSE_FILES} exec -T app php artisan config:clear
             docker compose --env-file .env.compose \${COMPOSE_FILES} exec -T app php artisan migrate --force
             docker compose --env-file .env.compose \${COMPOSE_FILES} exec -T app php artisan storage:link || true

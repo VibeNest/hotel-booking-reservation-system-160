@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\AdminBookingController;
 use App\Http\Controllers\Backend\BlogController;
 use App\Http\Controllers\Backend\BookAreaController;
 use App\Http\Controllers\Backend\CommentController;
+use App\Http\Controllers\Backend\CustomerController;
 use App\Http\Controllers\Backend\GalleryController;
 use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\RoleController;
@@ -73,6 +74,16 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/delete/team/{id}', 'destroy')->name('delete.team')->middleware('permission:team.delete');
         Route::get('/edit/team/{id}', 'edit')->name('edit.team')->middleware('permission:team.edit');
         Route::post('/team/update', 'update')->name('team.update')->middleware('permission:team.update');
+    });
+
+    // Customer Management Routes
+    Route::controller(CustomerController::class)->group(function () {
+        Route::get('/all/customer', 'index')->name('all.customer')->middleware('permission:customer.view');
+        Route::get('/add/customer', 'create')->name('add.customer')->middleware('permission:customer.create');
+        Route::post('/store/customer', 'store')->name('store.customer')->middleware('permission:customer.create');
+        Route::get('/edit/customer/{id}', 'edit')->name('edit.customer')->middleware('permission:customer.edit');
+        Route::post('/customer/update', 'update')->name('customer.update')->middleware('permission:customer.update');
+        Route::get('/delete/customer/{id}', 'destroy')->name('delete.customer')->middleware('permission:customer.delete');
     });
 
     // Add-ons All Routes
@@ -339,4 +350,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

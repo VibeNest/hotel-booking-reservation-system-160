@@ -44,6 +44,10 @@
                                 Teams Management
                             </option>
 
+                            <option value="Customer Management" {{ $permission->group_name == 'Customer Management' ? 'selected' : '' }}>
+                                Customer Management
+                            </option>
+
                             <option value="Book Area Management" {{ $permission->group_name == 'Book Area Management' ? 'selected' : '' }}>
                                 Book Area Management
                             </option>

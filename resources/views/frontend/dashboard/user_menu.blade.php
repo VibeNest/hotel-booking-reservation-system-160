@@ -8,7 +8,7 @@
 <div class="service-side-bar">
     <div class="services-bar-widget">
         <div class="side-bar-categories">
-            <img src="{{ (!empty($profileData->photo)) ? url("upload/user_images/{$profileData->photo}") : url("upload/no_image.jpeg")}}"
+            <img src="{{ (!empty($profileData->photo)) ? url("{$profileData->photo}") : url("upload/no_image.jpeg")}}"
                 class="mx-auto d-block rounded-circle p-1 bg-primary" alt="Image" style="width:110px; height:110px;">
             <center>
                 <h5>{{ $profileData->name }}</h5>

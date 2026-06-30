@@ -34,6 +34,7 @@
                             <option selected="" disabled>Select Group</option>
                             <option value="Dashboard">Dashboard</option>
                             <option value="Teams Management">Teams Management</option>
+                            <option value="Customer Management">Customer Management</option>
                             <option value="Book Area Management">Book Area Management</option>
                             <option value="Testimonial Management">Testimonial Management</option>
                             <option value="Blog">Blog</option>

@@ -98,7 +98,7 @@
                                                     <div class="col-lg-12 col-md-6">
                                                         <div class="form-group">
                                                             <img id="showImage"
-                                                                src="{{ (!empty($profileData->photo)) ? url("upload/user_images/{$profileData->photo}") : url("upload/no_image.jpeg")}}"
+                                                                src="{{ (!empty($profileData->photo)) ? url("{$profileData->photo}") : url("upload/no_image.jpeg")}}"
                                                                 alt="User" class="rounded-circle p-1 bg-primary" width="80">
                                                         </div>
                                                     </div>

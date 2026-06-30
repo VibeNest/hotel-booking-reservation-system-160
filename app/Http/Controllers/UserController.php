@@ -12,7 +12,8 @@ class UserController extends Controller
 {
     public function __construct(
         protected ImageUploadProxy $imageProxy
-    ) {}
+    ) {
+    }
 
     // Home Page
     public function Index()
@@ -48,13 +49,13 @@ class UserController extends Controller
         // Kiểm tra có photo không -> nếu có thì update photo
         if ($request->file('photo')) {
             if ($oldPhoto) {
-                $this->imageProxy->delete('upload/user_images/' . $oldPhoto);
+                $this->imageProxy->delete($oldPhoto);
             }
 
             $file = $request->file('photo');
             $filename = date('YmdHi') . '-' . $file->getClientOriginalName();
             $this->imageProxy->move($file, 'upload/user_images', $filename);
-            $data->photo = $filename;
+            $data->photo = 'upload/user_images/' . $filename;
         }
 
         $data->save();
@@ -102,7 +103,7 @@ class UserController extends Controller
         ]);
 
         // Nếu password không khớp nhau
-        if (! Hash::check($request->current_password, Auth::user()->password)) {
+        if (!Hash::check($request->current_password, Auth::user()->password)) {
             // Hiển thị thông báo toaster
             $notification = [
                 'message' => 'Current password does not match!',

@@ -43,6 +43,26 @@
             </li>
         @endif
 
+        @if(Auth::user()->can('customer.menu'))
+            <li>
+                <a href="javascript:;" class="has-arrow">
+                    <div class="parent-icon"><i class="bx bx-user"></i>
+                    </div>
+                    <div class="menu-title">Customer Management</div>
+                </a>
+                <ul>
+                    @if(Auth::user()->can('customer.view'))
+                        <li> <a href="{{ route("all.customer") }}"><i class='bx bx-radio-circle'></i>All Customers</a>
+                        </li>
+                    @endif
+                    @if(Auth::user()->can('customer.create'))
+                        <li> <a href="{{ route("add.customer") }}"><i class='bx bx-radio-circle'></i>Add Customer</a>
+                        </li>
+                    @endif
+                </ul>
+            </li>
+        @endif
+
         @if(Auth::user()->can('testimonial.menu'))
             <li>
                 <a href="javascript:;" class="has-arrow">

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\RegistrationOtpMail;
 use App\Models\User;
-use App\Notifications\RegistrationOtpNotification;
+use App\Models\SmtpSetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -86,12 +89,43 @@ class OtpVerificationController extends Controller
             'otp_expires_at' => now()->addMinutes(10),
         ])->save();
 
-        $user->notify(new RegistrationOtpNotification($otpCode));
+        $this->prepareSmtpMailer();
+
+        Mail::mailer('smtp')
+            ->to($user->email)
+            ->send(new RegistrationOtpMail(
+                name: $user->name,
+                otpCode: $otpCode,
+            ));
 
         return redirect()->route('otp.verification.notice', ['email' => $user->email])->with([
             'message' => 'Đã gửi lại mã OTP tới email của bạn.',
             'alert-type' => 'success',
         ]);
+    }
+
+    private function prepareSmtpMailer(): void
+    {
+        $smtpSetting = SmtpSetting::first();
+
+        if (!$smtpSetting) {
+            return;
+        }
+
+        Config::set('mail.driver', null);
+        Config::set('mail.default', 'smtp');
+        Config::set('mail.mailers.smtp.transport', 'smtp');
+        Config::set('mail.mailers.smtp.scheme', $smtpSetting->mailerScheme());
+        Config::set('mail.mailers.smtp.encryption', $smtpSetting->mailerEncryption());
+        Config::set('mail.mailers.smtp.url', null);
+        Config::set('mail.mailers.smtp.host', $smtpSetting->host);
+        Config::set('mail.mailers.smtp.port', $smtpSetting->port);
+        Config::set('mail.mailers.smtp.username', $smtpSetting->username);
+        Config::set('mail.mailers.smtp.password', $smtpSetting->sanitizedPassword());
+        Config::set('mail.from.address', $smtpSetting->from_address);
+        Config::set('mail.from.name', 'HotelHub');
+
+        Mail::forgetMailers();
     }
 
     private function pendingUser(Request $request): ?User

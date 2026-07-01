@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 01, 2026 at 11:13 AM
+-- Generation Time: Jul 01, 2026 at 12:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -491,30 +491,6 @@ CREATE TABLE `notifications` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `notifications`
---
-
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
-('0589932f-fa9a-495f-a95d-f3c54abcf9ce', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 5, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606270835-avatar-5.png\",\"user_id\":6}', NULL, '2026-06-28 06:37:45', '2026-06-28 06:37:45'),
-('24734ec0-2adc-4849-b2d9-7417b8123b29', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 6, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606270835-avatar-5.png\",\"user_id\":6}', NULL, '2026-06-28 03:25:15', '2026-06-28 03:25:15'),
-('46b7903c-cb97-4fb6-acb1-ad0cda71fbe5', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 6, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606111451-avatar-1.png\",\"user_id\":3}', NULL, '2026-06-28 06:43:39', '2026-06-28 06:43:39'),
-('5fa83112-2979-441c-8601-cc4a704f3704', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 6, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606111451-avatar-1.png\",\"user_id\":3}', NULL, '2026-06-28 06:47:44', '2026-06-28 06:47:44'),
-('639cf5e4-0520-4e89-bb2c-4c5074a3cfd1', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 1, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606111451-avatar-1.png\",\"user_id\":3}', '2026-06-28 06:48:08', '2026-06-28 06:47:44', '2026-06-28 06:48:08'),
-('6508889a-0b89-4b21-ab75-2d015e87091a', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 1, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606131605-avatar-5.png\",\"user_id\":1}', '2026-06-26 06:14:57', '2026-06-25 21:40:04', '2026-06-26 06:14:57'),
-('6571434f-c660-4e9e-b184-19e8dc98dcf4', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 1, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606111451-avatar-1.png\",\"user_id\":3}', '2026-06-18 01:15:22', '2026-06-17 23:01:21', '2026-06-18 01:15:22'),
-('697e0c15-f6ff-424f-99a8-9f3c220ddcec', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 1, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606131605-avatar-5.png\",\"user_id\":1}', '2026-06-23 06:32:55', '2026-06-21 07:42:24', '2026-06-23 06:32:55'),
-('6f226b1c-4a1e-491f-b657-177ff8131614', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 5, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606270835-avatar-5.png\",\"user_id\":6}', NULL, '2026-06-28 03:25:15', '2026-06-28 03:25:15'),
-('7d22d0aa-f791-4041-8ca5-fef6e5d6175b', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 1, '{\"message\":\"Added new booking in Hotel\"}', '2026-06-18 01:26:11', '2026-06-17 22:35:22', '2026-06-18 01:26:11'),
-('815b40fc-1a2a-4a90-b258-74547c5a7761', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 1, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606270835-avatar-5.png\",\"user_id\":6}', '2026-06-28 06:38:09', '2026-06-28 06:37:45', '2026-06-28 06:38:09'),
-('a220f7b8-f957-45d5-8d82-dbc865638953', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 5, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606111451-avatar-1.png\",\"user_id\":3}', NULL, '2026-06-28 06:43:39', '2026-06-28 06:43:39'),
-('a5b64714-9d8e-41b4-bc5f-8805674e10cd', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 6, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606270835-avatar-5.png\",\"user_id\":6}', NULL, '2026-06-28 06:37:45', '2026-06-28 06:37:45'),
-('b3670b79-2952-4c39-9bcd-aeab40fbdbaf', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 1, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606270835-avatar-5.png\",\"user_id\":6}', '2026-06-28 03:26:08', '2026-06-28 03:25:15', '2026-06-28 03:26:08'),
-('c06a7fc2-c287-4349-858f-62a720bb7285', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 1, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606131605-avatar-5.png\",\"user_id\":1}', '2026-06-26 06:15:00', '2026-06-25 21:50:01', '2026-06-26 06:15:00'),
-('e09e25c0-b04b-4aaf-8b7c-5937587f6231', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 5, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606111451-avatar-1.png\",\"user_id\":3}', NULL, '2026-06-28 06:47:44', '2026-06-28 06:47:44'),
-('e28f8766-1ea7-4ffd-b568-9f0681f04549', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 1, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606111451-avatar-1.png\",\"user_id\":3}', '2026-06-18 01:29:21', '2026-06-18 01:28:54', '2026-06-18 01:29:21'),
-('fcb6ca74-d2e0-4d08-94b6-b861bb8e85a2', 'App\\Notifications\\BookingComplete', 'App\\Models\\User', 1, '{\"message\":\"Added new booking in Hotel\",\"user_image\":\"202606111451-avatar-1.png\",\"user_id\":3}', '2026-06-28 06:48:07', '2026-06-28 06:43:39', '2026-06-28 06:48:07');
 
 -- --------------------------------------------------------
 
@@ -1084,6 +1060,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('1304BciUIG2Cgw2q2qP5k1gGj9ljUM1ACdDLnBZZ', 10, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiRG1RSGpPbk5rdTNMUFkzcUNoazhPVXRLOTVYVEZhcU9HRDQxYmdvWSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTA7fQ==', 1782903012),
+('tS43hbE5PxxwNf80vP2KCWmQaIpsNZJcm763bz9n', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiSWhLTFczQzdHR2l0WTNOc0tzMmR6VzdYbmhhSll2Nk5NbGRZRG1xWiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzQ6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hbGwvY3VzdG9tZXIiO3M6NToicm91dGUiO3M6MTI6ImFsbC5jdXN0b21lciI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1782902839),
 ('wPs1LXcRixR3qMNV0Bsoc0lX5KGkfjWpnjUSvhoG', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiZ1p4STUyM205U3c5R2RCcTVlWHRLajN1eFBuN3p5NGRHZDRkb2puVSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mzc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9kYXNoYm9hcmQiO3M6NToicm91dGUiO3M6MTU6ImFkbWluLmRhc2hib2FyZCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1782897208),
 ('wsYv76PPujACHi0y90C3k2NVgICV6cj2eQ2ivwTh', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiRHpSaHd5SEpublFUdGlCZ1NUNzF3bnBncWtxOFp4bzlMc1EyRHNXVSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mzc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9kYXNoYm9hcmQiO3M6NToicm91dGUiO3M6MTU6ImFkbWluLmRhc2hib2FyZCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1782895930);
 
@@ -1123,6 +1101,7 @@ INSERT INTO `site_settings` (`id`, `logo`, `phone`, `address`, `email`, `faceboo
 CREATE TABLE `smtp_settings` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `mailer` varchar(255) DEFAULT NULL,
+  `scheme` varchar(255) DEFAULT NULL,
   `host` varchar(255) DEFAULT NULL,
   `port` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
@@ -1136,8 +1115,8 @@ CREATE TABLE `smtp_settings` (
 -- Dumping data for table `smtp_settings`
 --
 
-INSERT INTO `smtp_settings` (`id`, `mailer`, `host`, `port`, `username`, `password`, `from_address`, `created_at`, `updated_at`) VALUES
-(1, 'smtp', 'sandbox.smtp.mailtrap.io', '2525', '4db4d9bb5de191', 'b1c233123d587e', 'tungvuvanthanh@gmail.com', NULL, '2026-06-08 07:49:34');
+INSERT INTO `smtp_settings` (`id`, `mailer`, `scheme`, `host`, `port`, `username`, `password`, `from_address`, `created_at`, `updated_at`) VALUES
+(1, 'smtp', 'tls', 'smtp.gmail.com', '587', 'tungvuvanthanh@gmail.com', 'awlovngxrytpfbnm', 'tungvuvanthanh@gmail.com', NULL, '2026-07-01 03:43:04');
 
 -- --------------------------------------------------------
 
@@ -1223,7 +1202,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `username`, `email`, `email_verified_at`, `password`, `photo`, `phone`, `address`, `role`, `status`, `otp_code`, `otp_expires_at`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'Admin', 'admin', 'admin@gmail.com', NULL, '$2y$12$3AR5pmKDwr2mB2dBPC21AOs4tOWND6.fXvGgIxLPvEKXILZBpmYOa', '202606131605-avatar-5.png', '0123456789', 'Hưng Yên', 'admin', '1', NULL, NULL, NULL, NULL, '2026-06-13 09:05:34'),
-(2, 'Instructor', 'instructor', 'instructor@gmail.com', NULL, '$2y$12$D1rX/xMLLsU2RgO93rWAVeeBR6no17iEooHJQTEuqe8a6DQ/kk.Um', NULL, '0123456789', 'Hưng Yên', 'instructor', '1', NULL, NULL, NULL, NULL, NULL);
+(2, 'Instructor', 'instructor', 'instructor@gmail.com', NULL, '$2y$12$D1rX/xMLLsU2RgO93rWAVeeBR6no17iEooHJQTEuqe8a6DQ/kk.Um', NULL, '0123456789', 'Hưng Yên', 'instructor', '1', NULL, NULL, NULL, NULL, NULL),
+(10, 'Thanh Tùng', NULL, 'tungvuvanthanh@gmail.com', '2026-07-01 03:49:56', '$2y$12$snKPSJRRb22MO8SfM2o3zOSS6LLPMVp96P0DKGPBVIPPx7JpVApde', NULL, '0376734165', 'Hưng Yên', 'user', '1', NULL, NULL, NULL, '2026-07-01 03:49:20', '2026-07-01 03:49:56');
 
 --
 -- Indexes for dumped tables
@@ -1598,7 +1578,7 @@ ALTER TABLE `testimonials`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables

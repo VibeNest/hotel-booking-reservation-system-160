@@ -41,6 +41,19 @@
 
                                     <div class="row mb-3">
                                         <div class="col-sm-3">
+                                            <h6 class="mb-0">Encryption / Scheme</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <select name="scheme" class="form-control">
+                                                <option value="" @selected(empty($smtp->scheme))>None</option>
+                                                <option value="tls" @selected($smtp->scheme === 'tls')>TLS</option>
+                                                <option value="ssl" @selected($smtp->scheme === 'ssl')>SSL</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
                                             <h6 class="mb-0">Host</h6>
                                         </div>
                                         <div class="col-sm-9 text-secondary">

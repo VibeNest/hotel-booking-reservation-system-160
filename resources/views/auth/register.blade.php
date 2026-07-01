@@ -84,8 +84,15 @@
 
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <input class="form-control @error('password') register-input-error @enderror"
-                                                type="password" name="password" id="password" placeholder="Password">
+                                            <div class="password-field">
+                                                <input
+                                                    class="form-control @error('password') register-input-error @enderror"
+                                                    type="password" name="password" id="password" placeholder="Password">
+                                                <button type="button" class="toggle-password" aria-label="Show password"
+                                                    aria-pressed="false" data-target="password">
+                                                    <i class="bx bx-hide"></i>
+                                                </button>
+                                            </div>
 
                                             @error('password')
                                                 <span class="text-danger">{{ $message }}</span>
@@ -95,10 +102,16 @@
 
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <input
-                                                class="form-control @error('password_confirmation') register-input-error @enderror"
-                                                type="password" name="password_confirmation" id="password_confirmation"
-                                                placeholder="Confirm Password">
+                                            <div class="password-field">
+                                                <input
+                                                    class="form-control @error('password_confirmation') register-input-error @enderror"
+                                                    type="password" name="password_confirmation" id="password_confirmation"
+                                                    placeholder="Confirm Password">
+                                                <button type="button" class="toggle-password" aria-label="Show password"
+                                                    aria-pressed="false" data-target="password_confirmation">
+                                                    <i class="bx bx-hide"></i>
+                                                </button>
+                                            </div>
 
                                             @error('password_confirmation')
                                                 <span class="text-danger">{{ $message }}</span>
@@ -130,7 +143,69 @@
                                     border-color: #dc3545 !important;
                                     box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
                                 }
+
+                                .contact-form .password-field {
+                                    position: relative;
+                                }
+
+                                .contact-form .password-field .form-control {
+                                    padding-right: 50px;
+                                }
+
+                                .contact-form .password-field .toggle-password {
+                                    position: absolute;
+                                    top: 50%;
+                                    right: 15px;
+                                    width: 24px;
+                                    height: 24px;
+                                    padding: 0;
+                                    border: 0;
+                                    background: transparent;
+                                    color: #555;
+                                    cursor: pointer;
+                                    line-height: 1;
+                                    transform: translateY(-50%);
+                                }
+
+                                .contact-form .password-field .toggle-password:focus {
+                                    outline: none;
+                                    color: #f9ab30;
+                                }
+
+                                .contact-form .password-field .toggle-password i {
+                                    font-size: 20px;
+                                }
                             </style>
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const toggleButtons = document.querySelectorAll('.toggle-password');
+
+                                    if (!toggleButtons.length) {
+                                        return;
+                                    }
+
+                                    toggleButtons.forEach(function (button) {
+                                        const input = document.getElementById(button.dataset.target);
+
+                                        if (!input) {
+                                            return;
+                                        }
+
+                                        button.addEventListener('click', function () {
+                                            const isPassword = input.getAttribute('type') === 'password';
+                                            const icon = this.querySelector('i');
+
+                                            input.setAttribute('type', isPassword ? 'text' : 'password');
+                                            this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+                                            this.setAttribute('aria-pressed', isPassword ? 'true' : 'false');
+
+                                            icon.classList.toggle('bx-hide', !isPassword);
+                                            icon.classList.toggle('bx-show', isPassword);
+                                        });
+                                    });
+                                });
+                            </script>
 
                         </div>
                     </div>

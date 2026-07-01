@@ -8,6 +8,7 @@ use App\Observers\Booking\Observers\EmailNotifierObserver;
 use App\Observers\Booking\Observers\RoomAvailabilityUpdaterObserver;
 use App\Services\BookingEventManager;
 use Config;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -40,18 +41,20 @@ class AppServiceProvider extends ServiceProvider
                 $smtpSetting = SmtpSetting::first();
 
                 if ($smtpSetting) {
-                    $data = [
-                        'driver' => $smtpSetting->mailer,
-                        'host' => $smtpSetting->host,
-                        'port' => $smtpSetting->port,
-                        'username' => $smtpSetting->username,
-                        'password' => $smtpSetting->password,
-                        'from' => [
-                            'address' => $smtpSetting->from_address,
-                            'name' => 'HotelHub',
-                        ],
-                    ];
-                    Config::set('mail', $data);
+                    Config::set('mail.driver', null);
+                    Config::set('mail.default', $smtpSetting->mailer ?: 'smtp');
+                    Config::set('mail.mailers.smtp.transport', 'smtp');
+                    Config::set('mail.mailers.smtp.scheme', $smtpSetting->mailerScheme());
+                    Config::set('mail.mailers.smtp.encryption', $smtpSetting->mailerEncryption());
+                    Config::set('mail.mailers.smtp.url', null);
+                    Config::set('mail.mailers.smtp.host', $smtpSetting->host);
+                    Config::set('mail.mailers.smtp.port', $smtpSetting->port);
+                    Config::set('mail.mailers.smtp.username', $smtpSetting->username);
+                    Config::set('mail.mailers.smtp.password', $smtpSetting->sanitizedPassword());
+                    Config::set('mail.from.address', $smtpSetting->from_address);
+                    Config::set('mail.from.name', 'HotelHub');
+
+                    Mail::forgetMailers();
                 }
             }
         } catch (\Throwable $e) {

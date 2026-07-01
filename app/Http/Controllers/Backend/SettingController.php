@@ -13,7 +13,8 @@ class SettingController extends Controller
 {
     public function __construct(
         protected ImageUploadProxy $imageProxy
-    ) {}
+    ) {
+    }
 
     // Smtp Setting Method
     public function SmtpSetting()
@@ -30,10 +31,11 @@ class SettingController extends Controller
 
         SmtpSetting::find($smtp_id)->update([
             'mailer' => $request->mailer,
+            'scheme' => $request->filled('scheme') ? strtolower(trim($request->scheme)) : null,
             'host' => $request->host,
             'port' => $request->port,
             'username' => $request->username,
-            'password' => $request->password,
+            'password' => preg_replace('/\s+/', '', (string) $request->password),
             'from_address' => $request->from_address,
         ]);
 

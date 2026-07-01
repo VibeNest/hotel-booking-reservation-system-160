@@ -207,23 +207,23 @@
             <div class="booking-details">
                 <h3>📋 Booking Details</h3>
                 <div class="detail-item">
-                    <span class="detail-label">Check-in Date</span>
+                    <span class="detail-label">Check-in Date: </span>
                     <span class="detail-value">{{ $booking['check_in'] }}</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Check-out Date</span>
+                    <span class="detail-label">Check-out Date: </span>
                     <span class="detail-value">{{ $booking['check_out'] }}</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Guest Name</span>
+                    <span class="detail-label">Guest Name: </span>
                     <span class="detail-value">{{ $booking['name'] }}</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Email</span>
+                    <span class="detail-label">Email: </span>
                     <span class="detail-value">{{ $booking['email'] }}</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Phone</span>
+                    <span class="detail-label">Phone: </span>
                     <span class="detail-value">{{ $booking['phone'] }}</span>
                 </div>
             </div>

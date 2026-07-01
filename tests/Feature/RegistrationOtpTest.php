@@ -1,19 +1,20 @@
 <?php
 
 use App\Models\User;
-use App\Notifications\RegistrationOtpNotification;
+use App\Mail\RegistrationOtpMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Mail;
+use function Pest\Laravel\withoutMiddleware;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->withoutMiddleware();
+    withoutMiddleware();
 });
 
 it('sends otp and keeps the account inactive after registration', function () {
-    Notification::fake();
+    Mail::fake();
 
     $response = $this->post(route('register'), [
         'name' => 'Nguyen Van A',
@@ -32,13 +33,11 @@ it('sends otp and keeps the account inactive after registration', function () {
     expect($user->otp_code)->not->toBeNull();
     expect($user->otp_expires_at)->not->toBeNull();
 
-    Notification::assertSentTo(
-        $user,
-        RegistrationOtpNotification::class,
-        function (RegistrationOtpNotification $notification) use ($user): bool {
-            return Hash::check($notification->otpCode, $user->otp_code);
-        }
-    );
+    Mail::assertSent(RegistrationOtpMail::class, function (RegistrationOtpMail $mail) use ($user): bool {
+        return $mail->hasTo($user->email)
+            && $mail->name === $user->name
+            && Hash::check($mail->otpCode, $user->otp_code);
+    });
 });
 
 it('activates the account when the correct otp is submitted', function () {

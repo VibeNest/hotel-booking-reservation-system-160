@@ -6,16 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\AddOn;
 use App\Models\Booking;
 use App\Models\Room;
+use App\Services\BookingAvailabilityService;
 use App\Services\BookingEventManager;
 use App\Services\Payment\CodStrategy;
 use App\Services\Payment\StripeStrategy;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Omnipay\Common\Message\RedirectResponseInterface;
 use Omnipay\Omnipay;
+use RuntimeException;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class BookingController extends Controller
@@ -42,7 +46,6 @@ class BookingController extends Controller
             ]);
         }
     }
-
 
     // Booking Store Method
     public function BookingStore(Request $request, $id)
@@ -86,7 +89,7 @@ class BookingController extends Controller
         $booking = Booking::where('user_id', Auth::id())->latest()->first();
 
         // Không tìm thấy booking khi thanh toán
-        if (!$booking) {
+        if (! $booking) {
             $notification = [
                 'message' => 'No Booking Found!',
                 'alert-type' => 'error',
@@ -102,7 +105,7 @@ class BookingController extends Controller
     public function CheckoutStore(Request $request)
     {
         // Check session tồn tại
-        if (!Session::has('book_date')) {
+        if (! Session::has('book_date')) {
             return redirect()->route('checkout')->with('error', 'Session expired');
         }
 
@@ -147,6 +150,25 @@ class BookingController extends Controller
 
         // Nếu chọn thanh toán bằng Paypal thì lưu dữ liệu vào session và redirect sang trang Paypal
         if ($request->payment_method == 'paypal') {
+            // Kiểm tra availability với pessimistic locking trước khi redirect sang PayPal
+            $availabilityService = app(BookingAvailabilityService::class);
+            try {
+                $availabilityService->validateAndLockAvailability(
+                    $room->id,
+                    date('d-m-Y', strtotime($book_data['check_in'])),
+                    date('d-m-Y', strtotime($book_data['check_out'])),
+                    $book_data['number_of_rooms']
+                );
+            } catch (RuntimeException $e) {
+                Session::forget('book_date');
+                $notification = [
+                    'message' => 'Sorry, this room is no longer available for the selected dates.',
+                    'alert-type' => 'error',
+                ];
+
+                return redirect('/')->with($notification);
+            }
+
             Session::put('checkout_data', [
                 'name' => $request->name,
                 'email' => $request->email,
@@ -180,44 +202,70 @@ class BookingController extends Controller
         $payment_status = $result['payment_status'];
         $transaction_id = $result['transaction_id'];
 
-        // Insert Data Booking
-        $booking = new Booking;
+        // Sử dụng DB transaction + pessimistic locking để chống race condition
+        try {
+            $booking = DB::transaction(function () use ($room, $book_data, $total_nights, $subtotal, $discount, $total_price, $request, $payment_status, $transaction_id, $code) {
+                // Kiểm tra availability với pessimistic locking
+                $availabilityService = app(BookingAvailabilityService::class);
+                $availabilityService->validateAndLockAvailability(
+                    $room->id,
+                    date('d-m-Y', strtotime($book_data['check_in'])),
+                    date('d-m-Y', strtotime($book_data['check_out'])),
+                    $book_data['number_of_rooms']
+                );
 
-        $booking->rooms_id = $room->id;
-        $booking->user_id = Auth::id();
+                // Insert Data Booking
+                $booking = new Booking;
+                $booking->rooms_id = $room->id;
+                $booking->user_id = Auth::id();
+                $booking->check_in = date('d-m-Y', strtotime($book_data['check_in']));
+                $booking->check_out = date('d-m-Y', strtotime($book_data['check_out']));
+                $booking->person = $book_data['person'];
+                $booking->number_of_rooms = $book_data['number_of_rooms'];
+                $booking->total_night = $total_nights;
+                $booking->actual_price = $room->price;
+                $booking->subtotal = $subtotal;
+                $booking->discount = $discount;
+                $booking->total_price = $total_price;
+                $booking->payment_method = $request->payment_method;
+                $booking->transaction_id = $transaction_id;
+                $booking->payment_status = $payment_status;
+                $booking->name = $request->name;
+                $booking->email = $request->email;
+                $booking->phone = $request->phone;
+                $booking->country = $request->country;
+                $booking->state = $request->state;
+                $booking->zip_code = $request->zip_code;
+                $booking->address = $request->address;
+                $booking->code = $code;
+                $booking->status = 0;
+                $booking->created_at = Carbon::now();
+                $booking->save();
 
-        $booking->check_in = date('d-m-Y', strtotime($book_data['check_in']));
-        $booking->check_out = date('d-m-Y', strtotime($book_data['check_out']));
+                return $booking;
+            });
+        } catch (RuntimeException $e) {
+            // Hết phòng do race condition
+            Session::forget('book_date');
+            $notification = [
+                'message' => 'Sorry, this room is no longer available for the selected dates.',
+                'alert-type' => 'error',
+            ];
 
-        $booking->person = $book_data['person'];
-        $booking->number_of_rooms = $book_data['number_of_rooms'];
+            return redirect('/')->with($notification);
+        } catch (QueryException $e) {
+            // Unique constraint violation (dự phòng cho pessimistic locking)
+            if (str_contains($e->getMessage(), 'uq_room_booked_dates_room_date')) {
+                Session::forget('book_date');
+                $notification = [
+                    'message' => 'Sorry, this room is no longer available for the selected dates.',
+                    'alert-type' => 'error',
+                ];
 
-        $booking->total_night = $total_nights;
-
-        $booking->actual_price = $room->price;
-
-        $booking->subtotal = $subtotal;
-        $booking->discount = $discount;
-        $booking->total_price = $total_price;
-
-        $booking->payment_method = $request->payment_method;
-        $booking->transaction_id = $transaction_id;
-        $booking->payment_status = $payment_status;
-
-        $booking->name = $request->name;
-        $booking->email = $request->email;
-        $booking->phone = $request->phone;
-        $booking->country = $request->country;
-        $booking->state = $request->state;
-        $booking->zip_code = $request->zip_code;
-        $booking->address = $request->address;
-
-        $booking->code = $code;
-        $booking->status = 0;
-
-        $booking->created_at = Carbon::now();
-
-        $booking->save();
+                return redirect('/')->with($notification);
+            }
+            throw $e;
+        }
 
         // Fire the created event to notify all observers
         BookingEventManager::getInstance()->created($booking);
@@ -260,7 +308,7 @@ class BookingController extends Controller
         }
 
         $room = Room::find($book_data['room_id']);
-        if (!$room) {
+        if (! $room) {
             $notification = [
                 'message' => 'Room not found.',
                 'alert-type' => 'error',
@@ -281,32 +329,69 @@ class BookingController extends Controller
 
         $code = rand(100000000, 999999999);
 
-        $booking = new Booking;
-        $booking->rooms_id = $room->id;
-        $booking->user_id = Auth::id();
-        $booking->check_in = $book_data['check_in'];
-        $booking->check_out = $book_data['check_out'];
-        $booking->person = $book_data['person'];
-        $booking->number_of_rooms = $book_data['number_of_rooms'];
-        $booking->total_night = $total_nights;
-        $booking->actual_price = $room->price;
-        $booking->subtotal = $subtotal;
-        $booking->discount = $discount;
-        $booking->total_price = $total_price;
-        $booking->payment_method = 'VN Pay';
-        $booking->transaction_id = '';
-        $booking->payment_status = 0;
-        $booking->code = $code;
-        $booking->status = 0;
-        $booking->name = $validated['name'];
-        $booking->email = $validated['email'];
-        $booking->phone = $validated['phone'];
-        $booking->country = $validated['country'];
-        $booking->state = $validated['state'];
-        $booking->zip_code = $validated['zip_code'];
-        $booking->address = $validated['address'];
-        $booking->created_at = Carbon::now();
-        $booking->save();
+        // Sử dụng DB transaction + pessimistic locking để chống race condition
+        try {
+            $booking = DB::transaction(function () use ($room, $book_data, $total_nights, $subtotal, $discount, $total_price, $validated, $code) {
+                // Kiểm tra availability với pessimistic locking
+                $availabilityService = app(BookingAvailabilityService::class);
+                $availabilityService->validateAndLockAvailability(
+                    $room->id,
+                    date('d-m-Y', strtotime($book_data['check_in'])),
+                    date('d-m-Y', strtotime($book_data['check_out'])),
+                    $book_data['number_of_rooms']
+                );
+
+                $booking = new Booking;
+                $booking->rooms_id = $room->id;
+                $booking->user_id = Auth::id();
+                $booking->check_in = $book_data['check_in'];
+                $booking->check_out = $book_data['check_out'];
+                $booking->person = $book_data['person'];
+                $booking->number_of_rooms = $book_data['number_of_rooms'];
+                $booking->total_night = $total_nights;
+                $booking->actual_price = $room->price;
+                $booking->subtotal = $subtotal;
+                $booking->discount = $discount;
+                $booking->total_price = $total_price;
+                $booking->payment_method = 'VN Pay';
+                $booking->transaction_id = '';
+                $booking->payment_status = 0;
+                $booking->code = $code;
+                $booking->status = 0;
+                $booking->name = $validated['name'];
+                $booking->email = $validated['email'];
+                $booking->phone = $validated['phone'];
+                $booking->country = $validated['country'];
+                $booking->state = $validated['state'];
+                $booking->zip_code = $validated['zip_code'];
+                $booking->address = $validated['address'];
+                $booking->created_at = Carbon::now();
+                $booking->save();
+
+                return $booking;
+            });
+        } catch (RuntimeException $e) {
+            // Hết phòng do race condition
+            Session::forget('book_date');
+            $notification = [
+                'message' => 'Sorry, this room is no longer available for the selected dates.',
+                'alert-type' => 'error',
+            ];
+
+            return redirect('/')->with($notification);
+        } catch (QueryException $e) {
+            // Unique constraint violation (dự phòng cho pessimistic locking)
+            if (str_contains($e->getMessage(), 'uq_room_booked_dates_room_date')) {
+                Session::forget('book_date');
+                $notification = [
+                    'message' => 'Sorry, this room is no longer available for the selected dates.',
+                    'alert-type' => 'error',
+                ];
+
+                return redirect('/')->with($notification);
+            }
+            throw $e;
+        }
 
         // Fire the created event to notify all observers
         BookingEventManager::getInstance()->created($booking);
@@ -321,7 +406,7 @@ class BookingController extends Controller
 
         $response = $gateway->purchase([
             'txnRef' => (string) $code,
-            'orderInfo' => 'Thanh toan don hang ' . $code,
+            'orderInfo' => 'Thanh toan don hang '.$code,
             'amount' => (int) round($total_price),
             'currency' => config('omnipay.gateways.VNPay.currency', 'VND'),
             'returnUrl' => route('vnpay.return'),
@@ -343,18 +428,18 @@ class BookingController extends Controller
         }
 
         $bookingCode = $data['vnp_TxnRef'] ?? null;
-        if (!$bookingCode) {
+        if (! $bookingCode) {
             return redirect()->route('place.order')->with('error', 'Missing VNPay transaction reference.');
         }
 
         $booking = Booking::where('code', $bookingCode)->first();
-        if (!$booking) {
+        if (! $booking) {
             return redirect()->route('place.order')->with('error', 'Booking not found for VNPay response.');
         }
 
         $hashSecret = config('omnipay.gateways.VNPay.hash_secret');
         $secureHash = $data['vnp_SecureHash'] ?? '';
-        if (!$hashSecret || !$secureHash) {
+        if (! $hashSecret || ! $secureHash) {
             return redirect()->route('place.order')->with('error', 'Missing VNPay signature data.');
         }
 
@@ -366,8 +451,8 @@ class BookingController extends Controller
         $hashStringEncoded = '';
         foreach ($hashData as $key => $value) {
             if (strpos($key, 'vnp_') === 0 && $value !== '' && $value !== null) {
-                $hashString .= $key . '=' . $value . '&';
-                $hashStringEncoded .= urlencode($key) . '=' . urlencode((string) $value) . '&';
+                $hashString .= $key.'='.$value.'&';
+                $hashStringEncoded .= urlencode($key).'='.urlencode((string) $value).'&';
             }
         }
 
@@ -381,7 +466,7 @@ class BookingController extends Controller
             hash_equals(strtolower($secureHash), strtolower($calculatedHash)) ||
             hash_equals(strtolower($secureHash), strtolower($calculatedHashEncoded));
 
-        if (!$isValidSignature) {
+        if (! $isValidSignature) {
             return redirect()->route('place.order')->with('error', 'Invalid VNPay signature.');
         }
 
@@ -429,14 +514,14 @@ class BookingController extends Controller
     {
         $checkout = Session::get('checkout_data');
 
-        if (!$checkout) {
+        if (! $checkout) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Session expired');
         }
 
         if (
-            !isset($checkout['total_price']) ||
+            ! isset($checkout['total_price']) ||
             $checkout['total_price'] <= 0
         ) {
             return redirect()
@@ -473,7 +558,7 @@ class BookingController extends Controller
             ],
         ]);
 
-        if (!empty($response['id']) && isset($response['links'])) {
+        if (! empty($response['id']) && isset($response['links'])) {
             foreach ($response['links'] as $link) {
                 if ($link['rel'] == 'approve') {
                     return redirect()
@@ -490,13 +575,13 @@ class BookingController extends Controller
 
     public function PaypalSuccess(Request $request)
     {
-        if (!Session::has('checkout_data') || !Session::has('book_date')) {
+        if (! Session::has('checkout_data') || ! Session::has('book_date')) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Session expired');
         }
 
-        if (!$request->token || empty($request->token)) {
+        if (! $request->token || empty($request->token)) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Invalid PayPal token');
@@ -524,47 +609,87 @@ class BookingController extends Controller
             $book_data = Session::get('book_date');
             $checkout = Session::get('checkout_data');
             $room = Room::find($book_data['room_id']);
-            if (!$room) {
+            if (! $room) {
                 Session::forget('book_date');
                 Session::forget('checkout_data');
 
                 return redirect('/')
                     ->with('error', 'Room not found');
             }
-            $booking = new Booking;
 
-            $booking->rooms_id = $room->id;
-            $booking->user_id = Auth::id();
-            $booking->check_in = $book_data['check_in'];
-            $booking->check_out = $book_data['check_out'];
-            $booking->person = $book_data['person'];
-            $booking->number_of_rooms = $book_data['number_of_rooms'];
-            $booking->total_night = $checkout['total_nights'];
-            $booking->actual_price = $room->price;
-            $booking->subtotal = $checkout['subtotal'];
-            $booking->discount = $checkout['discount'];
-            $booking->total_price = $checkout['total_price'];
-            $booking->payment_method = 'paypal';
+            // Sử dụng DB transaction + pessimistic locking để chống race condition
+            try {
+                $booking = DB::transaction(function () use ($room, $book_data, $checkout, $response) {
+                    // Kiểm tra availability với pessimistic locking
+                    $availabilityService = app(BookingAvailabilityService::class);
+                    $availabilityService->validateAndLockAvailability(
+                        $room->id,
+                        date('d-m-Y', strtotime($book_data['check_in'])),
+                        date('d-m-Y', strtotime($book_data['check_out'])),
+                        $book_data['number_of_rooms']
+                    );
 
-            $booking->transaction_id = $response['id'];
+                    $booking = new Booking;
 
-            $booking->payment_status = 1;
+                    $booking->rooms_id = $room->id;
+                    $booking->user_id = Auth::id();
+                    $booking->check_in = $book_data['check_in'];
+                    $booking->check_out = $book_data['check_out'];
+                    $booking->person = $book_data['person'];
+                    $booking->number_of_rooms = $book_data['number_of_rooms'];
+                    $booking->total_night = $checkout['total_nights'];
+                    $booking->actual_price = $room->price;
+                    $booking->subtotal = $checkout['subtotal'];
+                    $booking->discount = $checkout['discount'];
+                    $booking->total_price = $checkout['total_price'];
+                    $booking->payment_method = 'paypal';
 
-            $booking->name = $checkout['name'];
-            $booking->email = $checkout['email'];
-            $booking->phone = $checkout['phone'];
-            $booking->country = $checkout['country'];
-            $booking->state = $checkout['state'];
-            $booking->zip_code = $checkout['zip_code'];
-            $booking->address = $checkout['address'];
+                    $booking->transaction_id = $response['id'];
 
-            $booking->code = rand(100000000, 999999999);
+                    $booking->payment_status = 1;
 
-            $booking->status = 0;
+                    $booking->name = $checkout['name'];
+                    $booking->email = $checkout['email'];
+                    $booking->phone = $checkout['phone'];
+                    $booking->country = $checkout['country'];
+                    $booking->state = $checkout['state'];
+                    $booking->zip_code = $checkout['zip_code'];
+                    $booking->address = $checkout['address'];
 
-            $booking->created_at = Carbon::now();
+                    $booking->code = rand(100000000, 999999999);
 
-            $booking->save();
+                    $booking->status = 0;
+
+                    $booking->created_at = Carbon::now();
+
+                    $booking->save();
+
+                    return $booking;
+                });
+            } catch (RuntimeException $e) {
+                // Hết phòng do race condition
+                Session::forget('book_date');
+                Session::forget('checkout_data');
+                $notification = [
+                    'message' => 'Sorry, this room is no longer available for the selected dates.',
+                    'alert-type' => 'error',
+                ];
+
+                return redirect('/')->with($notification);
+            } catch (QueryException $e) {
+                // Unique constraint violation (dự phòng cho pessimistic locking)
+                if (str_contains($e->getMessage(), 'uq_room_booked_dates_room_date')) {
+                    Session::forget('book_date');
+                    Session::forget('checkout_data');
+                    $notification = [
+                        'message' => 'Sorry, this room is no longer available for the selected dates.',
+                        'alert-type' => 'error',
+                    ];
+
+                    return redirect('/')->with($notification);
+                }
+                throw $e;
+            }
 
             // Fire the created event to notify all observers
             BookingEventManager::getInstance()->created($booking);
@@ -591,14 +716,14 @@ class BookingController extends Controller
     {
         $selectedFacilities = $request->input('facility_addons', []);
 
-        if (!is_array($selectedFacilities)) {
+        if (! is_array($selectedFacilities)) {
             $selectedFacilities = [];
         }
 
-        $selectedIds = array_filter($selectedFacilities, fn($id) => is_numeric($id));
+        $selectedIds = array_filter($selectedFacilities, fn ($id) => is_numeric($id));
         $addonTotal = 0;
 
-        if (!empty($selectedIds)) {
+        if (! empty($selectedIds)) {
             $addonTotal = (float) AddOn::whereIn('id', $selectedIds)->sum('price');
         }
 
@@ -630,9 +755,9 @@ class BookingController extends Controller
         $editData = Booking::with('room')->find($id);
         $pdf = Pdf::loadView('backend.booking.booking_invoice', compact('editData'))
             ->setPaper('a4')->setOption([
-                    'tempDir' => public_path(),
-                    'chroot' => public_path(),
-                ]);
+                'tempDir' => public_path(),
+                'chroot' => public_path(),
+            ]);
 
         return $pdf->download('Booking Invoice.pdf');
     }

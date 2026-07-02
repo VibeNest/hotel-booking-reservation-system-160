@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Booking;
+use App\Models\BookingRoomList;
 use App\Models\Room;
 use App\Models\RoomBookedDate;
 use Carbon\Carbon;
@@ -65,25 +66,26 @@ class BookingAvailabilityService
             // Step 2: Get the distinct booking IDs from locked results
             $bookingIds = $lockedBookings->pluck('booking_id')->unique()->toArray();
 
-            // Step 3: Get the sum of assign_rooms for those bookings
-            $totalBookedRoom = 0;
-            if (! empty($bookingIds)) {
-                $totalBookedRoom = (int) Booking::whereIn('id', $bookingIds)
+            // Step 3: Get the sum of ACTUALLY ASSIGNED rooms for those bookings
+            // This ensures we count only rooms that have been physically assigned (not just booked)
+            $totalAssignedRooms = 0;
+            if (!empty($bookingIds)) {
+                $totalAssignedRooms = (int) BookingRoomList::whereIn('booking_id', $bookingIds)
                     ->when($excludeBookingId !== null, function ($q) use ($excludeBookingId) {
-                        return $q->where('id', '!=', $excludeBookingId);
+                        return $q->where('booking_id', '!=', $excludeBookingId);
                     })
-                    ->sum('number_of_rooms');
+                    ->count();
             }
 
             // Step 4: Get total rooms available
             $room = Room::select('id')->withCount('rooms_numbers')->find($roomId);
 
-            if (! $room) {
+            if (!$room) {
                 throw new ModelNotFoundException("Room #{$roomId} not found.");
             }
 
             $totalRoom = (int) $room->rooms_numbers_count;
-            $availableRoom = $totalRoom - $totalBookedRoom;
+            $availableRoom = $totalRoom - $totalAssignedRooms;
 
             // Step 5: Check if enough rooms are available
             if ($availableRoom < $numberOfRoomsRequested) {

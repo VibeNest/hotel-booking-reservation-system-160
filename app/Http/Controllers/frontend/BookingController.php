@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\AddOn;
 use App\Models\Booking;
+use App\Models\BookingRoomList;
 use App\Models\Room;
+use App\Models\RoomNumber;
 use App\Services\BookingAvailabilityService;
 use App\Services\BookingEventManager;
 use App\Services\Payment\CodStrategy;
@@ -247,6 +249,9 @@ class BookingController extends Controller
                 $booking->status = 0;
                 $booking->created_at = Carbon::now();
                 $booking->save();
+
+                // Auto-assign rooms for this booking
+                $this->autoAssignRooms($booking, $room);
 
                 return $booking;
             });
@@ -772,6 +777,59 @@ class BookingController extends Controller
                 ]);
 
         return $pdf->download('Booking Invoice.pdf');
+    }
+
+    /**
+     * Auto-assign available room numbers to a booking.
+     *
+     * This method automatically assigns room numbers that are:
+     * 1. Active
+     * 2. Not assigned to any other booking during the same date range
+     *
+     * @param Booking $booking
+     * @param Room $room
+     * @return bool True if rooms were assigned successfully, false otherwise
+     */
+    private function autoAssignRooms(Booking $booking, Room $room): bool
+    {
+        $checkIn = Carbon::createFromFormat('d-m-Y', $booking->check_in);
+        $checkOut = Carbon::createFromFormat('d-m-Y', $booking->check_out);
+
+        // Get room numbers that are already assigned to other bookings during this period
+        $assignedRoomNumberIds = BookingRoomList::whereHas('booking', function ($query) use ($room, $checkIn, $checkOut, $booking) {
+            $query->where('rooms_id', $room->id)
+                ->where('id', '!=', $booking->id)
+                ->where(function ($q) use ($checkIn, $checkOut) {
+                    $q->where('check_in', '<', $checkOut->format('d-m-Y'))
+                        ->where('check_out', '>', $checkIn->format('d-m-Y'));
+                });
+        })
+            ->pluck('room_number_id')
+            ->toArray();
+
+        // Get available room numbers
+        $availableRoomNumbers = RoomNumber::where('rooms_id', $room->id)
+            ->where('status', 'Active')
+            ->whereNotIn('id', $assignedRoomNumberIds)
+            ->orderBy('room_number', 'asc')
+            ->limit($booking->number_of_rooms)
+            ->get();
+
+        // Check if we have enough rooms
+        if ($availableRoomNumbers->count() < $booking->number_of_rooms) {
+            return false;
+        }
+
+        // Assign rooms
+        foreach ($availableRoomNumbers as $roomNumber) {
+            BookingRoomList::create([
+                'booking_id' => $booking->id,
+                'room_id' => $room->id,
+                'room_number_id' => $roomNumber->id,
+            ]);
+        }
+
+        return true;
     }
 }
 

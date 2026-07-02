@@ -252,8 +252,8 @@
                                             <li><i class='bx bxs-hotel'></i> {{ $room->bed_style ?? '' }}</li>
                                         </ul>
 
-                                        <a href="room-details.html" class="book-more-btn">
-                                            Book Now
+                                        <a href="{{ route('room.details', $room->id) }}" class="book-more-btn">
+                                            View Details
                                         </a>
                                     </div>
                                 </div>

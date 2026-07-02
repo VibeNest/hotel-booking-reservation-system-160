@@ -5,19 +5,26 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         // Xoá các bản ghi trùng lặp (nếu có) trước khi thêm unique constraint
-        DB::statement('DELETE t1 FROM room_booked_dates t1
-            INNER JOIN room_booked_dates t2
-            WHERE t1.id > t2.id
-            AND t1.room_id = t2.room_id
-            AND t1.book_date = t2.book_date');
+        // Sử dụng subquery để tương thích với cả MySQL và SQLite
+        $duplicateIds = DB::table('room_booked_dates as t1')
+            ->select('t1.id')
+            ->join('room_booked_dates as t2', function ($join) {
+                $join->on('t1.room_id', '=', 't2.room_id')
+                    ->on('t1.book_date', '=', 't2.book_date')
+                    ->where('t1.id', '>', 't2.id');
+            })
+            ->get()->pluck('id');
+
+        if ($duplicateIds->isNotEmpty()) {
+            DB::table('room_booked_dates')->whereIn('id', $duplicateIds)->delete();
+        }
 
         Schema::table('room_booked_dates', function (Blueprint $table) {
             $table->unique(['room_id', 'book_date'], 'uq_room_booked_dates_room_date');

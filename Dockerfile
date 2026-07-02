@@ -12,6 +12,18 @@ RUN npm run build
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libwebp-dev \
+    libzip-dev \
+    unzip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j"$(nproc)" bcmath exif gd zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 RUN composer install \
     --no-dev \
     --prefer-dist \

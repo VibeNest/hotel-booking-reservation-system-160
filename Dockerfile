@@ -9,11 +9,15 @@ COPY public ./public
 COPY vite.config.js ./
 RUN npm run build
 
-FROM composer:2 AS vendor
+FROM composer:2 AS composer
+
+FROM php:8.2-cli-bookworm AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+    git \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \

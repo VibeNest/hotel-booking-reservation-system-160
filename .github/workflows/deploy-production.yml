@@ -181,20 +181,7 @@ jobs:
           EOF
 
           chmod 600 ~/.ssh/id_rsa
-
-          echo "==== HEX ===="
-          xxd -l 32 ~/.ssh/id_rsa
-
-          echo "==== FIRST ===="
-          sed -n '1p' ~/.ssh/id_rsa
-
-          echo "==== SECOND ===="
-          sed -n '2p' ~/.ssh/id_rsa
-
-          echo "==== LAST ===="
-          tail -1 ~/.ssh/id_rsa
-
-          ssh-keygen -l -f ~/.ssh/id_rsa
+          ssh-keyscan -H "${EC2_HOST}" >> ~/.ssh/known_hosts
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
 
@@ -209,15 +196,15 @@ jobs:
 
       - name: Upload compose and env
         run: |
-          ssh -o StrictHostKeyChecking=no "${EC2_USER}@${EC2_HOST}" "mkdir -p /opt/hotel-booking"
+          ssh "${EC2_USER}@${EC2_HOST}" "mkdir -p /opt/hotel-booking"
 
-          scp -o StrictHostKeyChecking=no docker-compose.remote.yml "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/docker-compose.prod.yml"
+          scp docker-compose.remote.yml "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/docker-compose.prod.yml"
 
-          scp -o StrictHostKeyChecking=no docker-compose.duckdns-https.remote.yml "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/docker-compose.duckdns-https.yml"
+          scp docker-compose.duckdns-https.remote.yml "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/docker-compose.duckdns-https.yml"
 
-          scp -o StrictHostKeyChecking=no nginx-https.conf.template "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/nginx-https.conf.template"
+          scp nginx-https.conf.template "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/nginx-https.conf.template"
 
-          scp -o StrictHostKeyChecking=no .env.production "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/.env.production"
+          scp .env.production "${EC2_USER}@${EC2_HOST}:/opt/hotel-booking/.env.production"
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}

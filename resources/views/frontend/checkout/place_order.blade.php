@@ -49,7 +49,20 @@
                                 <div class="col-md-4">
                                     <div class="info-box">
                                         <h5>Payment</h5>
-                                        <span>{{ $booking->payment_status == 1 ? 'Complete' : 'Pending' }}</span>
+                                        <span>{{ $booking->getPaymentStatusLabel() }}</span>
+                                        @if ($booking->isDepositPending())
+                                            <div class="mt-2 small text-muted">
+                                                Deposit required: ${{ number_format($booking->getDepositAmount(), 2) }}
+                                            </div>
+                                        @endif
+                                        @if ($booking->isDepositPaid())
+                                            <div class="mt-2 small text-muted">
+                                                Deposit received: ${{ number_format($booking->getDepositAmount(), 2) }}
+                                            </div>
+                                            <div class="small text-muted">
+                                                Remaining: ${{ number_format($booking->getRemainingAmount(), 2) }}
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
 
@@ -61,6 +74,23 @@
                                 </div>
                             </div>
                         </div>
+
+                        @if ($booking->isDepositPending())
+                            <div class="mt-4 text-start rounded-4 p-4" style="background:#eef6ff;border:1px solid #dbeafe;">
+                                <h5 class="fw-bold mb-3">Deposit transfer details</h5>
+                                <p class="mb-2">Please transfer <strong>{{ $booking->getDepositPercentage() }}%</strong> of the total amount to keep your room reserved.</p>
+                                <p class="mb-2"><strong>Amount:</strong> ${{ number_format($booking->getDepositAmount(), 2) }}</p>
+
+                                @if (config('booking.bank_name') || config('booking.bank_account_name') || config('booking.bank_account_number'))
+                                    <p class="mb-1"><strong>Bank:</strong> {{ config('booking.bank_name') }}</p>
+                                    <p class="mb-1"><strong>Account name:</strong> {{ config('booking.bank_account_name') }}</p>
+                                    <p class="mb-1"><strong>Account number:</strong> {{ config('booking.bank_account_number') }}</p>
+                                    @if (config('booking.bank_transfer_note'))
+                                        <p class="mb-0"><strong>Transfer note:</strong> {{ config('booking.bank_transfer_note') }} {{ $booking->code }}</p>
+                                    @endif
+                                @endif
+                            </div>
+                        @endif
 
                         <div class="place-order-btn mt-4">
                             <a href="/" class="default-btn btn-bg-one border-radius-5">

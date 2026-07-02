@@ -31,16 +31,18 @@
 
                             @php
                                 $unreadCount = Auth::user()->unreadNotifications()->count();
+                                $totalNotifications = Auth::user()->notifications()->count();
                             @endphp
 
                             <span class="alert-count" id="notification-count">{{ $unreadCount }}</span>
                             <i class='bx bx-bell'></i>
                         </a>
+
                         <div class="dropdown-menu dropdown-menu-end">
                             <a href="javascript:;">
                                 <div class="msg-header">
                                     <p class="msg-header-title">Notifications</p>
-                                    <p class="msg-header-badge">8 New</p>
+                                    <p class="msg-header-badge">{{ $totalNotifications }} New</p>
                                 </div>
                             </a>
                             <div class="header-notifications-list">

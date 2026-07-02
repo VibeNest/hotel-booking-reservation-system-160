@@ -62,9 +62,8 @@
                         <div class="d-flex align-items-center">
                             <div>
                                 <p class="mb-0 text-secondary">Payment Status</p>
-                                <h4 class="my-1 text-warning">@if ($editData->payment_status == '1') <span
-                                class="text-success">Complete</span> @else
-                                        <span class="text-danger">Pending</span> @endif
+                                <h4 class="my-1 text-warning"><span
+                                        class="text-{{ $editData->getPaymentStatusColor() }}">{{ $editData->getPaymentStatusLabel() }}</span>
                                 </h4>
                             </div>
                             <div class="widgets-icons-2 rounded-circle bg-gradient-orange text-white ms-auto"><i
@@ -319,6 +318,10 @@
 
                                             <option value="0" {{ $editData->payment_status == '0' ? 'selected' : '' }}>
                                                 Pending
+                                            </option>
+
+                                            <option value="2" {{ $editData->payment_status == '2' ? 'selected' : '' }}>
+                                                Deposit Paid
                                             </option>
 
                                             <option value="1" {{ $editData->payment_status == '1' ? 'selected' : '' }}>

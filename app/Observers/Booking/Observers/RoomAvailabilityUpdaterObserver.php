@@ -32,6 +32,22 @@ class RoomAvailabilityUpdaterObserver implements BookingObserverInterface
     }
 
     /**
+     * No availability changes on deposit confirmation
+     */
+    public function depositConfirmed(Booking $booking): void
+    {
+        // No action needed
+    }
+
+    /**
+     * No availability changes on final payment completion
+     */
+    public function paymentCompleted(Booking $booking): void
+    {
+        // No action needed
+    }
+
+    /**
      * No specific action on approval for availability
      */
     public function approved(Booking $booking): void

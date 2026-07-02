@@ -25,6 +25,16 @@ class AdminNotifierObserver implements BookingObserverInterface
         ));
     }
 
+    public function depositConfirmed(Booking $booking): void
+    {
+        // No admin notification needed for deposit confirmation
+    }
+
+    public function paymentCompleted(Booking $booking): void
+    {
+        // No admin notification needed for payment completion
+    }
+
     /**
      * No admin notification when booking is approved
      * Only send email to customer (handled by EmailNotifierObserver)

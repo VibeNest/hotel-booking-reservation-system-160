@@ -8,6 +8,8 @@ use App\Models\Room;
 use App\Models\RoomBookedDate;
 use App\Models\RoomNumber;
 use App\Models\RoomType;
+use App\Services\BookingEventManager;
+use App\Services\Payment\CodStrategy;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
@@ -93,6 +95,10 @@ class RoomListController extends Controller
         // Generate booking code 9 số
         $code = rand(100000000, 999999999);
 
+        $paymentData = (new CodStrategy)->pay([
+            'total_price' => $total_price,
+        ]);
+
         // Insert Data Booking
         $booking = new Booking;
         $booking->rooms_id = $room->id;
@@ -108,7 +114,10 @@ class RoomListController extends Controller
         $booking->total_price = $total_price;
         $booking->payment_method = 'COD';
         $booking->transaction_id = '';
-        $booking->payment_status = 0;
+        $booking->payment_status = $paymentData['payment_status'];
+        $booking->deposit_percentage = $paymentData['deposit_percentage'];
+        $booking->deposit_amount = $paymentData['deposit_amount'];
+        $booking->remaining_amount = $paymentData['remaining_amount'];
         $booking->name = $request->name;
         $booking->email = $request->email;
         $booking->phone = $request->phone;
@@ -120,6 +129,8 @@ class RoomListController extends Controller
         $booking->status = 0;
         $booking->created_at = Carbon::now();
         $booking->save();
+
+        BookingEventManager::getInstance()->created($booking);
 
         // Room Booked Dates
         $startDate = Carbon::createFromFormat('Y-m-d', $request->check_in);

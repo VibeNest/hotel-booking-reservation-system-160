@@ -13,7 +13,7 @@ class PaymentContext
         $this->strategy = $strategy;
     }
 
-    public function execute(array $data)
+    public function execute(array $data): array
     {
         return $this->strategy->pay($data);
     }

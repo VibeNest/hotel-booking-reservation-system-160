@@ -89,7 +89,7 @@ class BookingController extends Controller
         $booking = Booking::where('user_id', Auth::id())->latest()->first();
 
         // Không tìm thấy booking khi thanh toán
-        if (! $booking) {
+        if (!$booking) {
             $notification = [
                 'message' => 'No Booking Found!',
                 'alert-type' => 'error',
@@ -105,7 +105,7 @@ class BookingController extends Controller
     public function CheckoutStore(Request $request)
     {
         // Check session tồn tại
-        if (! Session::has('book_date')) {
+        if (!Session::has('book_date')) {
             return redirect()->route('checkout')->with('error', 'Session expired');
         }
 
@@ -201,10 +201,13 @@ class BookingController extends Controller
 
         $payment_status = $result['payment_status'];
         $transaction_id = $result['transaction_id'];
+        $depositPercentage = $result['deposit_percentage'] ?? 0;
+        $depositAmount = $result['deposit_amount'] ?? 0;
+        $remainingAmount = $result['remaining_amount'] ?? 0;
 
         // Sử dụng DB transaction + pessimistic locking để chống race condition
         try {
-            $booking = DB::transaction(function () use ($room, $book_data, $total_nights, $subtotal, $discount, $total_price, $request, $payment_status, $transaction_id, $code) {
+            $booking = DB::transaction(function () use ($room, $book_data, $total_nights, $subtotal, $discount, $total_price, $request, $payment_status, $transaction_id, $code, $depositPercentage, $depositAmount, $remainingAmount) {
                 // Kiểm tra availability với pessimistic locking
                 $availabilityService = app(BookingAvailabilityService::class);
                 $availabilityService->validateAndLockAvailability(
@@ -230,6 +233,9 @@ class BookingController extends Controller
                 $booking->payment_method = $request->payment_method;
                 $booking->transaction_id = $transaction_id;
                 $booking->payment_status = $payment_status;
+                $booking->deposit_percentage = $depositPercentage;
+                $booking->deposit_amount = $depositAmount;
+                $booking->remaining_amount = $remainingAmount;
                 $booking->name = $request->name;
                 $booking->email = $request->email;
                 $booking->phone = $request->phone;
@@ -308,7 +314,7 @@ class BookingController extends Controller
         }
 
         $room = Room::find($book_data['room_id']);
-        if (! $room) {
+        if (!$room) {
             $notification = [
                 'message' => 'Room not found.',
                 'alert-type' => 'error',
@@ -356,6 +362,9 @@ class BookingController extends Controller
                 $booking->payment_method = 'VN Pay';
                 $booking->transaction_id = '';
                 $booking->payment_status = 0;
+                $booking->deposit_percentage = 0;
+                $booking->deposit_amount = 0;
+                $booking->remaining_amount = 0;
                 $booking->code = $code;
                 $booking->status = 0;
                 $booking->name = $validated['name'];
@@ -406,7 +415,7 @@ class BookingController extends Controller
 
         $response = $gateway->purchase([
             'txnRef' => (string) $code,
-            'orderInfo' => 'Thanh toan don hang '.$code,
+            'orderInfo' => 'Thanh toan don hang ' . $code,
             'amount' => (int) round($total_price),
             'currency' => config('omnipay.gateways.VNPay.currency', 'VND'),
             'returnUrl' => route('vnpay.return'),
@@ -428,18 +437,18 @@ class BookingController extends Controller
         }
 
         $bookingCode = $data['vnp_TxnRef'] ?? null;
-        if (! $bookingCode) {
+        if (!$bookingCode) {
             return redirect()->route('place.order')->with('error', 'Missing VNPay transaction reference.');
         }
 
         $booking = Booking::where('code', $bookingCode)->first();
-        if (! $booking) {
+        if (!$booking) {
             return redirect()->route('place.order')->with('error', 'Booking not found for VNPay response.');
         }
 
         $hashSecret = config('omnipay.gateways.VNPay.hash_secret');
         $secureHash = $data['vnp_SecureHash'] ?? '';
-        if (! $hashSecret || ! $secureHash) {
+        if (!$hashSecret || !$secureHash) {
             return redirect()->route('place.order')->with('error', 'Missing VNPay signature data.');
         }
 
@@ -451,8 +460,8 @@ class BookingController extends Controller
         $hashStringEncoded = '';
         foreach ($hashData as $key => $value) {
             if (strpos($key, 'vnp_') === 0 && $value !== '' && $value !== null) {
-                $hashString .= $key.'='.$value.'&';
-                $hashStringEncoded .= urlencode($key).'='.urlencode((string) $value).'&';
+                $hashString .= $key . '=' . $value . '&';
+                $hashStringEncoded .= urlencode($key) . '=' . urlencode((string) $value) . '&';
             }
         }
 
@@ -466,7 +475,7 @@ class BookingController extends Controller
             hash_equals(strtolower($secureHash), strtolower($calculatedHash)) ||
             hash_equals(strtolower($secureHash), strtolower($calculatedHashEncoded));
 
-        if (! $isValidSignature) {
+        if (!$isValidSignature) {
             return redirect()->route('place.order')->with('error', 'Invalid VNPay signature.');
         }
 
@@ -514,14 +523,14 @@ class BookingController extends Controller
     {
         $checkout = Session::get('checkout_data');
 
-        if (! $checkout) {
+        if (!$checkout) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Session expired');
         }
 
         if (
-            ! isset($checkout['total_price']) ||
+            !isset($checkout['total_price']) ||
             $checkout['total_price'] <= 0
         ) {
             return redirect()
@@ -558,7 +567,7 @@ class BookingController extends Controller
             ],
         ]);
 
-        if (! empty($response['id']) && isset($response['links'])) {
+        if (!empty($response['id']) && isset($response['links'])) {
             foreach ($response['links'] as $link) {
                 if ($link['rel'] == 'approve') {
                     return redirect()
@@ -575,13 +584,13 @@ class BookingController extends Controller
 
     public function PaypalSuccess(Request $request)
     {
-        if (! Session::has('checkout_data') || ! Session::has('book_date')) {
+        if (!Session::has('checkout_data') || !Session::has('book_date')) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Session expired');
         }
 
-        if (! $request->token || empty($request->token)) {
+        if (!$request->token || empty($request->token)) {
             return redirect()
                 ->route('checkout')
                 ->with('error', 'Invalid PayPal token');
@@ -609,7 +618,7 @@ class BookingController extends Controller
             $book_data = Session::get('book_date');
             $checkout = Session::get('checkout_data');
             $room = Room::find($book_data['room_id']);
-            if (! $room) {
+            if (!$room) {
                 Session::forget('book_date');
                 Session::forget('checkout_data');
 
@@ -647,6 +656,9 @@ class BookingController extends Controller
                     $booking->transaction_id = $response['id'];
 
                     $booking->payment_status = 1;
+                    $booking->deposit_percentage = 0;
+                    $booking->deposit_amount = 0;
+                    $booking->remaining_amount = 0;
 
                     $booking->name = $checkout['name'];
                     $booking->email = $checkout['email'];
@@ -716,14 +728,14 @@ class BookingController extends Controller
     {
         $selectedFacilities = $request->input('facility_addons', []);
 
-        if (! is_array($selectedFacilities)) {
+        if (!is_array($selectedFacilities)) {
             $selectedFacilities = [];
         }
 
-        $selectedIds = array_filter($selectedFacilities, fn ($id) => is_numeric($id));
+        $selectedIds = array_filter($selectedFacilities, fn($id) => is_numeric($id));
         $addonTotal = 0;
 
-        if (! empty($selectedIds)) {
+        if (!empty($selectedIds)) {
             $addonTotal = (float) AddOn::whereIn('id', $selectedIds)->sum('price');
         }
 
@@ -755,9 +767,9 @@ class BookingController extends Controller
         $editData = Booking::with('room')->find($id);
         $pdf = Pdf::loadView('backend.booking.booking_invoice', compact('editData'))
             ->setPaper('a4')->setOption([
-                'tempDir' => public_path(),
-                'chroot' => public_path(),
-            ]);
+                    'tempDir' => public_path(),
+                    'chroot' => public_path(),
+                ]);
 
         return $pdf->download('Booking Invoice.pdf');
     }

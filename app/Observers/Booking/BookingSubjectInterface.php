@@ -22,6 +22,16 @@ interface BookingSubjectInterface
     public function notifyCreated(Booking $booking): void;
 
     /**
+     * Notify all observers that a deposit was confirmed
+     */
+    public function notifyDepositConfirmed(Booking $booking): void;
+
+    /**
+     * Notify all observers that the booking payment was completed
+     */
+    public function notifyPaymentCompleted(Booking $booking): void;
+
+    /**
      * Notify all observers that a booking was approved
      */
     public function notifyApproved(Booking $booking): void;

@@ -107,15 +107,9 @@
                                                             </td>
 
                                                             <td>
-                                                                @if ($item->status == 1)
-                                                                    <span class="badge bg-success">
-                                                                        Complete
-                                                                    </span>
-                                                                @else
-                                                                    <span class="badge bg-danger">
-                                                                        Pending
-                                                                    </span>
-                                                                @endif
+                                                                <span class="badge bg-{{ $item->getPaymentStatusColor() }}">
+                                                                    {{ $item->getPaymentStatusLabel() }}
+                                                                </span>
                                                             </td>
                                                         </tr>
                                                     @empty

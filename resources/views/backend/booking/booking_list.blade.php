@@ -57,8 +57,8 @@
                                             class="badge bg-warning text-dark">{{ $item->check_out }}</span></td>
                                     <td>{{ $item->number_of_rooms }}</td>
                                     <td>{{ $item->person }}</td>
-                                    <td>@if ($item->payment_status == '1') <span class="badge bg-success">Complete</span> @else
-                                    <span class="badge bg-danger">Pending</span> @endif
+                                    <td><span
+                                            class="badge bg-{{ $item->getPaymentStatusColor() }}">{{ $item->getPaymentStatusLabel() }}</span>
                                     </td>
                                     <td>@if ($item->status == 1) <span class="badge bg-success">Complete</span> @else
                                     <span class="badge bg-danger">Pending</span> @endif

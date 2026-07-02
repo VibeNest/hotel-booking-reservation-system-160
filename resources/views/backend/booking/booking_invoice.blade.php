@@ -395,6 +395,16 @@
                         <td>Add-ons</td>
                         <td class="t-right">+${{ number_format($editData->getAddonFee(), 0) }}</td>
                     </tr>
+                    @if ($editData->isDepositPaid())
+                        <tr class="row-discount">
+                            <td>Deposit ({{ $editData->getDepositPercentage() }}%)</td>
+                            <td class="t-right">-${{ number_format($editData->getDepositAmount(), 0) }}</td>
+                        </tr>
+                        <tr>
+                            <td>Balance Due</td>
+                            <td class="t-right">${{ number_format($editData->getRemainingAmount(), 0) }}</td>
+                        </tr>
+                    @endif
                     <tr class="row-divider">
                         <td></td>
                         <td></td>

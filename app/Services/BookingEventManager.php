@@ -54,6 +54,22 @@ class BookingEventManager
     }
 
     /**
+     * Fire the deposit confirmed event
+     */
+    public function depositConfirmed(Booking $booking): void
+    {
+        $this->subject->notifyDepositConfirmed($booking);
+    }
+
+    /**
+     * Fire the payment completed event
+     */
+    public function paymentCompleted(Booking $booking): void
+    {
+        $this->subject->notifyPaymentCompleted($booking);
+    }
+
+    /**
      * Fire the approved event
      */
     public function approved(Booking $booking): void

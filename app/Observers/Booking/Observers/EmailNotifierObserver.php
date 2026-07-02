@@ -3,6 +3,9 @@
 namespace App\Observers\Booking\Observers;
 
 use App\Mail\BookConfirm;
+use App\Mail\BookingDepositConfirmedMail;
+use App\Mail\BookingDepositRequestMail;
+use App\Mail\BookingPaymentCompletedMail;
 use App\Models\Booking;
 use App\Observers\Booking\BookingObserverInterface;
 use Illuminate\Support\Facades\Mail;
@@ -10,13 +13,31 @@ use Illuminate\Support\Facades\Mail;
 class EmailNotifierObserver implements BookingObserverInterface
 {
     /**
-     * No email sent when booking is created
-     * Admin notification only (handled by AdminNotifierObserver)
-     * Email will be sent when booking is approved
+     * Send deposit request email when COD booking is created.
      */
     public function created(Booking $booking): void
     {
-        // No email sent at creation time
+        if ($booking->payment_method !== 'COD' || !$booking->isDepositPending()) {
+            return;
+        }
+
+        Mail::to($booking->email)->send(new BookingDepositRequestMail($booking));
+    }
+
+    /**
+     * Send confirmation email when the deposit has been received.
+     */
+    public function depositConfirmed(Booking $booking): void
+    {
+        Mail::to($booking->email)->send(new BookingDepositConfirmedMail($booking));
+    }
+
+    /**
+     * Send completion email when the remaining balance has been paid.
+     */
+    public function paymentCompleted(Booking $booking): void
+    {
+        Mail::to($booking->email)->send(new BookingPaymentCompletedMail($booking));
     }
 
     /**

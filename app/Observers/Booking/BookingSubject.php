@@ -28,7 +28,7 @@ class BookingSubject implements BookingSubjectInterface
     {
         $this->observers = array_filter(
             $this->observers,
-            fn ($existing) => $existing !== $observer
+            fn($existing) => $existing !== $observer
         );
     }
 
@@ -39,6 +39,26 @@ class BookingSubject implements BookingSubjectInterface
     {
         foreach ($this->observers as $observer) {
             $observer->created($booking);
+        }
+    }
+
+    /**
+     * Notify all observers that a deposit was confirmed
+     */
+    public function notifyDepositConfirmed(Booking $booking): void
+    {
+        foreach ($this->observers as $observer) {
+            $observer->depositConfirmed($booking);
+        }
+    }
+
+    /**
+     * Notify all observers that the payment was completed
+     */
+    public function notifyPaymentCompleted(Booking $booking): void
+    {
+        foreach ($this->observers as $observer) {
+            $observer->paymentCompleted($booking);
         }
     }
 

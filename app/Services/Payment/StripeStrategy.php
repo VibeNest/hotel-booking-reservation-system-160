@@ -7,7 +7,7 @@ use Stripe;
 
 class StripeStrategy implements PaymentStrategy
 {
-    public function pay(array $data)
+    public function pay(array $data): array
     {
         Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 

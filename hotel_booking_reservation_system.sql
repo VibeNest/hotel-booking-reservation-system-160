@@ -129,6 +129,9 @@ CREATE TABLE `bookings` (
   `address` varchar(255) DEFAULT NULL,
   `code` varchar(255) DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT 1,
+  `deposit_percentage` tinyint(3) UNSIGNED NOT NULL DEFAULT 0,
+  `deposit_amount` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `remaining_amount` decimal(12,2) NOT NULL DEFAULT 0.00,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

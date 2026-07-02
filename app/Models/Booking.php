@@ -28,6 +28,57 @@ class Booking extends Model
         return $this->belongsTo(Room::class, 'rooms_id', 'id');
     }
 
+    public function getPaymentStatusLabel(): string
+    {
+        return match ((int) $this->payment_status) {
+            1 => 'Complete',
+            2 => 'Deposit Paid',
+            default => 'Pending',
+        };
+    }
+
+    public function getPaymentStatusColor(): string
+    {
+        return match ((int) $this->payment_status) {
+            1 => 'success',
+            2 => 'warning',
+            default => 'danger',
+        };
+    }
+
+    public function isDepositPaid(): bool
+    {
+        return (int) $this->payment_status === 2;
+    }
+
+    public function isDepositPending(): bool
+    {
+        return (int) $this->payment_status === 0;
+    }
+
+    public function getDepositPercentage(): int
+    {
+        return (int) ($this->deposit_percentage ?? config('booking.cod_deposit_percentage', 30));
+    }
+
+    public function getDepositAmount(): float
+    {
+        if (isset($this->deposit_amount)) {
+            return (float) $this->deposit_amount;
+        }
+
+        return (float) round($this->total_price * ($this->getDepositPercentage() / 100), 2);
+    }
+
+    public function getRemainingAmount(): float
+    {
+        if (isset($this->remaining_amount)) {
+            return (float) $this->remaining_amount;
+        }
+
+        return (float) round(max(0, $this->total_price - $this->getDepositAmount()), 2);
+    }
+
     /**
      * Get the current state of the booking
      */

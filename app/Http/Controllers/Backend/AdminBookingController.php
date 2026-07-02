@@ -36,9 +36,22 @@ class AdminBookingController extends Controller
     public function UpdateBookingStatus(Request $request, $id)
     {
         $booking = Booking::find($id);
+        $previousPaymentStatus = (int) $booking->payment_status;
+        $newPaymentStatus = (int) $request->payment_status;
+
         $booking->payment_status = $request->payment_status;
         $booking->status = $request->status;
         $booking->save();
+
+        if ($previousPaymentStatus !== $newPaymentStatus) {
+            if ($newPaymentStatus === 2) {
+                BookingEventManager::getInstance()->depositConfirmed($booking);
+            }
+
+            if ($newPaymentStatus === 1) {
+                BookingEventManager::getInstance()->paymentCompleted($booking);
+            }
+        }
 
         // Fire the appropriate event based on status
         if ((int) $request->status === 1) {

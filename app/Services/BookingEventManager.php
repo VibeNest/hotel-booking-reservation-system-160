@@ -34,6 +34,12 @@ class BookingEventManager
      */
     public function attach(BookingObserverInterface $observer): void
     {
+        foreach ($this->subject->getObservers() as $existingObserver) {
+            if ($existingObserver::class === $observer::class) {
+                return;
+            }
+        }
+
         $this->subject->attach($observer);
     }
 

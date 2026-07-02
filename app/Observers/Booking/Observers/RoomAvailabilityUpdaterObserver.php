@@ -20,13 +20,41 @@ class RoomAvailabilityUpdaterObserver implements BookingObserverInterface
         $endDate = Carbon::createFromFormat('d-m-Y', $booking->check_out);
         $endDate = $endDate->subDay();
 
-        $dayPeriod = CarbonPeriod::create($startDate, $endDate);
+        $bookDates = [];
+        foreach (CarbonPeriod::create($startDate, $endDate) as $period) {
+            $bookDates[] = $period->format('Y-m-d');
+        }
 
-        foreach ($dayPeriod as $period) {
+        if (empty($bookDates)) {
+            return;
+        }
+
+        $assignedRoomNumberIds = BookingRoomList::where('booking_id', $booking->id)
+            ->pluck('room_number_id')
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($assignedRoomNumberIds->isNotEmpty()) {
+            foreach ($assignedRoomNumberIds as $roomNumberId) {
+                foreach ($bookDates as $bookDate) {
+                    $bookedDates = new RoomBookedDate;
+                    $bookedDates->booking_id = $booking->id;
+                    $bookedDates->room_id = $booking->rooms_id;
+                    $bookedDates->room_number_id = $roomNumberId;
+                    $bookedDates->book_date = $bookDate;
+                    $bookedDates->save();
+                }
+            }
+
+            return;
+        }
+
+        foreach ($bookDates as $bookDate) {
             $bookedDates = new RoomBookedDate;
             $bookedDates->booking_id = $booking->id;
             $bookedDates->room_id = $booking->rooms_id;
-            $bookedDates->book_date = $period->format('Y-m-d');
+            $bookedDates->book_date = $bookDate;
             $bookedDates->save();
         }
     }

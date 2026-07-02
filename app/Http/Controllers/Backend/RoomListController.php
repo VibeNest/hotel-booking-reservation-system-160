@@ -5,13 +5,11 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Room;
-use App\Models\RoomBookedDate;
 use App\Models\RoomNumber;
 use App\Models\RoomType;
 use App\Services\BookingEventManager;
 use App\Services\Payment\CodStrategy;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -131,24 +129,6 @@ class RoomListController extends Controller
         $booking->save();
 
         BookingEventManager::getInstance()->created($booking);
-
-        // Room Booked Dates
-        $startDate = Carbon::createFromFormat('Y-m-d', $request->check_in);
-        $endDate = Carbon::createFromFormat('Y-m-d', $request->check_out);
-
-        // Không lấy ngày checkout - trừ 1 ngày
-        $endDate = $endDate->subDay();
-
-        // Tạo danh sách các ngày booking
-        $day_period = CarbonPeriod::create($startDate, $endDate);
-
-        foreach ($day_period as $period) {
-            $booked_dates = new RoomBookedDate;
-            $booked_dates->booking_id = $booking->id;
-            $booked_dates->room_id = $room->id;
-            $booked_dates->book_date = $period->format('Y-m-d');
-            $booked_dates->save();
-        }
 
         // Notification
         $notification = [

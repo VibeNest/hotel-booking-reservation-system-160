@@ -3,7 +3,10 @@
 use App\Models\Booking;
 use App\Models\BookingRoomList;
 use App\Models\Room;
+use App\Models\RoomBookedDate;
 use App\Models\RoomNumber;
+use App\Models\User;
+use App\Services\BookingEventManager;
 use Carbon\Carbon;
 
 beforeEach(function () {
@@ -17,7 +20,7 @@ it('auto-assigns rooms when creating a COD booking', function () {
     RoomNumber::factory()->count(2)->create(['rooms_id' => $room->id, 'status' => 'Active']);
 
     // Create a user
-    $user = \App\Models\User::factory()->create();
+    $user = User::factory()->create();
 
     // Simulate booking creation with auto-assign
     $booking = new Booking([
@@ -152,4 +155,53 @@ it('allows booking when enough rooms are available', function () {
 
     // 2 rooms available, requesting 2
     expect($availableRoomNumbers)->toBe(2);
+});
+
+it('stores booked dates per assigned room number so the same room type can be booked multiple times on the same dates', function () {
+    $room = Room::factory()->create();
+    $roomNumbers = RoomNumber::factory()->count(3)->create([
+        'rooms_id' => $room->id,
+        'status' => 'Active',
+    ]);
+
+    $bookingOne = Booking::factory()->create([
+        'rooms_id' => $room->id,
+        'check_in' => '01-07-2026',
+        'check_out' => '03-07-2026',
+        'number_of_rooms' => 2,
+    ]);
+
+    BookingRoomList::create([
+        'booking_id' => $bookingOne->id,
+        'room_id' => $room->id,
+        'room_number_id' => $roomNumbers[0]->id,
+    ]);
+
+    BookingRoomList::create([
+        'booking_id' => $bookingOne->id,
+        'room_id' => $room->id,
+        'room_number_id' => $roomNumbers[1]->id,
+    ]);
+
+    BookingEventManager::getInstance()->created($bookingOne);
+
+    expect(RoomBookedDate::where('booking_id', $bookingOne->id)->count())->toBe(4);
+
+    $bookingTwo = Booking::factory()->create([
+        'rooms_id' => $room->id,
+        'check_in' => '01-07-2026',
+        'check_out' => '03-07-2026',
+        'number_of_rooms' => 1,
+    ]);
+
+    BookingRoomList::create([
+        'booking_id' => $bookingTwo->id,
+        'room_id' => $room->id,
+        'room_number_id' => $roomNumbers[2]->id,
+    ]);
+
+    BookingEventManager::getInstance()->created($bookingTwo);
+
+    expect(RoomBookedDate::where('room_id', $room->id)->count())->toBe(6);
+    expect(RoomBookedDate::where('room_number_id', $roomNumbers[2]->id)->count())->toBe(2);
 });

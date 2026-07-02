@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\AdminBookingController;
 use App\Models\Booking;
 use App\Models\BookingRoomList;
 use App\Models\Room;
@@ -8,11 +9,10 @@ use App\Models\RoomNumber;
 use App\Models\User;
 use App\Services\BookingEventManager;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 
-beforeEach(function () {
-    // Run migrations for in-memory SQLite database
-    $this->artisan('migrate:fresh', ['--force' => true]);
-});
+uses(RefreshDatabase::class);
 
 it('auto-assigns rooms when creating a COD booking', function () {
     // Create a room with 2 room numbers
@@ -204,4 +204,42 @@ it('stores booked dates per assigned room number so the same room type can be bo
 
     expect(RoomBookedDate::where('room_id', $room->id)->count())->toBe(6);
     expect(RoomBookedDate::where('room_number_id', $roomNumbers[2]->id)->count())->toBe(2);
+});
+
+it('releases the old room number dates when admin reassigns a booking to another room number', function () {
+    $room = Room::factory()->create();
+    $roomNumbers = RoomNumber::factory()->count(2)->create([
+        'rooms_id' => $room->id,
+        'status' => 'Active',
+    ]);
+
+    $booking = Booking::factory()->create([
+        'rooms_id' => $room->id,
+        'check_in' => '03-07-2026',
+        'check_out' => '04-07-2026',
+        'number_of_rooms' => 1,
+    ]);
+
+    BookingRoomList::create([
+        'booking_id' => $booking->id,
+        'room_id' => $room->id,
+        'room_number_id' => $roomNumbers[0]->id,
+    ]);
+
+    BookingEventManager::getInstance()->created($booking);
+
+    expect(RoomBookedDate::where('room_number_id', $roomNumbers[0]->id)->count())->toBe(1);
+
+    $controller = app(AdminBookingController::class);
+    $controller->AssignRoomDelete(BookingRoomList::where('booking_id', $booking->id)->first()->id);
+
+    expect(RoomBookedDate::where('room_number_id', $roomNumbers[0]->id)->count())->toBe(0);
+
+    $request = Request::create('/', 'POST');
+    app()->instance('request', $request);
+
+    $controller->AssignRoomStore($booking->id, $roomNumbers[1]->id);
+
+    expect(RoomBookedDate::where('room_number_id', $roomNumbers[1]->id)->count())->toBe(1);
+    expect(RoomBookedDate::where('room_number_id', $roomNumbers[0]->id)->count())->toBe(0);
 });

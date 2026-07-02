@@ -160,6 +160,8 @@ class AdminBookingController extends Controller
             $assign_data->room_number_id = $room_number_id;
             $assign_data->save();
 
+            $this->syncBookedDatesForAssignedRoom($booking, $room_number_id);
+
             $notification = [
                 'message' => 'Assign room successfully!',
                 'alert-type' => 'success',
@@ -180,6 +182,12 @@ class AdminBookingController extends Controller
     public function AssignRoomDelete($id)
     {
         $assign_room = BookingRoomList::find($id);
+        if ($assign_room) {
+            RoomBookedDate::where('booking_id', $assign_room->booking_id)
+                ->where('room_number_id', $assign_room->room_number_id)
+                ->delete();
+        }
+
         $assign_room->delete();
 
         $notification = [
@@ -188,6 +196,25 @@ class AdminBookingController extends Controller
         ];
 
         return redirect()->back()->with($notification);
+    }
+
+    private function syncBookedDatesForAssignedRoom(Booking $booking, int $roomNumberId): void
+    {
+        $startDate = Carbon::createFromFormat('d-m-Y', $booking->check_in);
+        $endDate = Carbon::createFromFormat('d-m-Y', $booking->check_out)->subDay();
+
+        foreach (CarbonPeriod::create($startDate, $endDate) as $period) {
+            RoomBookedDate::updateOrCreate(
+                [
+                    'booking_id' => $booking->id,
+                    'room_number_id' => $roomNumberId,
+                    'book_date' => $period->format('Y-m-d'),
+                ],
+                [
+                    'room_id' => $booking->rooms_id,
+                ]
+            );
+        }
     }
 
     // Delete Booking Method

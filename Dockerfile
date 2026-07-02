@@ -20,17 +20,17 @@ RUN composer install \
     --no-scripts \
     --optimize-autoloader
 
-FROM php:8.3-fpm-bookworm AS app
+FROM php:8.2-fpm-bookworm AS app
 WORKDIR /var/www/html
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        libfreetype6-dev \
-        libjpeg62-turbo-dev \
-        libpng-dev \
-        libwebp-dev \
-        libzip-dev \
-        unzip \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libwebp-dev \
+    libzip-dev \
+    unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j"$(nproc)" bcmath exif gd opcache pcntl pdo_mysql zip \
     && apt-get clean \

@@ -6,7 +6,6 @@ services:
         condition: service_healthy
     volumes:
     - app_storage:/var/www/html/storage
-    - app_bootstrap_cache:/var/www/html/bootstrap/cache
     - app_public_upload:/var/www/html/public/upload
     networks:
     - hotel
@@ -70,7 +69,6 @@ services:
         condition: service_healthy
     volumes:
     - app_storage:/var/www/html/storage
-    - app_bootstrap_cache:/var/www/html/bootstrap/cache
     - app_public_upload:/var/www/html/public/upload
     networks:
     - hotel
@@ -134,7 +132,6 @@ services:
         condition: service_healthy
     volumes:
     - app_storage:/var/www/html/storage
-    - app_bootstrap_cache:/var/www/html/bootstrap/cache
     - app_public_upload:/var/www/html/public/upload
     networks:
     - hotel
@@ -225,7 +222,6 @@ services:
     - hotel
 volumes:
   app_storage: 
-  app_bootstrap_cache: 
   app_public_upload: 
   mysql_data: 
   certbot_www: 

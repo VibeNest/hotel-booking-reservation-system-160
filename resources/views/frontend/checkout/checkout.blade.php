@@ -1,118 +1,118 @@
 @extends('frontend.home_page')
 
 @section('home')
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-        <!-- Inner Banner -->
-        <div class="inner-banner inner-bg7">
-            <div class="container">
-                <div class="inner-title">
-                    <ul>
-                        <li>
-                            <a href="/">Home</a>
-                        </li>
-                        <li><i class='bx bx-chevron-right'></i></li>
-                        <li> Check Out</li>
-                    </ul>
-                    <h3> Check Out</h3>
-                </div>
+    <!-- Inner Banner -->
+    <div class="inner-banner inner-bg7">
+        <div class="container">
+            <div class="inner-title">
+                <ul>
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li><i class='bx bx-chevron-right'></i></li>
+                    <li> Check Out</li>
+                </ul>
+                <h3> Check Out</h3>
             </div>
         </div>
-        <!-- Inner Banner End -->
+    </div>
+    <!-- Inner Banner End -->
 
-        <!-- Checkout Area -->
-        <section class="checkout-area pt-100 pb-70">
-            <div class="container">
-                <form role="form" method="POST" action="{{ route('checkout.store') }}" class="stripe_form require-validation"
-                    data-cc-on-file="false" data-stripe-publishable-key="{{ env('STRIPE_KEY') }}">
-                    @csrf
+    <!-- Checkout Area -->
+    <section class="checkout-area pt-100 pb-70">
+        <div class="container">
+            <form role="form" method="POST" action="{{ route('checkout.store') }}" class="stripe_form require-validation"
+                data-cc-on-file="false" data-stripe-publishable-key="{{ env('STRIPE_KEY') }}">
+                @csrf
 
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <div class="billing-details">
-                                <h3 class="title">Billing Details</h3>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="billing-details">
+                            <h3 class="title">Billing Details</h3>
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12">
-                                        <div class="form-group">
-                                            <label>Country <span class="required">*</span></label>
-                                            <div class="select-box">
-                                                <select class="form-control" name="country">
-                                                    <option value="Viet Nam">Viet Nam</option>
-                                                    <option value="China">China</option>
-                                                    <option value="United Kingdom">United Kingdom</option>
-                                                    <option value="Germany">Germany</option>
-                                                    <option value="France">France</option>
-                                                    <option value="Japan">Japan</option>
-                                                    <option value="United States">United States</option>
-                                                    <option value="Thailand">Thailand</option>
-                                                    <option value="Singapore">Singapore</option>
-                                                    <option value="Malaysia">Malaysia</option>
-                                                    <option value="India">India</option>
-                                                    <option value="Canada">Canada</option>
-                                                    <option value="Australia">Australia</option>
-                                                    <option value="Italy">Italy</option>
-                                                </select>
-                                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="form-group">
+                                        <label>Country <span class="required">*</span></label>
+                                        <div class="select-box">
+                                            <select class="form-control" name="country">
+                                                <option value="Viet Nam">Viet Nam</option>
+                                                <option value="China">China</option>
+                                                <option value="United Kingdom">United Kingdom</option>
+                                                <option value="Germany">Germany</option>
+                                                <option value="France">France</option>
+                                                <option value="Japan">Japan</option>
+                                                <option value="United States">United States</option>
+                                                <option value="Thailand">Thailand</option>
+                                                <option value="Singapore">Singapore</option>
+                                                <option value="Malaysia">Malaysia</option>
+                                                <option value="India">India</option>
+                                                <option value="Canada">Canada</option>
+                                                <option value="Australia">Australia</option>
+                                                <option value="Italy">Italy</option>
+                                            </select>
                                         </div>
                                     </div>
-
-                                    <div class="col-lg-12 col-md-12">
-                                        <div class="form-group">
-                                            <label> Name <span class="required">*</span></label>
-                                            <input type="text" name="name" class="form-control"
-                                                value="{{ Auth::user()->name }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-12 col-md-12">
-                                        <div class="form-group">
-                                            <label> Email <span class="required">*</span></label>
-                                            <input type="email" name="email" class="form-control"
-                                                value="{{ Auth::user()->email }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-12 col-md-12">
-                                        <div class="form-group">
-                                            <label> Phone <span class="required">*</span></label>
-                                            <input type="text" name="phone" class="form-control"
-                                                value="{{ optional(Auth::user())->phone }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-12 col-md-12">
-                                        <div class="form-group">
-                                            <label> Address <span class="required">*</span></label>
-                                            <input type="text" name="address" class="form-control"
-                                                value="{{ optional(Auth::user())->address }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-12 col-md-12">
-                                        <div class="form-group">
-                                            <label> State <span class="required">*</span></label>
-                                            <input type="text" name="state" class="form-control">
-                                            @if ($errors->has('state'))
-                                                <span class="text-danger">{{ $errors->first('state') }}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-12 col-md-12">
-                                        <div class="form-group">
-                                            <label> Zip Code <span class="required">*</span></label>
-                                            <input type="text" name="zip_code" class="form-control">
-                                            @if ($errors->has('zip_code'))
-                                                <span class="text-danger">{{ $errors->first('zip_code') }}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-
-
-
                                 </div>
+
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="form-group">
+                                        <label> Name <span class="required">*</span></label>
+                                        <input type="text" name="name" class="form-control"
+                                            value="{{ Auth::user()->name }}">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="form-group">
+                                        <label> Email <span class="required">*</span></label>
+                                        <input type="email" name="email" class="form-control"
+                                            value="{{ Auth::user()->email }}">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="form-group">
+                                        <label> Phone <span class="required">*</span></label>
+                                        <input type="text" name="phone" class="form-control"
+                                            value="{{ optional(Auth::user())->phone }}">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="form-group">
+                                        <label> Address <span class="required">*</span></label>
+                                        <input type="text" name="address" class="form-control"
+                                            value="{{ optional(Auth::user())->address }}">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="form-group">
+                                        <label> State <span class="required">*</span></label>
+                                        <input type="text" name="state" class="form-control">
+                                        @if ($errors->has('state'))
+                                            <span class="text-danger">{{ $errors->first('state') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="form-group">
+                                        <label> Zip Code <span class="required">*</span></label>
+                                        <input type="text" name="zip_code" class="form-control">
+                                        @if ($errors->has('zip_code'))
+                                            <span class="text-danger">{{ $errors->first('zip_code') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+
+
+
                             </div>
+                        </div>
 
                         <div class="billing-details">
                             <h3 class="title">Facility Add-ons</h3>
@@ -138,374 +138,374 @@
                                 <p>No add-ons available.</p>
                             @endif
                         </div>
-                        </div>
+                    </div>
 
 
-                        <div class="col-lg-4">
-                            <section class="checkout-area pb-70">
-                                <div class="card-body">
-                                    <div class="billing-details">
-                                        <h3 class="title">Booking Summary</h3>
-                                        <hr>
+                    <div class="col-lg-4">
+                        <section class="checkout-area pb-70">
+                            <div class="card-body">
+                                <div class="billing-details">
+                                    <h3 class="title">Booking Summary</h3>
+                                    <hr>
 
-                                        <div style="display: flex">
-                                            <img style="height:100px; width:100px;object-fit: cover"
-                                                src="{{ (!empty($room->image)) ? asset('upload/room_images/' . $room->image) : asset('upload/no_image.jpg') }}"
-                                                alt="{{ $room->type->name }}">
-                                            <div style="padding-left: 10px;">
-                                                <a href=" "
-                                                    style="font-size: 20px; color: #595959;font-weight: bold">{{ $room->type->name }}</a>
-                                                <p><b>${{ $room->price }} / Night</b></p>
-                                            </div>
-
+                                    <div style="display: flex">
+                                        <img style="height:100px; width:100px;object-fit: cover"
+                                            src="{{ (!empty($room->image)) ? asset('upload/room_images/' . $room->image) : asset('upload/no_image.jpg') }}"
+                                            alt="{{ $room->type->name }}">
+                                        <div style="padding-left: 10px;">
+                                            <a href=" "
+                                                style="font-size: 20px; color: #595959;font-weight: bold">{{ $room->type->name }}</a>
+                                            <p><b>${{ $room->price }} / Night</b></p>
                                         </div>
-
-                                        <br>
-
-                                        <table class="table" style="width: 100%">
-
-                                            @php
-    $subtotal = $room->price * $book_data['number_of_rooms'] * $nights;
-    $discount = ($room->discount / 100) * $subtotal;
-    $total = $subtotal - $discount;
-                                            @endphp
-
-                                            <tr>
-                                                <td>
-                                                    <p style="font-weight: 600">Total Night <br><b style="color: red">
-                                                            ({{ $book_data['check_in'] }} -
-                                                            {{ $book_data['check_out'] }})</b></p>
-                                                </td>
-                                                <td style="text-align: right;">
-                                                    <p style="color: red; font-weight: 600">{{ $nights }}</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <p style="font-weight: 600">Total Room</p>
-                                                </td>
-                                                <td style=" text-align: right; color: red;">
-                                                    <p style="color: red; font-weight: 600">{{ $book_data['number_of_rooms'] }}
-                                                    </p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <p style="font-weight: 600">Subtotal</p>
-                                                </td>
-                                                <td style="text-align: right;">
-                                                    <p style="color: red; font-weight: 600">${{ $subtotal }}</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <p style="font-weight: 600">Discount</p>
-                                                </td>
-                                                <td style="text-align:right; ">
-                                                    <p style="color: red; font-weight: 600">${{ $discount }}</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <p style="font-weight: 600">Total</p>
-                                                </td>
-                                                <td style="text-align:right;">
-                                                    <p style="color: red; font-weight: 600">${{ $total }}</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <p style="font-weight: 600">Facility Add-ons</p>
-                                                </td>
-                                                <td style="text-align:right;">
-                                                    <p id="facility-addon-total" style="color: red; font-weight: 600"
-                                                        data-base-total="{{ $total }}">$0</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <p style="font-weight: 600">Grand Total</p>
-                                                </td>
-                                                <td style="text-align:right;">
-                                                    <p id="facility-grand-total" style="color: red; font-weight: 600">
-                                                        ${{ $total }}
-                                                    </p>
-                                                </td>
-                                            </tr>
-                                        </table>
 
                                     </div>
+
+                                    <br>
+
+                                    <table class="table" style="width: 100%">
+
+                                        @php
+                                            $subtotal = $room->price * $book_data['number_of_rooms'] * $nights;
+                                            $discount = ($room->discount / 100) * $subtotal;
+                                            $total = $subtotal - $discount;
+                                        @endphp
+
+                                        <tr>
+                                            <td>
+                                                <p style="font-weight: 600">Total Night <br><b style="color: red">
+                                                        ({{ $book_data['check_in'] }} -
+                                                        {{ $book_data['check_out'] }})</b></p>
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <p style="color: red; font-weight: 600">{{ $nights }}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p style="font-weight: 600">Total Room</p>
+                                            </td>
+                                            <td style=" text-align: right; color: red;">
+                                                <p style="color: red; font-weight: 600">{{ $book_data['number_of_rooms'] }}
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p style="font-weight: 600">Subtotal</p>
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <p style="color: red; font-weight: 600">${{ $subtotal }}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p style="font-weight: 600">Discount</p>
+                                            </td>
+                                            <td style="text-align:right; ">
+                                                <p style="color: red; font-weight: 600">${{ $discount }}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p style="font-weight: 600">Total</p>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <p style="color: red; font-weight: 600">${{ $total }}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p style="font-weight: 600">Facility Add-ons</p>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <p id="facility-addon-total" style="color: red; font-weight: 600"
+                                                    data-base-total="{{ $total }}">$0</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p style="font-weight: 600">Grand Total</p>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <p id="facility-grand-total" style="color: red; font-weight: 600">
+                                                    ${{ $total }}
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+
                                 </div>
-                            </section>
+                            </div>
+                        </section>
 
-                        </div>
+                    </div>
 
-                        <link rel="stylesheet"
-                            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+                    <link rel="stylesheet"
+                        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-                        <div class="col-lg-8 col-md-8">
-                            <div class="payment-box">
+                    <div class="col-lg-8 col-md-8">
+                        <div class="payment-box">
 
-                                <h4 class="payment-title">Choose Payment Method</h4>
+                            <h4 class="payment-title">Choose Payment Method</h4>
 
-                                <div class="payment-method">
-                                    @if ($errors->has('payment_method'))
-                                        <span class="text-danger">
-                                            {{ $errors->first('payment_method') }}
-                                        </span>
-                                    @endif
+                            <div class="payment-method">
+                                @if ($errors->has('payment_method'))
+                                    <span class="text-danger">
+                                        {{ $errors->first('payment_method') }}
+                                    </span>
+                                @endif
 
-                                    <label class="payment-card">
-                                        <input type="radio" class="pay_method" name="payment_method" id="cash-on-delivery"
-                                            value="COD">
+                                <label class="payment-card">
+                                    <input type="radio" class="pay_method" name="payment_method" id="cash-on-delivery"
+                                        value="COD">
 
-                                        <div class="payment-content">
-                                            <div class="payment-left">
-                                                <i class="fa-solid fa-money-bill-wave payment-icon cod"></i>
-                                                <span>Cash On Delivery</span>
-                                            </div>
-
-                                            <div class="checkmark"></div>
-                                        </div>
-                                    </label>
-
-                                    <label class="payment-card">
-                                        <input type="radio" class="pay_method" name="payment_method" id="stripe" value="Stripe">
-
-                                        <div class="payment-content">
-                                            <div class="payment-left">
-                                                <i class="fa-brands fa-cc-stripe payment-icon stripe"></i>
-                                                <span>Stripe</span>
-                                            </div>
-
-                                            <div class="checkmark"></div>
-                                        </div>
-                                    </label>
-
-                                    <div id="stripe_pay" class="stripe-payment-form d-none">
-
-                                        <div class="stripe-header">
-                                            <i class="fa-brands fa-cc-stripe"></i>
-                                            <span>Secure Stripe Payment</span>
+                                    <div class="payment-content">
+                                        <div class="payment-left">
+                                            <i class="fa-solid fa-money-bill-wave payment-icon cod"></i>
+                                            <span>Cash On Delivery</span>
                                         </div>
 
-                                        <div class="stripe-card-box">
-
-                                            <div class="form-group mb-3">
-                                                <label class="stripe-label">
-                                                    Name on Card
-                                                </label>
-
-                                                <input type="text" id="card-holder-name" class="form-control stripe-input"
-                                                    placeholder="John Doe">
-                                            </div>
-
-                                            <div class="form-group">
-
-                                                <label class="stripe-label">
-                                                    Card Information
-                                                </label>
-
-                                                <div id="card-element"></div>
-
-                                                <small class="text-muted d-block mt-2">
-                                                    Test card: 4242 4242 4242 4242
-                                                </small>
-
-                                                <div id="card-errors" class="text-danger mt-2"></div>
-
-                                            </div>
-
-                                        </div>
+                                        <div class="checkmark"></div>
                                     </div>
-                                </div>
+                                </label>
 
-                                <div class="payment-actions">
-                                    <button type="submit" class="order-btn three place-order-btn" id="myButton">
-                                        Place to Order
-                                    </button>
+                                <label class="payment-card">
+                                    <input type="radio" class="pay_method" name="payment_method" id="stripe" value="Stripe">
 
-                                    <div class="payment-separator">Or pay directly</div>
+                                    <div class="payment-content">
+                                        <div class="payment-left">
+                                            <i class="fa-brands fa-cc-stripe payment-icon stripe"></i>
+                                            <span>Stripe</span>
+                                        </div>
 
-                                    <div class="direct-payment-actions">
-                                        <button type="submit" name="payment_method" value="paypal"
-                                            class="direct-payment-btn paypal-btn">
-                                            <i class="fa-brands fa-paypal payment-icon"></i>
-                                            <span>Pay with PayPal</span>
-                                        </button>
+                                        <div class="checkmark"></div>
+                                    </div>
+                                </label>
 
-                                        <button type="submit" name="payment_method" value="VN Pay"
-                                            formaction="{{ route('vnpay.payment') }}" class="direct-payment-btn vnpay-btn">
-                                            <i class="fa-solid fa-wallet payment-icon"></i>
-                                            <span>Pay with VN Pay</span>
-                                        </button>
+                                <div id="stripe_pay" class="stripe-payment-form d-none">
+
+                                    <div class="stripe-header">
+                                        <i class="fa-brands fa-cc-stripe"></i>
+                                        <span>Secure Stripe Payment</span>
+                                    </div>
+
+                                    <div class="stripe-card-box">
+
+                                        <div class="form-group mb-3">
+                                            <label class="stripe-label">
+                                                Name on Card
+                                            </label>
+
+                                            <input type="text" id="card-holder-name" class="form-control stripe-input"
+                                                placeholder="John Doe">
+                                        </div>
+
+                                        <div class="form-group">
+
+                                            <label class="stripe-label">
+                                                Card Information
+                                            </label>
+
+                                            <div id="card-element"></div>
+
+                                            <small class="text-muted d-block mt-2">
+                                                Test card: 4242 4242 4242 4242
+                                            </small>
+
+                                            <div id="card-errors" class="text-danger mt-2"></div>
+
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="payment-actions">
+                                <button type="submit" class="order-btn three place-order-btn" id="myButton">
+                                    Place to Order
+                                </button>
+
+                                <div class="payment-separator">Or pay directly</div>
+
+                                <div class="direct-payment-actions">
+                                    <button type="submit" name="payment_method" value="paypal"
+                                        class="direct-payment-btn paypal-btn">
+                                        <i class="fa-brands fa-paypal payment-icon"></i>
+                                        <span>Pay with PayPal</span>
+                                    </button>
+
+                                    <button type="submit" name="payment_method" value="VN Pay"
+                                        formaction="{{ route('vnpay.payment') }}" class="direct-payment-btn vnpay-btn">
+                                        <i class="fa-solid fa-wallet payment-icon"></i>
+                                        <span>Pay with VN Pay</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
+                    </div>
 
-                        <script>
-                            const facilityInputs = document.querySelectorAll('input[name="facility_addons[]"]');
-                            const addonTotalEl = document.getElementById('facility-addon-total');
-                            const grandTotalEl = document.getElementById('facility-grand-total');
+                    <script>
+                        const facilityInputs = document.querySelectorAll('input[name="facility_addons[]"]');
+                        const addonTotalEl = document.getElementById('facility-addon-total');
+                        const grandTotalEl = document.getElementById('facility-grand-total');
 
-                            const toMoney = (value) => `$${Math.round(Number(value))}`;
+                        const toMoney = (value) => `$${Math.round(Number(value))}`;
 
-                            const updateFacilityTotals = () => {
-                                if (!addonTotalEl || !grandTotalEl) {
-                                    return;
-                                }
+                        const updateFacilityTotals = () => {
+                            if (!addonTotalEl || !grandTotalEl) {
+                                return;
+                            }
 
-                                const baseTotal = Number(addonTotalEl.dataset.baseTotal || 0);
-                                let addonTotal = 0;
-
-                                facilityInputs.forEach((input) => {
-                                    if (input.checked) {
-                                        addonTotal += Number(input.dataset.fee || 0);
-                                    }
-                                });
-
-                                addonTotalEl.textContent = toMoney(addonTotal);
-                                grandTotalEl.textContent = toMoney(baseTotal + addonTotal);
-                            };
+                            const baseTotal = Number(addonTotalEl.dataset.baseTotal || 0);
+                            let addonTotal = 0;
 
                             facilityInputs.forEach((input) => {
-                                input.addEventListener('change', updateFacilityTotals);
+                                if (input.checked) {
+                                    addonTotal += Number(input.dataset.fee || 0);
+                                }
                             });
 
-                            updateFacilityTotals();
-                        </script>
-                    </div>
-                </form>
-            </div>
-        </section>
-        <!-- Checkout Area End -->
+                            addonTotalEl.textContent = toMoney(addonTotal);
+                            grandTotalEl.textContent = toMoney(baseTotal + addonTotal);
+                        };
 
-        <style>
-            .hide {
-                display: none
-            }
-        </style>
+                        facilityInputs.forEach((input) => {
+                            input.addEventListener('change', updateFacilityTotals);
+                        });
 
-        <script src="https://js.stripe.com/v3/"></script>
+                        updateFacilityTotals();
+                    </script>
+                </div>
+            </form>
+        </div>
+    </section>
+    <!-- Checkout Area End -->
 
-        <script>
-            // SHOW / HIDE STRIPE FORM
-            $(document).ready(function () {
-                $(".pay_method").on('change', function () {
-                    let payment_method = $(this).val();
+    <style>
+        .hide {
+            display: none
+        }
+    </style>
 
-                    if (payment_method === 'Stripe') {
-                        $("#stripe_pay").removeClass('d-none');
-                    } else {
-                        $("#stripe_pay").addClass('d-none');
-                    }
-                });
-            });
+    <script src="https://js.stripe.com/v3/"></script>
 
-            // STRIPE V3
+    <script>
+        // SHOW / HIDE STRIPE FORM
+        $(document).ready(function () {
+            $(".pay_method").on('change', function () {
+                let payment_method = $(this).val();
 
-            const stripe = Stripe("{{ env('STRIPE_KEY') }}");
-
-            const elements = stripe.elements();
-
-            const card = elements.create('card', {
-                style: {
-                    base: {
-                        color: '#32325d',
-                        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-                        fontSmoothing: 'antialiased',
-                        fontSize: '16px',
-
-                        '::placeholder': {
-                            color: '#aab7c4'
-                        }
-                    },
-
-                    invalid: {
-                        color: '#dc3545',
-                        iconColor: '#dc3545'
-                    }
-                }
-            });
-
-            card.mount('#card-element');
-
-            // REALTIME ERROR
-
-            card.on('change', function (event) {
-                const displayError = document.getElementById('card-errors');
-
-                if (event.error) {
-                    displayError.textContent = event.error.message;
+                if (payment_method === 'Stripe') {
+                    $("#stripe_pay").removeClass('d-none');
                 } else {
-                    displayError.textContent = '';
+                    $("#stripe_pay").addClass('d-none');
                 }
             });
+        });
 
-            // FORM SUBMIT
+        // STRIPE V3
 
-            const form = document.querySelector('.stripe_form');
+        const stripe = Stripe("{{ env('STRIPE_KEY') }}");
 
-            form.addEventListener('submit', async function (e) {
-                // BUTTON ĐƯỢC CLICK
-                const clickedButton = document.activeElement;
+        const elements = stripe.elements();
 
-                // PAYPAL / VNPAY => CHO SUBMIT THẲNG
-                if (clickedButton && (clickedButton.value === 'paypal' || clickedButton.value === 'VN Pay')) {
-                    return true;
-                }
+        const card = elements.create('card', {
+            style: {
+                base: {
+                    color: '#32325d',
+                    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                    fontSmoothing: 'antialiased',
+                    fontSize: '16px',
 
-                // PLACE ORDER BUTTON
-                const selectedPayment = document.querySelector('input[name="payment_method"]:checked');
-
-                // NO PAYMENT
-                if (!selectedPayment) {
-                    e.preventDefault();
-                    alert('Please select payment method');
-                    return;
-                }
-
-                // COD
-
-                if (selectedPayment.value === 'COD') {
-                    return true;
-                }
-
-                // STRIPE
-                if (selectedPayment.value === 'Stripe') {
-                    e.preventDefault();
-
-                    const submitBtn = document.getElementById('myButton');
-
-                    submitBtn.disabled = true;
-
-                    submitBtn.innerHTML = 'Processing...';
-
-                    const { token, error } = await stripe.createToken(card);
-
-                    if (error) {
-                        document.getElementById('card-errors').textContent = error.message;
-
-                        submitBtn.disabled = false;
-
-                        submitBtn.innerHTML = 'Place to Order';
-                    } else {
-                        const hiddenInput = document.createElement('input');
-
-                        hiddenInput.setAttribute('type', 'hidden');
-
-                        hiddenInput.setAttribute('name', 'stripeToken');
-
-                        hiddenInput.setAttribute('value', token.id);
-
-                        form.appendChild(hiddenInput);
-
-                        form.submit();
+                    '::placeholder': {
+                        color: '#aab7c4'
                     }
+                },
+
+                invalid: {
+                    color: '#dc3545',
+                    iconColor: '#dc3545'
                 }
-            });
-        </script>
+            }
+        });
+
+        card.mount('#card-element');
+
+        // REALTIME ERROR
+
+        card.on('change', function (event) {
+            const displayError = document.getElementById('card-errors');
+
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // FORM SUBMIT
+
+        const form = document.querySelector('.stripe_form');
+
+        form.addEventListener('submit', async function (e) {
+            // BUTTON ĐƯỢC CLICK
+            const clickedButton = document.activeElement;
+
+            // PAYPAL / VNPAY => CHO SUBMIT THẲNG
+            if (clickedButton && (clickedButton.value === 'paypal' || clickedButton.value === 'VN Pay')) {
+                return true;
+            }
+
+            // PLACE ORDER BUTTON
+            const selectedPayment = document.querySelector('input[name="payment_method"]:checked');
+
+            // NO PAYMENT
+            if (!selectedPayment) {
+                e.preventDefault();
+                alert('Please select payment method');
+                return;
+            }
+
+            // COD
+
+            if (selectedPayment.value === 'COD') {
+                return true;
+            }
+
+            // STRIPE
+            if (selectedPayment.value === 'Stripe') {
+                e.preventDefault();
+
+                const submitBtn = document.getElementById('myButton');
+
+                submitBtn.disabled = true;
+
+                submitBtn.innerHTML = 'Processing...';
+
+                const { token, error } = await stripe.createToken(card);
+
+                if (error) {
+                    document.getElementById('card-errors').textContent = error.message;
+
+                    submitBtn.disabled = false;
+
+                    submitBtn.innerHTML = 'Place to Order';
+                } else {
+                    const hiddenInput = document.createElement('input');
+
+                    hiddenInput.setAttribute('type', 'hidden');
+
+                    hiddenInput.setAttribute('name', 'stripeToken');
+
+                    hiddenInput.setAttribute('value', token.id);
+
+                    form.appendChild(hiddenInput);
+
+                    form.submit();
+                }
+            }
+        });
+    </script>
 @endsection
 
 <style>
